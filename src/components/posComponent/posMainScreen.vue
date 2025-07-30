@@ -53,7 +53,12 @@
     <div class="row flex-grow-1 body-row align-items-stretch body-row-gap" style="min-height: 0">
       <div class="col body-col h-100 me-3">
         <!-- Left body content -->
-        Left Body
+        <posMainScreenLeftPanel
+          ref="leftPanelComponent"
+          @item-updated="handleItemUpdated"
+          @item-removed="handleItemRemoved"
+          @totals-updated="handleTotalsUpdated"
+        />
       </div>
       <div
         class="col body-col h-100 d-flex flex-column"
@@ -143,6 +148,7 @@ import posMainScreenFooter from './posMainScreenFooter.vue'
 import posMainScreenFooterShortcut from './posMainScreenFooterShortcut.vue'
 import posMainScreenProductGroup from './posMainScreenProductGroup.vue'
 import posMainScreenProduct from './posMainScreenProduct.vue'
+import posMainScreenLeftPanel from './posMainScreenLeftPanel.vue'
 import { electronicsProducts } from '../posData/electronics'
 import { clothingAndApparelProducts } from '../posData/clothingAndApparel'
 import { homeAndGardenProducts } from '../posData/homeAndGarden'
@@ -158,6 +164,9 @@ const selectedFooterBtn = ref('Member')
 const selectedProductGroup = ref<{ ProductGroupId: number; ProductGroupText: string } | null>(null)
 import type { Product } from '../posDataStruct/posProduct'
 const selectedProducts = ref<Product[]>([])
+
+// Left panel component reference
+const leftPanelComponent = ref()
 
 const productDataMap = {
   Electronics: electronicsProducts,
@@ -200,7 +209,33 @@ function handleProductGroupSelected(group: { ProductGroupId: number; ProductGrou
 
 function handleProductSelected(product: Product) {
   console.log('Product selected:', product)
-  // Handle product selection (e.g., add to cart, show details, etc.)
+  // Add the selected product to the left panel table
+  addProductToLeftPanel(product)
+}
+
+// Left panel event handlers
+function handleItemUpdated(item: any) {
+  console.log('Item updated in left panel:', item)
+}
+
+function handleItemRemoved(item: any) {
+  console.log('Item removed from left panel:', item)
+}
+
+function handleTotalsUpdated(totals: any) {
+  console.log('Totals updated in left panel:', totals)
+}
+
+// Method to add product to left panel table
+function addProductToLeftPanel(product: Product) {
+  if (leftPanelComponent.value) {
+    leftPanelComponent.value.addToTable({
+      ProductId: product.ProductId,
+      ProductName: product.ProductName,
+      ProductCode: product.ProductCode,
+      ProductRate: product.ProductRate,
+    })
+  }
 }
 </script>
 
