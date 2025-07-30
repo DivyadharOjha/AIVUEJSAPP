@@ -1,39 +1,45 @@
 <template>
   <div class="footer-btn-group">
-    <button v-for="(btn, idx) in buttons" :key="btn" class="footer-btn" :style="{ background: randomColors[idx] }" @click="handleClick(btn)">
+    <button
+      v-for="(btn, idx) in buttons"
+      :key="btn"
+      class="footer-btn"
+      :style="{ background: randomColors[idx] }"
+      @click="handleClick(btn)"
+    >
       {{ btn }}
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineEmits } from 'vue';
-const emit = defineEmits(['footerBtnClick']);
+import { defineEmits } from 'vue'
+const emit = defineEmits(['footerBtnClick'])
 
 const buttons = [
-  "Member",
-  "Item",
-  "Task",
-  "Transaction",
-  "Sales Return",
-  "Employee",
-  "Pre Order",
-  "Employee (Schemes)",
-  "Batch Report"
-];
+  'Member',
+  'Item',
+  'Task',
+  'Transaction',
+  'Sales Return',
+  'Employee',
+  'Pre Order',
+  'Employee (Schemes)',
+  'Batch Report',
+]
 
-function getRandomDarkColor() {
-  // Generate a random dark color by limiting RGB values to lower range
-  const r = Math.floor(Math.random() * 100);
-  const g = Math.floor(Math.random() * 100);
-  const b = Math.floor(Math.random() * 100);
-  return `rgb(${r},${g},${b})`;
-}
+const predefinedColors = [
+  'rgb(3, 49, 57)',
+  'rgb(64, 4, 86)',
+  'rgb(159, 110, 44)',
+  'rgb(83, 50, 103)',
+  'rgb(6, 35, 80)',
+]
 
-const randomColors = buttons.map(() => getRandomDarkColor());
+const randomColors = buttons.map((_, index) => predefinedColors[index % predefinedColors.length])
 
 function handleClick(btn: string) {
-  emit('footerBtnClick', btn);
+  emit('footerBtnClick', btn)
 }
 </script>
 
@@ -52,7 +58,10 @@ function handleClick(btn: string) {
   font-size: 1rem;
   color: #fff;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    box-shadow 0.2s;
 }
 .footer-btn:hover {
   background: lightgreen;
