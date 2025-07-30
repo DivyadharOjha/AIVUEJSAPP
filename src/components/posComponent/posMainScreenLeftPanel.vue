@@ -107,7 +107,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, computed, defineEmits } from 'vue'
 
 const emit = defineEmits([
