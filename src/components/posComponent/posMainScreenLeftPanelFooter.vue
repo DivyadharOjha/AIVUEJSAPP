@@ -2,68 +2,59 @@
   <div class="left-panel-footer">
     <!-- Row 1 -->
     <div class="row mb-2">
-      <div class="col-6">
-        <div class="form-group">
-          <label class="form-label">Total Product Count</label>
-          <input
-            type="text"
-            class="form-control form-control-sm"
-            v-model="totalProductCount"
-            readonly
-          />
-        </div>
+      <div class="col-3">
+        <label class="form-label">Total Product Count</label>
       </div>
-      <div class="col-6">
-        <div class="form-group">
-          <label class="form-label">Total Product Quantity</label>
-          <input
-            type="text"
-            class="form-control form-control-sm"
-            v-model="totalProductQuantity"
-            readonly
-          />
-        </div>
+      <div class="col-3">
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          v-model="totalProductCount"
+          readonly
+        />
+      </div>
+      <div class="col-3">
+        <label class="form-label">Total Product Quantity</label>
+      </div>
+      <div class="col-3">
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          v-model="totalProductQuantity"
+          readonly
+        />
       </div>
     </div>
 
     <!-- Row 2 -->
     <div class="row mb-2">
-      <div class="col-6">
-        <div class="form-group">
-          <label class="form-label">Discount Amount</label>
-          <input
-            type="text"
-            class="form-control form-control-sm"
-            v-model="discountAmount"
-            readonly
-          />
-        </div>
+      <div class="col-3">
+        <label class="form-label">Discount Amount</label>
       </div>
-      <div class="col-6">
-        <div class="form-group">
-          <label class="form-label">Schemes Amount</label>
-          <input
-            type="text"
-            class="form-control form-control-sm"
-            v-model="schemesAmount"
-            readonly
-          />
-        </div>
+      <div class="col-3">
+        <input type="text" class="form-control form-control-sm" v-model="discountAmount" readonly />
+      </div>
+      <div class="col-3">
+        <label class="form-label">Schemes Amount</label>
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control form-control-sm" v-model="schemesAmount" readonly />
       </div>
     </div>
 
     <!-- Row 3 -->
     <div class="row mb-2">
-      <div class="col-12">
-        <div class="form-group">
-          <label class="form-label">Taxable Amount</label>
-          <input
-            type="text"
-            class="form-control form-control-sm"
-            v-model="taxableAmount"
-            readonly
-          />
-        </div>
+      <div class="col-3">
+        <label class="form-label">Taxable Amount</label>
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control form-control-sm" v-model="taxableAmount" readonly />
+      </div>
+      <div class="col-3">
+        <label class="form-label"></label>
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control form-control-sm" readonly />
       </div>
     </div>
   </div>
@@ -175,16 +166,13 @@ defineExpose({
   border-top: 1px solid #e9ecef;
 }
 
-.form-group {
-  margin-bottom: 10px;
-}
-
 .form-label {
   font-size: 11px;
   font-weight: 600;
   color: #495057;
   margin-bottom: 4px;
   text-transform: uppercase;
+  display: block;
 }
 
 .form-control {

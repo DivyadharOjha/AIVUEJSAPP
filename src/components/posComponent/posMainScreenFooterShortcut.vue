@@ -55,16 +55,20 @@ const displayedData = computed(() => {
   }
 })
 
-function getRandomColor() {
-  const letters = '0123456789ABCDEF'
-  let color = '#'
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)]
-  }
-  return color
-}
+const predefinedColors = [
+  'rgb(159, 110, 44)',
+  'rgb(41, 153, 9)',
+  'rgb(26, 91, 44)',
+  'rgb(143, 110, 75)',
+  'rgb(63, 78, 92)',
+  'rgb(83, 50, 103)',
+  'rgb(50, 110, 38)',
+  'rgb(207, 114, 45)',
+]
 
-const randomColors = computed(() => displayedData.value.map(() => getRandomColor()))
+const randomColors = computed(() =>
+  displayedData.value.map((_, index) => predefinedColors[index % predefinedColors.length]),
+)
 </script>
 
 <style scoped>

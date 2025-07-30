@@ -225,7 +225,7 @@ defineExpose({
   background: white;
   border: 1px solid #e9ecef;
   border-radius: 6px;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
   flex-direction: column;
 }
@@ -236,21 +236,26 @@ defineExpose({
   font-size: 13px;
   table-layout: fixed;
   height: 100%;
+  min-width: 800px; /* Minimum width to prevent squashing */
 }
 
 .table thead {
   background: #f8f9fa;
   border-bottom: 2px solid #dee2e6;
+  height: 40px;
 }
 
 .table tbody {
   background: white;
   overflow-y: auto;
+  overflow-x: auto;
+  max-height: calc(100% - 80px); /* Account for header and footer heights */
 }
 
 .table tfoot {
   background: #f8f9fa;
   border-top: 2px solid #dee2e6;
+  height: 40px;
 }
 
 .table {
@@ -260,19 +265,32 @@ defineExpose({
 }
 
 .table th {
-  padding: 12px 8px;
+  padding: 5px;
   text-align: left;
   font-weight: 600;
   color: #495057;
   background: #f8f9fa;
   border-bottom: 1px solid #dee2e6;
   white-space: nowrap;
+  vertical-align: middle;
+  height: 40px;
 }
 
 .table td {
   padding: 10px 8px;
   border-bottom: 1px solid #f1f3f4;
   vertical-align: middle;
+}
+
+.table thead td,
+.table tfoot td {
+  padding: 5px;
+  vertical-align: middle;
+  height: 40px;
+}
+
+.table tfoot tr {
+  height: 40px;
 }
 
 .table-row:hover {
@@ -282,39 +300,47 @@ defineExpose({
 /* Column widths */
 .serial-col {
   width: 80px;
+  min-width: 80px;
   text-align: center;
 }
 
 .product-col {
   width: 200px;
+  min-width: 150px;
 }
 
 .code-col {
   width: 120px;
+  min-width: 100px;
 }
 
 .quantity-col {
   width: 100px;
+  min-width: 80px;
   text-align: center;
 }
 
 .rate-col {
   width: 100px;
+  min-width: 80px;
   text-align: right;
 }
 
 .gross-col {
   width: 100px;
+  min-width: 80px;
   text-align: right;
 }
 
 .discount-col {
   width: 100px;
+  min-width: 80px;
   text-align: center;
 }
 
 .nett-col {
   width: 100px;
+  min-width: 80px;
   text-align: right;
   font-weight: 600;
 }

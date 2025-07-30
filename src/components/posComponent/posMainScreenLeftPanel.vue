@@ -147,12 +147,12 @@ defineExpose({
 }
 
 .first-row {
-  height: 60%;
+  height: 75%;
   min-height: 0;
 }
 
 .second-row {
-  height: 40%;
+  height: 25%;
   min-height: 0;
 }
 
