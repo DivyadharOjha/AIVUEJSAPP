@@ -1,24 +1,30 @@
 <template>
   <div class="product-group-container">
-    <div class="product-group-navigation row" id="divProductGroupNavigation">
-      <div class="col-1 d-flex align-items-center justify-content-start">
-        <button class="nav-button nav-left" @click="scrollLeft" :disabled="!canScrollLeft">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M15.41 7.41L10.83 12L15.41 16.59L14 18L8 12L14 6L15.41 7.41Z"
-              fill="currentColor"
-            />
-          </svg>
-        </button>
-      </div>
-      <div class="col-10 d-flex align-items-center">
-        <div class="product-group-grid w-100" ref="scrollContainer">
+    <div class="product-group-navigation" id="divProductGroupNavigation">
+      <!-- Left Navigation Button -->
+      <button
+        class="nav-button nav-left"
+        @click="scrollLeft"
+        :disabled="!canScrollLeft"
+        aria-label="Scroll left"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15.41 7.41L10.83 12L15.41 16.59L14 18L8 12L14 6L15.41 7.41Z"
+            fill="currentColor"
+          />
+        </svg>
+      </button>
+
+      <!-- Product Groups Container -->
+      <div class="product-groups-wrapper">
+        <div class="product-group-grid" ref="scrollContainer">
           <div
             v-for="(group, index) in productGroups"
             :key="group.ProductGroupId"
@@ -33,22 +39,27 @@
           </div>
         </div>
       </div>
-      <div class="col-1 d-flex align-items-center justify-content-end">
-        <button class="nav-button nav-right" @click="scrollRight" :disabled="!canScrollRight">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z"
-              fill="currentColor"
-            />
-          </svg>
-        </button>
-      </div>
+
+      <!-- Right Navigation Button -->
+      <button
+        class="nav-button nav-right"
+        @click="scrollRight"
+        :disabled="!canScrollRight"
+        aria-label="Scroll right"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z"
+            fill="currentColor"
+          />
+        </svg>
+      </button>
     </div>
 
     <div v-if="productGroups.length === 0" class="no-results">
@@ -180,10 +191,12 @@ defineExpose({
 .product-group-navigation {
   height: 60px;
   width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
   box-sizing: border-box;
   position: relative;
-  margin: 0;
-  gap: 0 !important;
 }
 
 .nav-button {
@@ -201,42 +214,43 @@ defineExpose({
   transition: all 0.2s ease;
   padding: 0;
   z-index: 2;
-  margin: 0 !important;
-}
-
-.nav-left {
-  margin-right: 0 !important;
-}
-
-.nav-right {
-  margin-left: -20px;
 }
 
 .nav-button:hover:not(:disabled) {
   background: #1565c0;
-  transform: scale(1.1);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
 }
 
 .nav-button:disabled {
   background: #ccc;
   cursor: not-allowed;
   opacity: 0.5;
+  transform: none;
+}
+
+.nav-button:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+.product-groups-wrapper {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
 }
 
 .product-group-grid {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding-bottom: 4px;
-  flex: 1;
+  padding: 4px 0;
+  height: 52px;
+  align-items: center;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  height: 60px;
-  align-items: center;
-  min-width: 0;
-  box-sizing: border-box;
-  padding-left: 0;
-  padding-right: 0;
+  scroll-behavior: smooth;
 }
 
 .product-group-grid::-webkit-scrollbar {
@@ -254,7 +268,8 @@ defineExpose({
   gap: 6px;
   flex-shrink: 0;
   min-width: 120px;
-  height: 50px;
+  height: 44px;
+  position: relative;
 }
 
 .product-group-card:hover {
@@ -267,6 +282,11 @@ defineExpose({
   border-color: #ffffff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   transform: translateY(-2px);
+}
+
+.product-group-card:focus {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
 }
 
 .product-group-info {
@@ -301,14 +321,92 @@ defineExpose({
   font-size: 16px;
 }
 
-.col-1 {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+/* Responsive Design */
+@media (max-width: 768px) {
+  .product-group-navigation {
+    height: 56px;
+    gap: 4px;
+    padding: 0 2px;
+  }
+
+  .nav-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .product-group-grid {
+    height: 48px;
+    gap: 6px;
+  }
+
+  .product-group-card {
+    min-width: 100px;
+    height: 40px;
+    padding: 6px 10px;
+  }
+
+  .product-group-name {
+    font-size: 13px;
+  }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 576px) {
+  .product-group-navigation {
+    height: 52px;
+    gap: 2px;
+  }
+
+  .nav-button {
+    width: 32px;
+    height: 32px;
+  }
+
   .product-group-grid {
-    grid-template-columns: 1fr;
+    height: 44px;
+    gap: 4px;
+  }
+
+  .product-group-card {
+    min-width: 90px;
+    height: 36px;
+    padding: 4px 8px;
+  }
+
+  .product-group-name {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-group-card {
+    min-width: 80px;
+  }
+
+  .product-group-name {
+    font-size: 11px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .nav-button {
+    border: 2px solid #ffffff;
+  }
+
+  .product-group-card {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .nav-button,
+  .product-group-card {
+    transition: none;
+  }
+
+  .product-group-grid {
+    scroll-behavior: auto;
   }
 }
 </style>
