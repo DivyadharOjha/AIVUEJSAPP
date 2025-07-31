@@ -84,23 +84,15 @@
 
     <!-- Pagination Footer -->
     <div v-if="hasProducts && products.length > 20" class="product-pagination-footer">
-      <div class="d-flex justify-content-center align-items-center h-100">
-        <button
-          class="btn btn-outline-primary btn-sm me-2"
-          @click="prevPage"
-          :disabled="currentPage === 1"
-        >
-          &lt;
-        </button>
-        <span style="font-size: 0.95rem">Page {{ currentPage }} / {{ totalPages }}</span>
-        <button
-          class="btn btn-outline-primary btn-sm ms-2"
-          :disabled="currentPage === totalPages"
-          @click="nextPage"
-        >
-          &gt;
-        </button>
-      </div>
+      <posPageNavigation
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        :totalRecords="products.length"
+        @first-click="goToFirstPage"
+        @previous-click="prevPage"
+        @next-click="nextPage"
+        @last-click="goToLastPage"
+      />
     </div>
   </div>
 </template>
@@ -108,6 +100,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import type { Product } from '../posDataStruct/posProduct'
+import posPageNavigation from './posPageNavigation.vue'
 
 const props = defineProps<{
   products: Product[]
@@ -150,6 +143,14 @@ function prevPage() {
 
 function nextPage() {
   if (currentPage.value < totalPages.value) currentPage.value++
+}
+
+function goToFirstPage() {
+  currentPage.value = 1
+}
+
+function goToLastPage() {
+  currentPage.value = totalPages.value
 }
 
 function selectProduct(product: Product) {
