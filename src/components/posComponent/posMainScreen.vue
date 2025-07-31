@@ -104,6 +104,8 @@
                     style="overflow: hidden; height: 100%; min-height: 0"
                   >
                     <posMainScreenProductGroup
+                      ref="productGroupComponent"
+                      :selectedGroupId="selectedProductGroup?.ProductGroupId"
                       @product-group-selected="handleProductGroupSelected"
                     />
                   </div>
@@ -167,6 +169,8 @@ const selectedProducts = ref<Product[]>([])
 
 // Left panel component reference
 const leftPanelComponent = ref()
+// Product group component reference
+const productGroupComponent = ref()
 
 const productDataMap = {
   Electronics: electronicsProducts,
@@ -190,8 +194,27 @@ function handleFooterBtnClick(btn: string) {
 
 function handleHomeClick() {
   selectedFooterBtn.value = ''
-  selectedProductGroup.value = null
-  selectedProducts.value = []
+  // Automatically select the first product group (Electronics)
+  const firstProductGroup = {
+    ProductGroupId: 1,
+    ProductGroupText: 'Electronics',
+  }
+  selectedProductGroup.value = firstProductGroup
+
+  // Load the first product group's data
+  const products = productDataMap[firstProductGroup.ProductGroupText as keyof typeof productDataMap]
+  selectedProducts.value = products || []
+
+  // Call selectFirstGroup on the ProductGroup component to highlight the button
+  if (productGroupComponent.value) {
+    productGroupComponent.value.selectFirstGroup()
+  }
+
+  console.log(
+    'Home clicked - Auto-selected Electronics with',
+    selectedProducts.value.length,
+    'products',
+  )
 }
 
 function handleProductGroupSelected(group: { ProductGroupId: number; ProductGroupText: string }) {

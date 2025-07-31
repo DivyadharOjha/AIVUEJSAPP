@@ -1,4 +1,4 @@
-import type { Product } from '../posDataStruct/posProduct';
+import type { Product } from '../posDataStruct/posProduct'
 
 export const homeAndGardenProducts: Product[] = [
   {
@@ -7,7 +7,8 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-001',
     ProductQuantity: 40,
     ProductRate: 29.99,
-    ProductImage: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+    ProductImage:
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 2,
@@ -15,7 +16,8 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-002',
     ProductQuantity: 80,
     ProductRate: 24.99,
-    ProductImage: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80',
+    ProductImage:
+      'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 3,
@@ -23,6 +25,97 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-003',
     ProductQuantity: 25,
     ProductRate: 59.99,
-    ProductImage: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+    ProductImage:
+      'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
   },
-]; 
+  {
+    ProductId: 4,
+    ProductName: 'Wall Clock',
+    ProductCode: 'HOME-004',
+    ProductQuantity: 60,
+    ProductRate: 34.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 5,
+    ProductName: 'Plant Pot',
+    ProductCode: 'HOME-005',
+    ProductQuantity: 100,
+    ProductRate: 12.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 6,
+    ProductName: 'Throw Blanket',
+    ProductCode: 'HOME-006',
+    ProductQuantity: 70,
+    ProductRate: 19.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 7,
+    ProductName: 'Kitchen Towels',
+    ProductCode: 'HOME-007',
+    ProductQuantity: 120,
+    ProductRate: 8.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 8,
+    ProductName: 'Picture Frame',
+    ProductCode: 'HOME-008',
+    ProductQuantity: 85,
+    ProductRate: 14.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 9,
+    ProductName: 'Garden Hose',
+    ProductCode: 'HOME-009',
+    ProductQuantity: 35,
+    ProductRate: 39.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 10,
+    ProductName: 'Bedside Table',
+    ProductCode: 'HOME-010',
+    ProductQuantity: 30,
+    ProductRate: 89.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 11,
+    ProductName: 'Candle Set',
+    ProductCode: 'HOME-011',
+    ProductQuantity: 65,
+    ProductRate: 16.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 12,
+    ProductName: 'Garden Seeds',
+    ProductCode: 'HOME-012',
+    ProductQuantity: 90,
+    ProductRate: 4.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 13,
+    ProductName: 'Storage Box',
+    ProductCode: 'HOME-013',
+    ProductQuantity: 50,
+    ProductRate: 24.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+  },
+]

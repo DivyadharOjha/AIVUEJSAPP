@@ -298,4 +298,94 @@ export const electronicsProducts: Product[] = [
     ProductImage:
       'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
   },
+  {
+    ProductId: 34,
+    ProductName: 'USB Hub',
+    ProductCode: 'ELEC-034',
+    ProductQuantity: 95,
+    ProductRate: 14.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 35,
+    ProductName: 'Cable Organizer',
+    ProductCode: 'ELEC-035',
+    ProductQuantity: 120,
+    ProductRate: 9.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 36,
+    ProductName: 'Laptop Stand',
+    ProductCode: 'ELEC-036',
+    ProductQuantity: 65,
+    ProductRate: 29.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 37,
+    ProductName: 'Phone Case',
+    ProductCode: 'ELEC-037',
+    ProductQuantity: 150,
+    ProductRate: 19.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 38,
+    ProductName: 'Screen Protector',
+    ProductCode: 'ELEC-038',
+    ProductQuantity: 200,
+    ProductRate: 8.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 39,
+    ProductName: 'Power Bank',
+    ProductCode: 'ELEC-039',
+    ProductQuantity: 75,
+    ProductRate: 39.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 40,
+    ProductName: 'Car Charger',
+    ProductCode: 'ELEC-040',
+    ProductQuantity: 80,
+    ProductRate: 24.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 41,
+    ProductName: 'Laptop Sleeve',
+    ProductCode: 'ELEC-041',
+    ProductQuantity: 60,
+    ProductRate: 34.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 42,
+    ProductName: 'Tablet Stand',
+    ProductCode: 'ELEC-042',
+    ProductQuantity: 45,
+    ProductRate: 19.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 43,
+    ProductName: 'Wireless Earbuds',
+    ProductCode: 'ELEC-043',
+    ProductQuantity: 90,
+    ProductRate: 89.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+  },
 ]

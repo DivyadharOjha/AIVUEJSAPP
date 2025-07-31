@@ -20,10 +20,11 @@
       <div class="col-10 d-flex align-items-center">
         <div class="product-group-grid w-100" ref="scrollContainer">
           <div
-            v-for="group in productGroups"
+            v-for="(group, index) in productGroups"
             :key="group.ProductGroupId"
             class="product-group-card"
-            :class="{ active: selectedGroupId === group.ProductGroupId }"
+            :class="{ active: internalSelectedGroupId === group.ProductGroupId }"
+            :style="{ background: randomColors[index], color: '#ffffff' }"
             @click="selectProductGroup(group)"
           >
             <div class="product-group-info">
@@ -57,23 +58,75 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick, defineEmits } from 'vue'
+import { ref, computed, onMounted, nextTick, defineEmits, watch } from 'vue'
 import { productGroupData, type ProductGroup } from '../posApi/productGroup'
+
+const props = defineProps<{
+  selectedGroupId?: number | null
+}>()
 
 const emit = defineEmits(['product-group-selected'])
 
 const scrollContainer = ref<HTMLElement>()
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
-const selectedGroupId = ref<number | null>(null)
+const internalSelectedGroupId = ref<number | null>(null)
 
 // Use the product group data directly
 const productGroups = computed(() => productGroupData)
 
+// Watch for changes in the selected group ID from parent
+watch(
+  () => props.selectedGroupId,
+  (newValue) => {
+    if (newValue !== undefined) {
+      internalSelectedGroupId.value = newValue
+    }
+  },
+  { immediate: true },
+)
+
+// Array of dark colors for product group buttons
+const darkColors = [
+  'rgb(33, 33, 33)', // Dark Gray
+  'rgb(55, 71, 79)', // Blue Gray
+  'rgb(69, 39, 160)', // Deep Purple
+  'rgb(49, 27, 146)', // Indigo
+  'rgb(27, 94, 32)', // Dark Green
+  'rgb(183, 28, 28)', // Dark Red
+  'rgb(230, 81, 0)', // Deep Orange
+  'rgb(245, 124, 0)', // Orange
+  'rgb(194, 24, 91)', // Pink
+  'rgb(156, 39, 176)', // Purple
+  'rgb(0, 96, 100)', // Teal
+  'rgb(0, 87, 255)', // Blue
+  'rgb(0, 150, 136)', // Cyan
+  'rgb(76, 175, 80)', // Green
+  'rgb(255, 152, 0)', // Amber
+  'rgb(255, 87, 34)', // Deep Orange
+  'rgb(121, 85, 72)', // Brown
+  'rgb(96, 125, 139)', // Blue Gray
+  'rgb(158, 158, 158)', // Gray
+  'rgb(244, 67, 54)', // Red
+]
+
+// Computed property for random colors
+const randomColors = computed(() => {
+  return productGroups.value.map((_, index) => darkColors[index % darkColors.length])
+})
+
 function selectProductGroup(group: ProductGroup) {
   console.log('Product group clicked:', group)
-  selectedGroupId.value = group.ProductGroupId
+  internalSelectedGroupId.value = group.ProductGroupId
   emit('product-group-selected', group)
+}
+
+// Method to programmatically select the first group
+function selectFirstGroup() {
+  if (productGroups.value.length > 0) {
+    const firstGroup = productGroups.value[0]
+    selectProductGroup(firstGroup)
+  }
 }
 
 function updateScrollButtons() {
@@ -105,6 +158,11 @@ onMounted(() => {
       scrollContainer.value.addEventListener('scroll', updateScrollButtons)
     }
   })
+})
+
+// Expose methods to parent component
+defineExpose({
+  selectFirstGroup,
 })
 </script>
 
@@ -186,7 +244,6 @@ onMounted(() => {
 }
 
 .product-group-card {
-  background: white;
   border: 1px solid #e9ecef;
   border-radius: 4px;
   padding: 8px 12px;
@@ -202,14 +259,14 @@ onMounted(() => {
 
 .product-group-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: #1976d2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: #ffffff;
 }
 
 .product-group-card.active {
-  background: #e3f2fd;
-  border-color: #1976d2;
-  color: #1976d2;
+  border-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
 }
 
 .product-group-info {
@@ -221,7 +278,7 @@ onMounted(() => {
   margin: 0;
   font-size: 14px;
   font-weight: 600;
-  color: #2c3e50;
+  color: #ffffff;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -229,7 +286,8 @@ onMounted(() => {
 }
 
 .product-group-card.active .product-group-name {
-  color: #1976d2;
+  color: #ffffff;
+  font-weight: 700;
 }
 
 .no-results {

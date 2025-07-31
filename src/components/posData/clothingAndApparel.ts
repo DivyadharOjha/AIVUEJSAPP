@@ -298,4 +298,94 @@ export const clothingAndApparelProducts: Product[] = [
     ProductImage:
       'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
   },
+  {
+    ProductId: 34,
+    ProductName: 'Sweater',
+    ProductCode: 'CLOTH-034',
+    ProductQuantity: 85,
+    ProductRate: 34.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 35,
+    ProductName: 'Hoodie',
+    ProductCode: 'CLOTH-035',
+    ProductQuantity: 95,
+    ProductRate: 29.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1469398715555-76331a6c7c9b?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 36,
+    ProductName: 'Dress Shirt',
+    ProductCode: 'CLOTH-036',
+    ProductQuantity: 75,
+    ProductRate: 44.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 37,
+    ProductName: 'Cargo Pants',
+    ProductCode: 'CLOTH-037',
+    ProductQuantity: 60,
+    ProductRate: 39.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1469398715555-76331a6c7c9b?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 38,
+    ProductName: 'Denim Jacket',
+    ProductCode: 'CLOTH-038',
+    ProductQuantity: 45,
+    ProductRate: 54.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 39,
+    ProductName: 'Polo Shirt',
+    ProductCode: 'CLOTH-039',
+    ProductQuantity: 100,
+    ProductRate: 24.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1469398715555-76331a6c7c9b?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 40,
+    ProductName: 'Tank Top',
+    ProductCode: 'CLOTH-040',
+    ProductQuantity: 120,
+    ProductRate: 14.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 41,
+    ProductName: 'Shorts',
+    ProductCode: 'CLOTH-041',
+    ProductQuantity: 80,
+    ProductRate: 19.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1469398715555-76331a6c7c9b?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 42,
+    ProductName: 'Suit',
+    ProductCode: 'CLOTH-042',
+    ProductQuantity: 25,
+    ProductRate: 199.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    ProductId: 43,
+    ProductName: 'Evening Gown',
+    ProductCode: 'CLOTH-043',
+    ProductQuantity: 15,
+    ProductRate: 299.99,
+    ProductImage:
+      'https://images.unsplash.com/photo-1469398715555-76331a6c7c9b?auto=format&fit=crop&w=400&q=80',
+  },
 ]
