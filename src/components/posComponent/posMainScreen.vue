@@ -88,7 +88,7 @@
                 flex-direction: column;
               "
             >
-              <template v-if="selectedFooterBtn">
+              <template v-if="showFooterShortcut">
                 <div style="height: 100%; min-height: 0; display: flex; flex-direction: column">
                   <posMainScreenFooterShortcut
                     :selectedButton="selectedFooterBtn"
@@ -96,7 +96,7 @@
                   />
                 </div>
               </template>
-              <template v-else>
+              <template v-else-if="showProductSection">
                 <div class="row" style="height: 60px; flex-shrink: 0; min-height: 0">
                   <div
                     class="col-12"
@@ -145,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, computed } from 'vue'
 import posMainScreenFooter from './posMainScreenFooter.vue'
 import posMainScreenFooterShortcut from './posMainScreenFooterShortcut.vue'
 import posMainScreenProductGroup from './posMainScreenProductGroup.vue'
@@ -162,7 +162,7 @@ import { toysAndGamesProducts } from '../posData/toysAndGames'
 import { foodAndBeveragesProducts } from '../posData/foodAndBeverages'
 import { officeSuppliesProducts } from '../posData/officeSupplies'
 
-const selectedFooterBtn = ref('Member')
+const selectedFooterBtn = ref('')
 const selectedProductGroup = ref<{ ProductGroupId: number; ProductGroupText: string } | null>(null)
 import type { Product } from '../posDataStruct/posProduct'
 const selectedProducts = ref<Product[]>([])
@@ -172,23 +172,9 @@ const leftPanelComponent = ref()
 // Product group component reference
 const productGroupComponent = ref()
 
-// TypeScript interfaces for event handlers
-interface TableItem {
-  id: number
-  productName: string
-  productCode: string
-  quantity: number
-  rate: number
-  discount: number
-}
-
-interface TotalsData {
-  gross: number
-  discount: number
-  nett: number
-  tax: number
-  grandTotal: number
-}
+// Computed property to determine which section to show
+const showProductSection = computed(() => !selectedFooterBtn.value)
+const showFooterShortcut = computed(() => !!selectedFooterBtn.value)
 
 const productDataMap = {
   Electronics: electronicsProducts,
@@ -206,9 +192,8 @@ const productDataMap = {
 // Debug logging
 console.log('Product data map keys:', Object.keys(productDataMap))
 
-// Initialize the first product group when component mounts
-onMounted(() => {
-  // Automatically select the first product group (Electronics)
+// Function to load first product group data
+async function loadFirstProductGroup() {
   const firstProductGroup = {
     ProductGroupId: 1,
     ProductGroupText: 'Electronics',
@@ -219,19 +204,37 @@ onMounted(() => {
   const products = productDataMap[firstProductGroup.ProductGroupText as keyof typeof productDataMap]
   selectedProducts.value = products || []
 
-  // Call selectFirstGroup on the ProductGroup component to highlight the button
-  // Use nextTick to ensure the component is fully mounted
-  nextTick(() => {
-    if (productGroupComponent.value) {
-      productGroupComponent.value.selectFirstGroup()
-    }
-  })
+  // Wait for next tick to ensure child components are mounted
+  await nextTick()
 
-  console.log(
-    'Component mounted - Auto-selected Electronics with',
-    selectedProducts.value.length,
-    'products',
-  )
+  // Call selectFirstGroup on the ProductGroup component to highlight the button
+  if (productGroupComponent.value) {
+    console.log('Calling selectFirstGroup on product group component')
+    try {
+      productGroupComponent.value.selectFirstGroup()
+      console.log('selectFirstGroup called successfully')
+    } catch (error) {
+      console.error('Error calling selectFirstGroup:', error)
+    }
+  } else {
+    console.warn('productGroupComponent.value is null - component may not be mounted yet')
+  }
+
+  console.log('Auto-loaded Electronics with', selectedProducts.value.length, 'products')
+}
+
+// Auto-load first product group when component mounts
+onMounted(async () => {
+  console.log('POS Main Screen mounted')
+
+  // Wait for child components to be fully mounted
+  await nextTick()
+
+  // Add a small delay to ensure all child components are ready
+  setTimeout(async () => {
+    console.log('Loading first product group...')
+    await loadFirstProductGroup()
+  }, 200)
 })
 
 function handleFooterBtnClick(btn: string) {
@@ -240,27 +243,7 @@ function handleFooterBtnClick(btn: string) {
 
 function handleHomeClick() {
   selectedFooterBtn.value = ''
-  // Automatically select the first product group (Electronics)
-  const firstProductGroup = {
-    ProductGroupId: 1,
-    ProductGroupText: 'Electronics',
-  }
-  selectedProductGroup.value = firstProductGroup
-
-  // Load the first product group's data
-  const products = productDataMap[firstProductGroup.ProductGroupText as keyof typeof productDataMap]
-  selectedProducts.value = products || []
-
-  // Call selectFirstGroup on the ProductGroup component to highlight the button
-  if (productGroupComponent.value) {
-    productGroupComponent.value.selectFirstGroup()
-  }
-
-  console.log(
-    'Home clicked - Auto-selected Electronics with',
-    selectedProducts.value.length,
-    'products',
-  )
+  loadFirstProductGroup()
 }
 
 function handleProductGroupSelected(group: { ProductGroupId: number; ProductGroupText: string }) {
@@ -283,15 +266,34 @@ function handleProductSelected(product: Product) {
 }
 
 // Left panel event handlers
-function handleItemUpdated(item: TableItem) {
+function handleItemUpdated(item: {
+  ProductId: number
+  ProductName: string
+  ProductCode: string
+  ProductRate: number
+  quantity: number
+  discount: number
+}) {
   console.log('Item updated in left panel:', item)
 }
 
-function handleItemRemoved(item: TableItem) {
+function handleItemRemoved(item: {
+  ProductId: number
+  ProductName: string
+  ProductCode: string
+  ProductRate: number
+  quantity: number
+  discount: number
+}) {
   console.log('Item removed from left panel:', item)
 }
 
-function handleTotalsUpdated(totals: TotalsData) {
+function handleTotalsUpdated(totals: {
+  totalQuantity: number
+  totalGross: number
+  totalDiscount: number
+  totalNett: number
+}) {
   console.log('Totals updated in left panel:', totals)
 }
 

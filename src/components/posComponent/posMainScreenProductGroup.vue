@@ -114,15 +114,24 @@ const randomColors = computed(() => {
 
 function selectProductGroup(group: ProductGroup) {
   console.log('Product group clicked:', group)
+  console.log('Setting internalSelectedGroupId to:', group.ProductGroupId)
   internalSelectedGroupId.value = group.ProductGroupId
+  console.log('Emitting product-group-selected event with group:', group)
   emit('product-group-selected', group)
 }
 
 // Method to programmatically select the first group
 function selectFirstGroup() {
+  console.log('selectFirstGroup called in posMainScreenProductGroup')
+  console.log('productGroups.value.length:', productGroups.value.length)
+
   if (productGroups.value.length > 0) {
     const firstGroup = productGroups.value[0]
+    console.log('First group found:', firstGroup)
     selectProductGroup(firstGroup)
+    console.log('selectProductGroup called with first group')
+  } else {
+    console.warn('No product groups available')
   }
 }
 
@@ -149,10 +158,18 @@ function scrollRight() {
 }
 
 onMounted(() => {
+  console.log('posMainScreenProductGroup mounted')
+  console.log('productGroups.value:', productGroups.value)
+  console.log('productGroups.value.length:', productGroups.value.length)
+
   nextTick(() => {
+    console.log('posMainScreenProductGroup nextTick - updating scroll buttons')
     updateScrollButtons()
     if (scrollContainer.value) {
       scrollContainer.value.addEventListener('scroll', updateScrollButtons)
+      console.log('Scroll event listener added')
+    } else {
+      console.warn('scrollContainer.value is null')
     }
   })
 })

@@ -320,11 +320,12 @@ defineExpose({
   text-overflow: ellipsis;
   white-space: nowrap;
   height: 40px;
+  text-align: center;
 }
 
 /* Header specific styles */
 .table th {
-  text-align: left;
+  text-align: center;
   font-weight: 600;
   color: #ffffff !important;
   background: inherit;
@@ -335,6 +336,7 @@ defineExpose({
   color: #ffffff !important;
   background: inherit;
   font-weight: 600;
+  text-align: center;
 }
 
 /* Row hover effect */
@@ -347,7 +349,6 @@ defineExpose({
   width: 80px !important;
   min-width: 80px !important;
   max-width: 80px !important;
-  text-align: center;
 }
 
 .col-product {
@@ -366,35 +367,30 @@ defineExpose({
   width: 100px !important;
   min-width: 100px !important;
   max-width: 100px !important;
-  text-align: center;
 }
 
 .col-rate {
   width: 100px !important;
   min-width: 100px !important;
   max-width: 100px !important;
-  text-align: right;
 }
 
 .col-gross {
   width: 100px !important;
   min-width: 100px !important;
   max-width: 100px !important;
-  text-align: right;
 }
 
 .col-discount {
   width: 100px !important;
   min-width: 100px !important;
   max-width: 100px !important;
-  text-align: center;
 }
 
 .col-nett {
   width: 100px !important;
   min-width: 100px !important;
   max-width: 100px !important;
-  text-align: right;
   font-weight: 600;
 }
 
