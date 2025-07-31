@@ -44,7 +44,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 40,
     ProductRate: 499.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 6,
@@ -53,7 +53,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 120,
     ProductRate: 29.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 7,
@@ -62,7 +62,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 110,
     ProductRate: 49.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 8,
@@ -71,7 +71,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 35,
     ProductRate: 199.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 9,
@@ -80,7 +80,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 25,
     ProductRate: 149.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 10,
@@ -89,7 +89,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 20,
     ProductRate: 129.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 11,
@@ -98,7 +98,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 80,
     ProductRate: 89.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 12,
@@ -107,285 +107,168 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 200,
     ProductRate: 19.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 13,
-    ProductName: 'Router',
+    ProductName: 'Webcam',
     ProductCode: 'ELEC-013',
-    ProductQuantity: 70,
-    ProductRate: 59.99,
+    ProductQuantity: 75,
+    ProductRate: 79.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 14,
-    ProductName: 'Projector',
+    ProductName: 'Microphone',
     ProductCode: 'ELEC-014',
-    ProductQuantity: 15,
-    ProductRate: 399.99,
+    ProductQuantity: 60,
+    ProductRate: 59.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 15,
-    ProductName: 'VR Headset',
+    ProductName: 'Speaker System',
     ProductCode: 'ELEC-015',
-    ProductQuantity: 10,
-    ProductRate: 349.99,
+    ProductQuantity: 45,
+    ProductRate: 129.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 16,
-    ProductName: 'Action Camera',
+    ProductName: 'Gaming Console',
     ProductCode: 'ELEC-016',
-    ProductQuantity: 18,
-    ProductRate: 249.99,
+    ProductQuantity: 30,
+    ProductRate: 399.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 17,
-    ProductName: 'Smart Speaker',
+    ProductName: 'VR Headset',
     ProductCode: 'ELEC-017',
-    ProductQuantity: 55,
-    ProductRate: 99.99,
+    ProductQuantity: 25,
+    ProductRate: 299.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 18,
-    ProductName: 'E-Reader',
+    ProductName: 'Drone',
     ProductCode: 'ELEC-018',
-    ProductQuantity: 22,
-    ProductRate: 129.99,
+    ProductQuantity: 20,
+    ProductRate: 199.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 19,
-    ProductName: 'Fitness Tracker',
+    ProductName: 'Action Camera',
     ProductCode: 'ELEC-019',
-    ProductQuantity: 65,
-    ProductRate: 79.99,
+    ProductQuantity: 40,
+    ProductRate: 149.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 20,
-    ProductName: 'Portable Charger',
+    ProductName: 'Power Bank',
     ProductCode: 'ELEC-020',
-    ProductQuantity: 140,
+    ProductQuantity: 150,
     ProductRate: 39.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 21,
-    ProductName: 'Smart Home Hub',
+    ProductName: 'Wireless Charger',
     ProductCode: 'ELEC-021',
-    ProductQuantity: 12,
-    ProductRate: 149.99,
+    ProductQuantity: 80,
+    ProductRate: 29.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 22,
-    ProductName: 'Streaming Device',
+    ProductName: 'Cable Organizer',
     ProductCode: 'ELEC-022',
-    ProductQuantity: 33,
-    ProductRate: 59.99,
+    ProductQuantity: 200,
+    ProductRate: 9.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 23,
-    ProductName: 'Game Console',
+    ProductName: 'Surge Protector',
     ProductCode: 'ELEC-023',
-    ProductQuantity: 27,
-    ProductRate: 399.99,
+    ProductQuantity: 100,
+    ProductRate: 24.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 24,
-    ProductName: 'Joystick',
+    ProductName: 'Laptop Stand',
     ProductCode: 'ELEC-024',
-    ProductQuantity: 45,
-    ProductRate: 49.99,
+    ProductQuantity: 70,
+    ProductRate: 34.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 25,
-    ProductName: 'Webcam',
+    ProductName: 'Phone Case',
     ProductCode: 'ELEC-025',
-    ProductQuantity: 38,
-    ProductRate: 59.99,
+    ProductQuantity: 300,
+    ProductRate: 14.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 26,
-    ProductName: 'Microphone',
+    ProductName: 'Screen Protector',
     ProductCode: 'ELEC-026',
-    ProductQuantity: 44,
-    ProductRate: 79.99,
+    ProductQuantity: 250,
+    ProductRate: 7.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 27,
-    ProductName: 'Soundbar',
+    ProductName: 'Laptop Bag',
     ProductCode: 'ELEC-027',
-    ProductQuantity: 29,
-    ProductRate: 129.99,
+    ProductQuantity: 60,
+    ProductRate: 49.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 28,
     ProductName: 'Bluetooth Speaker',
     ProductCode: 'ELEC-028',
-    ProductQuantity: 53,
-    ProductRate: 59.99,
+    ProductQuantity: 90,
+    ProductRate: 79.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 29,
-    ProductName: 'Digital Camera',
+    ProductName: 'Wireless Earbuds',
     ProductCode: 'ELEC-029',
-    ProductQuantity: 19,
-    ProductRate: 549.99,
+    ProductQuantity: 120,
+    ProductRate: 89.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
   {
     ProductId: 30,
-    ProductName: 'Photo Printer',
+    ProductName: 'Smart Home Hub',
     ProductCode: 'ELEC-030',
-    ProductQuantity: 16,
+    ProductQuantity: 35,
     ProductRate: 129.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 31,
-    ProductName: 'Smart Plug',
-    ProductCode: 'ELEC-031',
-    ProductQuantity: 70,
-    ProductRate: 24.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 32,
-    ProductName: 'Smart Bulb',
-    ProductCode: 'ELEC-032',
-    ProductQuantity: 90,
-    ProductRate: 19.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 33,
-    ProductName: 'Wireless Charger',
-    ProductCode: 'ELEC-033',
-    ProductQuantity: 85,
-    ProductRate: 34.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 34,
-    ProductName: 'USB Hub',
-    ProductCode: 'ELEC-034',
-    ProductQuantity: 95,
-    ProductRate: 14.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 35,
-    ProductName: 'Cable Organizer',
-    ProductCode: 'ELEC-035',
-    ProductQuantity: 120,
-    ProductRate: 9.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 36,
-    ProductName: 'Laptop Stand',
-    ProductCode: 'ELEC-036',
-    ProductQuantity: 65,
-    ProductRate: 29.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 37,
-    ProductName: 'Phone Case',
-    ProductCode: 'ELEC-037',
-    ProductQuantity: 150,
-    ProductRate: 19.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 38,
-    ProductName: 'Screen Protector',
-    ProductCode: 'ELEC-038',
-    ProductQuantity: 200,
-    ProductRate: 8.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 39,
-    ProductName: 'Power Bank',
-    ProductCode: 'ELEC-039',
-    ProductQuantity: 75,
-    ProductRate: 39.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 40,
-    ProductName: 'Car Charger',
-    ProductCode: 'ELEC-040',
-    ProductQuantity: 80,
-    ProductRate: 24.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 41,
-    ProductName: 'Laptop Sleeve',
-    ProductCode: 'ELEC-041',
-    ProductQuantity: 60,
-    ProductRate: 34.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 42,
-    ProductName: 'Tablet Stand',
-    ProductCode: 'ELEC-042',
-    ProductQuantity: 45,
-    ProductRate: 19.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    ProductId: 43,
-    ProductName: 'Wireless Earbuds',
-    ProductCode: 'ELEC-043',
-    ProductQuantity: 90,
-    ProductRate: 89.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
   },
 ]

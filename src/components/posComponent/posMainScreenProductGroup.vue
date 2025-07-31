@@ -97,28 +97,14 @@ watch(
   { immediate: true },
 )
 
-// Array of dark colors for product group buttons
+// Array of colors for product group buttons
 const darkColors = [
-  'rgb(33, 33, 33)', // Dark Gray
-  'rgb(55, 71, 79)', // Blue Gray
-  'rgb(69, 39, 160)', // Deep Purple
-  'rgb(49, 27, 146)', // Indigo
-  'rgb(27, 94, 32)', // Dark Green
-  'rgb(183, 28, 28)', // Dark Red
-  'rgb(230, 81, 0)', // Deep Orange
-  'rgb(245, 124, 0)', // Orange
-  'rgb(194, 24, 91)', // Pink
-  'rgb(156, 39, 176)', // Purple
-  'rgb(0, 96, 100)', // Teal
-  'rgb(0, 87, 255)', // Blue
-  'rgb(0, 150, 136)', // Cyan
-  'rgb(76, 175, 80)', // Green
-  'rgb(255, 152, 0)', // Amber
-  'rgb(255, 87, 34)', // Deep Orange
-  'rgb(121, 85, 72)', // Brown
-  'rgb(96, 125, 139)', // Blue Gray
-  'rgb(158, 158, 158)', // Gray
-  'rgb(244, 67, 54)', // Red
+  '#2e8b57', // Sea Green
+  '#4b0082', // Indigo
+  '#8b4513', // Saddle Brown
+  '#2f4f4f', // Dark Slate Gray
+  'rgb(25, 170, 195)', // Light Blue
+  'rgb(241, 23, 83)', // Pink Red
 ]
 
 // Computed property for random colors

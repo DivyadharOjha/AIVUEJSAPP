@@ -145,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import posMainScreenFooter from './posMainScreenFooter.vue'
 import posMainScreenFooterShortcut from './posMainScreenFooterShortcut.vue'
 import posMainScreenProductGroup from './posMainScreenProductGroup.vue'
@@ -187,6 +187,34 @@ const productDataMap = {
 
 // Debug logging
 console.log('Product data map keys:', Object.keys(productDataMap))
+
+// Initialize the first product group when component mounts
+onMounted(() => {
+  // Automatically select the first product group (Electronics)
+  const firstProductGroup = {
+    ProductGroupId: 1,
+    ProductGroupText: 'Electronics',
+  }
+  selectedProductGroup.value = firstProductGroup
+
+  // Load the first product group's data
+  const products = productDataMap[firstProductGroup.ProductGroupText as keyof typeof productDataMap]
+  selectedProducts.value = products || []
+
+  // Call selectFirstGroup on the ProductGroup component to highlight the button
+  // Use nextTick to ensure the component is fully mounted
+  nextTick(() => {
+    if (productGroupComponent.value) {
+      productGroupComponent.value.selectFirstGroup()
+    }
+  })
+
+  console.log(
+    'Component mounted - Auto-selected Electronics with',
+    selectedProducts.value.length,
+    'products',
+  )
+})
 
 function handleFooterBtnClick(btn: string) {
   selectedFooterBtn.value = btn

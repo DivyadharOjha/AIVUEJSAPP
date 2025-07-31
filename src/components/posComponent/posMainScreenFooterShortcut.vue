@@ -168,14 +168,12 @@ watch(
 )
 
 const predefinedColors = [
-  'rgb(159, 110, 44)',
-  'rgb(41, 153, 9)',
-  'rgb(26, 91, 44)',
-  'rgb(143, 110, 75)',
-  'rgb(63, 78, 92)',
-  'rgb(83, 50, 103)',
-  'rgb(50, 110, 38)',
-  'rgb(207, 114, 45)',
+  '#2e8b57', // Sea Green
+  '#4b0082', // Indigo
+  '#8b4513', // Saddle Brown
+  '#2f4f4f', // Dark Slate Gray
+  'rgb(25, 170, 195)', // Light Blue
+  'rgb(241, 23, 83)', // Pink Red
 ]
 
 const randomColors = computed(() =>

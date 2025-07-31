@@ -380,7 +380,83 @@ const productGridStyle = computed(() => {
   flex-shrink: 0;
 }
 
+/* Responsive design with horizontal scroll */
+@media (max-width: 1200px) {
+  .product-grid-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .product-row {
+    min-width: 800px; /* Minimum width to prevent squashing */
+    flex-wrap: nowrap;
+  }
+
+  .product-col {
+    flex: 0 0 200px; /* Fixed width for better scrolling */
+    min-width: 200px;
+    width: 200px;
+    max-width: 200px;
+  }
+
+  .product-col-placeholder {
+    flex: 0 0 200px;
+    min-width: 200px;
+    width: 200px;
+    max-width: 200px;
+  }
+
+  /* Custom horizontal scrollbar */
+  .product-grid-container::-webkit-scrollbar {
+    display: block;
+    height: 8px;
+  }
+
+  .product-grid-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  .product-grid-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+
+  .product-grid-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+
+  /* Firefox scrollbar */
+  .product-grid-container {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+  }
+}
+
 @media (max-width: 768px) {
+  .product-grid-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .product-row {
+    min-width: 600px;
+  }
+
+  .product-col {
+    flex: 0 0 150px;
+    min-width: 150px;
+    width: 150px;
+    max-width: 150px;
+  }
+
+  .product-col-placeholder {
+    flex: 0 0 150px;
+    min-width: 150px;
+    width: 150px;
+    max-width: 150px;
+  }
+
   .product-name {
     font-size: 11px;
   }
@@ -396,6 +472,38 @@ const productGridStyle = computed(() => {
 }
 
 @media (max-width: 576px) {
+  .product-grid-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .product-row {
+    min-width: 400px;
+  }
+
+  .product-col {
+    flex: 0 0 120px;
+    min-width: 120px;
+    width: 120px;
+    max-width: 120px;
+  }
+
+  .product-col-placeholder {
+    flex: 0 0 120px;
+    min-width: 120px;
+    width: 120px;
+    max-width: 120px;
+  }
+
+  .product-name {
+    font-size: 10px;
+  }
+
+  .product-qty-value,
+  .product-rate {
+    font-size: 9px;
+  }
+
   .product-grid-container.with-pagination {
     padding-bottom: 4px;
   }

@@ -3,32 +3,32 @@
     <table class="table">
       <thead :style="{ background: headerColor }">
         <tr>
-          <th class="serial-col">Serial Number</th>
-          <th class="product-col">Product Name</th>
-          <th class="code-col">Product Code</th>
-          <th class="quantity-col">Quantity</th>
-          <th class="rate-col">Rate</th>
-          <th class="gross-col">Gross</th>
-          <th class="discount-col">Discount</th>
-          <th class="nett-col">Nett</th>
+          <th class="col-serial">Serial Number</th>
+          <th class="col-product">Product Name</th>
+          <th class="col-code">Product Code</th>
+          <th class="col-quantity">Quantity</th>
+          <th class="col-rate">Rate</th>
+          <th class="col-gross">Gross</th>
+          <th class="col-discount">Discount</th>
+          <th class="col-nett">Nett</th>
         </tr>
       </thead>
 
       <tbody>
         <tr v-for="(item, index) in tableItems" :key="item.id" class="table-row">
-          <td class="serial-col">{{ index + 1 }}</td>
-          <td class="product-col">{{ item.productName }}</td>
-          <td class="code-col">{{ item.productCode }}</td>
-          <td class="quantity-col">
+          <td class="col-serial">{{ index + 1 }}</td>
+          <td class="col-product">{{ item.productName }}</td>
+          <td class="col-code">{{ item.productCode }}</td>
+          <td class="col-quantity">
             <div class="quantity-controls">
               <button @click="decreaseQuantity(item)" class="qty-btn">-</button>
               <span class="qty-value">{{ item.quantity }}</span>
               <button @click="increaseQuantity(item)" class="qty-btn">+</button>
             </div>
           </td>
-          <td class="rate-col">₹{{ item.rate.toFixed(2) }}</td>
-          <td class="gross-col">₹{{ (item.rate * item.quantity).toFixed(2) }}</td>
-          <td class="discount-col">
+          <td class="col-rate">₹{{ item.rate.toFixed(2) }}</td>
+          <td class="col-gross">₹{{ (item.rate * item.quantity).toFixed(2) }}</td>
+          <td class="col-discount">
             <input
               type="number"
               v-model="item.discount"
@@ -38,16 +38,20 @@
               step="0.01"
             />
           </td>
-          <td class="nett-col">₹{{ (item.rate * item.quantity - item.discount).toFixed(2) }}</td>
+          <td class="col-nett">₹{{ (item.rate * item.quantity - item.discount).toFixed(2) }}</td>
         </tr>
       </tbody>
 
       <tfoot :style="{ background: footerColor }">
         <tr class="summary-row">
-          <td colspan="5" class="summary-label">Total:</td>
-          <td class="gross-col">₹{{ totalGross.toFixed(2) }}</td>
-          <td class="discount-col">₹{{ totalDiscount.toFixed(2) }}</td>
-          <td class="nett-col">₹{{ totalNett.toFixed(2) }}</td>
+          <td class="col-serial"></td>
+          <td class="col-product"></td>
+          <td class="col-code"></td>
+          <td class="col-quantity">Total: {{ totalQuantity }}</td>
+          <td class="col-rate"></td>
+          <td class="col-gross">₹{{ totalGross.toFixed(2) }}</td>
+          <td class="col-discount">₹{{ totalDiscount.toFixed(2) }}</td>
+          <td class="col-nett">₹{{ totalNett.toFixed(2) }}</td>
         </tr>
       </tfoot>
     </table>
@@ -140,6 +144,12 @@ const totalTax = computed(() => {
 
 const grandTotal = computed(() => {
   return totalNett.value + totalTax.value
+})
+
+const totalQuantity = computed(() => {
+  return tableItems.value.reduce((total, item) => {
+    return total + item.quantity
+  }, 0)
 })
 
 // Methods
@@ -259,7 +269,7 @@ defineExpose({
   background: white;
   border: 1px solid #e9ecef;
   border-radius: 6px;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -271,7 +281,7 @@ defineExpose({
   font-size: 13px;
   table-layout: fixed;
   height: 100%;
-  min-width: 800px; /* Minimum width to prevent squashing */
+  min-width: 800px;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -287,7 +297,7 @@ defineExpose({
 .table tbody {
   background: white;
   overflow-y: auto;
-  overflow-x: auto;
+  overflow-x: hidden;
   flex: 1;
   min-height: 0;
   height: 100%;
@@ -299,110 +309,91 @@ defineExpose({
   flex-shrink: 0;
 }
 
-.table th {
+/* Common styles for all table cells */
+.table th,
+.table td {
   padding: 8px 5px;
+  border-bottom: 1px solid #f1f3f4;
+  vertical-align: middle;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 40px;
+}
+
+/* Header specific styles */
+.table th {
   text-align: left;
   font-weight: 600;
   color: #ffffff !important;
-  border-bottom: 1px solid #dee2e6;
-  white-space: nowrap;
-  vertical-align: middle;
-  height: 40px;
   background: inherit;
 }
 
-.table td {
-  padding: 10px 8px;
-  border-bottom: 1px solid #f1f3f4;
-  vertical-align: middle;
-}
-
-.table thead td,
+/* Footer specific styles */
 .table tfoot td {
-  padding: 8px 5px;
-  vertical-align: middle;
-  height: 40px;
   color: #ffffff !important;
   background: inherit;
+  font-weight: 600;
 }
 
-.table tfoot tr {
-  height: 40px;
-}
-
+/* Row hover effect */
 .table-row:hover {
   background: #f8f9fa;
 }
 
-/* Custom scrollbar for tbody */
-.table tbody::-webkit-scrollbar {
-  width: 8px;
-}
-
-.table tbody::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.table tbody::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-.table tbody::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-/* Firefox scrollbar */
-.table tbody {
-  scrollbar-width: thin;
-  scrollbar-color: #c1c1c1 #f1f1f1;
-}
-
-/* Column widths */
-.serial-col {
-  width: 80px;
-  min-width: 80px;
+/* Column width definitions - EXACTLY THE SAME FOR ALL SECTIONS */
+.col-serial {
+  width: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
   text-align: center;
 }
 
-.product-col {
-  width: 200px;
-  min-width: 150px;
+.col-product {
+  width: 200px !important;
+  min-width: 200px !important;
+  max-width: 200px !important;
 }
 
-.code-col {
-  width: 120px;
-  min-width: 100px;
+.col-code {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
 }
 
-.quantity-col {
-  width: 100px;
-  min-width: 80px;
+.col-quantity {
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
   text-align: center;
 }
 
-.rate-col {
-  width: 100px;
-  min-width: 80px;
+.col-rate {
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
   text-align: right;
 }
 
-.gross-col {
-  width: 100px;
-  min-width: 80px;
+.col-gross {
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
   text-align: right;
 }
 
-.discount-col {
-  width: 100px;
-  min-width: 80px;
+.col-discount {
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
   text-align: center;
 }
 
-.nett-col {
-  width: 100px;
-  min-width: 80px;
+.col-nett {
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
   text-align: right;
   font-weight: 600;
 }
@@ -458,47 +449,67 @@ defineExpose({
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-/* Footer styles */
-.summary-row {
-  font-weight: 600;
+/* Custom scrollbar for container */
+.pos-table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.tax-row {
-  font-weight: 500;
+.pos-table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
 }
 
-.final-row {
-  color: #ffffff !important;
-  font-weight: 600;
+.pos-table-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
 }
 
-.summary-label {
-  text-align: right;
-  font-weight: 600;
-  color: #ffffff !important;
+.pos-table-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 
-.final-row .summary-label {
-  color: #ffffff !important;
+/* Firefox scrollbar */
+.pos-table-container {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* Custom scrollbar for tbody */
+.table tbody::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table tbody::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table tbody::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.table tbody::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Firefox scrollbar */
+.table tbody {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
 }
 
 /* Responsive design */
 @media (max-width: 1200px) {
   .table {
     font-size: 12px;
+    min-width: 700px;
   }
 
   .table th,
   .table td {
     padding: 8px 6px;
-  }
-
-  .product-col {
-    width: 150px;
-  }
-
-  .code-col {
-    width: 100px;
   }
 }
 
@@ -509,6 +520,7 @@ defineExpose({
 
   .table {
     font-size: 11px;
+    min-width: 600px;
   }
 
   .table th,
@@ -525,6 +537,12 @@ defineExpose({
   .discount-input {
     width: 50px;
     font-size: 11px;
+  }
+}
+
+@media (max-width: 576px) {
+  .table {
+    min-width: 500px;
   }
 }
 </style>
