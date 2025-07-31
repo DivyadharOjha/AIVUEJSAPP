@@ -100,7 +100,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import type { Product } from '../posDataStruct/posProduct'
-import posPageNavigation from './posPageNavigation.vue'
+import posPageNavigation from '../posTemplate/posPageNavigation.vue'
 
 const props = defineProps<{
   products: Product[]
