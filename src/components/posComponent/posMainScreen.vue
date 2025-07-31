@@ -172,6 +172,24 @@ const leftPanelComponent = ref()
 // Product group component reference
 const productGroupComponent = ref()
 
+// TypeScript interfaces for event handlers
+interface TableItem {
+  id: number
+  productName: string
+  productCode: string
+  quantity: number
+  rate: number
+  discount: number
+}
+
+interface TotalsData {
+  gross: number
+  discount: number
+  nett: number
+  tax: number
+  grandTotal: number
+}
+
 const productDataMap = {
   Electronics: electronicsProducts,
   'Clothing & Apparel': clothingAndApparelProducts,
@@ -265,15 +283,15 @@ function handleProductSelected(product: Product) {
 }
 
 // Left panel event handlers
-function handleItemUpdated(item: any) {
+function handleItemUpdated(item: TableItem) {
   console.log('Item updated in left panel:', item)
 }
 
-function handleItemRemoved(item: any) {
+function handleItemRemoved(item: TableItem) {
   console.log('Item removed from left panel:', item)
 }
 
-function handleTotalsUpdated(totals: any) {
+function handleTotalsUpdated(totals: TotalsData) {
   console.log('Totals updated in left panel:', totals)
 }
 
