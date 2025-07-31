@@ -2,9 +2,9 @@
   <div class="left-panel">
     <!-- Bootstrap Rows Container -->
     <div class="rows-container">
-      <!-- First Row - Table Component (60% height) -->
-      <div class="row first-row">
-        <div class="col-12">
+      <!-- First Row - Table Component (75% height) -->
+      <div class="row first-row" :style="{ height: firstRowHeight + 'px' }">
+        <div class="col-12 h-100">
           <posMainScreenLeftPanelTable
             ref="tableComponent"
             @item-updated="handleItemUpdated"
@@ -14,9 +14,9 @@
         </div>
       </div>
 
-      <!-- Second Row - Footer Component (40% height) -->
-      <div class="row second-row">
-        <div class="col-12">
+      <!-- Second Row - Footer Component (25% height) -->
+      <div class="row second-row" :style="{ height: secondRowHeight + 'px' }">
+        <div class="col-12 h-100">
           <posMainScreenLeftPanelFooter
             ref="footerComponent"
             :total-product-count="totalProductCount"
@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import posMainScreenLeftPanelTable from './posMainScreenLeftPanelTable.vue'
 import posMainScreenLeftPanelFooter from './posMainScreenLeftPanelFooter.vue'
 
@@ -48,6 +48,22 @@ const totalProductQuantity = ref(0)
 const totalDiscount = ref(0)
 const schemesAmount = ref(0)
 const taxableAmount = ref(0)
+
+// Dynamic height calculations
+const firstRowHeight = ref(0)
+const secondRowHeight = ref(0)
+
+// Calculate heights based on window height
+function calculateHeights() {
+  const windowHeight = window.innerHeight
+  firstRowHeight.value = Math.floor(windowHeight * 0.75)
+  secondRowHeight.value = Math.floor(windowHeight * 0.25)
+}
+
+// Handle window resize
+function handleResize() {
+  calculateHeights()
+}
 
 // Interface for table item
 interface TableItem {
@@ -119,6 +135,16 @@ function clearTable() {
   }
 }
 
+// Lifecycle hooks
+onMounted(() => {
+  calculateHeights()
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
 // Expose methods for parent component
 defineExpose({
   addToTable,
@@ -144,16 +170,30 @@ defineExpose({
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  height: 100%;
 }
 
 .first-row {
-  height: 75%;
   min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .second-row {
-  height: 25%;
   min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.first-row .col-12,
+.second-row .col-12 {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Responsive design */

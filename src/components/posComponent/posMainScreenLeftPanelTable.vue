@@ -1,7 +1,7 @@
 <template>
   <div class="pos-table-container">
     <table class="table">
-      <thead>
+      <thead :style="{ background: headerColor }">
         <tr>
           <th class="serial-col">Serial Number</th>
           <th class="product-col">Product Name</th>
@@ -42,7 +42,7 @@
         </tr>
       </tbody>
 
-      <tfoot>
+      <tfoot :style="{ background: footerColor }">
         <tr class="summary-row">
           <td colspan="5" class="summary-label">Total:</td>
           <td class="gross-col">₹{{ totalGross.toFixed(2) }}</td>
@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineEmits } from 'vue'
+import { ref, computed, defineEmits, onMounted } from 'vue'
 
 // Props
 interface TableItem {
@@ -82,6 +82,40 @@ const emit = defineEmits(['item-updated', 'item-removed', 'totals-updated'])
 
 // Reactive data
 const tableItems = ref<TableItem[]>(props.items)
+
+// Array of dark colors for header and footer
+const darkColors = [
+  'rgb(33, 33, 33)', // Dark Gray
+  'rgb(55, 71, 79)', // Blue Gray
+  'rgb(69, 39, 160)', // Deep Purple
+  'rgb(49, 27, 146)', // Indigo
+  'rgb(27, 94, 32)', // Dark Green
+  'rgb(183, 28, 28)', // Dark Red
+  'rgb(230, 81, 0)', // Deep Orange
+  'rgb(245, 124, 0)', // Orange
+  'rgb(194, 24, 91)', // Pink
+  'rgb(156, 39, 176)', // Purple
+  'rgb(0, 96, 100)', // Teal
+  'rgb(0, 87, 255)', // Blue
+  'rgb(0, 150, 136)', // Cyan
+  'rgb(76, 175, 80)', // Green
+  'rgb(255, 152, 0)', // Amber
+  'rgb(255, 87, 34)', // Deep Orange
+  'rgb(121, 85, 72)', // Brown
+  'rgb(96, 125, 139)', // Blue Gray
+  'rgb(158, 158, 158)', // Gray
+  'rgb(244, 67, 54)', // Red
+]
+
+// Stable colors that don't change on every render
+const headerColor = ref('')
+const footerColor = ref('')
+
+// Initialize colors on component mount
+onMounted(() => {
+  headerColor.value = 'rgb(76, 175, 80)' // Specific green color for header
+  footerColor.value = 'rgb(76, 175, 80)' // Specific green color for footer
+})
 
 // Computed properties
 const totalGross = computed(() => {
@@ -225,9 +259,10 @@ defineExpose({
   background: white;
   border: 1px solid #e9ecef;
   border-radius: 6px;
-  overflow: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .table {
@@ -237,43 +272,43 @@ defineExpose({
   table-layout: fixed;
   height: 100%;
   min-width: 800px; /* Minimum width to prevent squashing */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
 }
 
 .table thead {
-  background: #f8f9fa;
   border-bottom: 2px solid #dee2e6;
   height: 40px;
+  flex-shrink: 0;
 }
 
 .table tbody {
   background: white;
   overflow-y: auto;
   overflow-x: auto;
-  max-height: calc(100% - 80px); /* Account for header and footer heights */
+  flex: 1;
+  min-height: 0;
+  height: 100%;
 }
 
 .table tfoot {
-  background: #f8f9fa;
   border-top: 2px solid #dee2e6;
   height: 40px;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
+  flex-shrink: 0;
 }
 
 .table th {
-  padding: 5px;
+  padding: 8px 5px;
   text-align: left;
   font-weight: 600;
-  color: #495057;
-  background: #f8f9fa;
+  color: #ffffff !important;
   border-bottom: 1px solid #dee2e6;
   white-space: nowrap;
   vertical-align: middle;
   height: 40px;
+  background: inherit;
 }
 
 .table td {
@@ -284,9 +319,11 @@ defineExpose({
 
 .table thead td,
 .table tfoot td {
-  padding: 5px;
+  padding: 8px 5px;
   vertical-align: middle;
   height: 40px;
+  color: #ffffff !important;
+  background: inherit;
 }
 
 .table tfoot tr {
@@ -295,6 +332,31 @@ defineExpose({
 
 .table-row:hover {
   background: #f8f9fa;
+}
+
+/* Custom scrollbar for tbody */
+.table tbody::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table tbody::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table tbody::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.table tbody::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Firefox scrollbar */
+.table tbody {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
 }
 
 /* Column widths */
@@ -398,29 +460,26 @@ defineExpose({
 
 /* Footer styles */
 .summary-row {
-  background: #f8f9fa;
   font-weight: 600;
 }
 
 .tax-row {
-  background: #f8f9fa;
   font-weight: 500;
 }
 
 .final-row {
-  background: #f8f9fa;
-  color: #495057;
+  color: #ffffff !important;
   font-weight: 600;
 }
 
 .summary-label {
   text-align: right;
   font-weight: 600;
-  color: #495057;
+  color: #ffffff !important;
 }
 
 .final-row .summary-label {
-  color: white;
+  color: #ffffff !important;
 }
 
 /* Responsive design */

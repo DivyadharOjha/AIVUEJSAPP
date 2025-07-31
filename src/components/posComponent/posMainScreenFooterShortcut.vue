@@ -15,6 +15,7 @@
             <div
               ref="divRightPanelShortcut"
               class="shortcut-grid-container"
+              :class="{ 'with-pagination': showPagination, 'without-pagination': !showPagination }"
               :style="shortcutGridStyle"
             >
               <div v-for="(row, rowIndex) in shortcutGrid" :key="rowIndex" class="shortcut-row">
@@ -62,7 +63,7 @@
     </div>
 
     <!-- Pagination Footer -->
-    <div v-if="hasShortcuts && displayedData.length > 20" class="shortcut-pagination-footer">
+    <div v-if="showPagination" class="shortcut-pagination-footer">
       <div class="d-flex justify-content-center align-items-center h-100">
         <button
           class="btn btn-outline-primary btn-sm me-2"
@@ -124,6 +125,7 @@ const displayedData = computed(() => {
 })
 
 const hasShortcuts = computed(() => displayedData.value && displayedData.value.length > 0)
+const showPagination = computed(() => hasShortcuts.value && displayedData.value.length > 20)
 
 // Pagination state
 const currentPage = ref(1)
@@ -229,6 +231,15 @@ const shortcutGridStyle = computed(() => {
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding: 4px;
+}
+
+/* Spacing adjustments based on pagination visibility */
+.shortcut-grid-container.with-pagination {
+  padding-bottom: 8px;
+}
+
+.shortcut-grid-container.without-pagination {
+  padding-bottom: 4px;
 }
 
 .shortcut-grid-container::-webkit-scrollbar {
@@ -347,6 +358,16 @@ const shortcutGridStyle = computed(() => {
 
   .shortcut-desc {
     font-size: 10px;
+  }
+
+  .shortcut-grid-container.with-pagination {
+    padding-bottom: 6px;
+  }
+}
+
+@media (max-width: 576px) {
+  .shortcut-grid-container.with-pagination {
+    padding-bottom: 4px;
   }
 }
 </style>

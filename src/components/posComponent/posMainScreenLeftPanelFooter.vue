@@ -1,25 +1,25 @@
 <template>
   <div class="left-panel-footer">
     <!-- Row 1 -->
-    <div class="row mb-2">
-      <div class="col-3">
+    <div class="row mb-2 h-100">
+      <div class="col-3 h-100">
         <label class="form-label">Total Product Count</label>
       </div>
-      <div class="col-3">
+      <div class="col-3 h-100">
         <input
           type="text"
-          class="form-control form-control-sm"
+          class="form-control form-control-sm h-100"
           v-model="totalProductCount"
           readonly
         />
       </div>
-      <div class="col-3">
+      <div class="col-3 h-100">
         <label class="form-label">Total Product Quantity</label>
       </div>
-      <div class="col-3">
+      <div class="col-3 h-100">
         <input
           type="text"
-          class="form-control form-control-sm"
+          class="form-control form-control-sm h-100"
           v-model="totalProductQuantity"
           readonly
         />
@@ -27,34 +27,49 @@
     </div>
 
     <!-- Row 2 -->
-    <div class="row mb-2">
-      <div class="col-3">
+    <div class="row mb-2 h-100">
+      <div class="col-3 h-100">
         <label class="form-label">Discount Amount</label>
       </div>
-      <div class="col-3">
-        <input type="text" class="form-control form-control-sm" v-model="discountAmount" readonly />
+      <div class="col-3 h-100">
+        <input
+          type="text"
+          class="form-control form-control-sm h-100"
+          v-model="discountAmount"
+          readonly
+        />
       </div>
-      <div class="col-3">
+      <div class="col-3 h-100">
         <label class="form-label">Schemes Amount</label>
       </div>
-      <div class="col-3">
-        <input type="text" class="form-control form-control-sm" v-model="schemesAmount" readonly />
+      <div class="col-3 h-100">
+        <input
+          type="text"
+          class="form-control form-control-sm h-100"
+          v-model="schemesAmount"
+          readonly
+        />
       </div>
     </div>
 
     <!-- Row 3 -->
-    <div class="row mb-2">
-      <div class="col-3">
+    <div class="row mb-2 h-100">
+      <div class="col-3 h-100">
         <label class="form-label">Taxable Amount</label>
       </div>
-      <div class="col-3">
-        <input type="text" class="form-control form-control-sm" v-model="taxableAmount" readonly />
+      <div class="col-3 h-100">
+        <input
+          type="text"
+          class="form-control form-control-sm h-100"
+          v-model="taxableAmount"
+          readonly
+        />
       </div>
-      <div class="col-3">
+      <div class="col-3 h-100">
         <label class="form-label"></label>
       </div>
-      <div class="col-3">
-        <input type="text" class="form-control form-control-sm" readonly />
+      <div class="col-3 h-100">
+        <input type="text" class="form-control form-control-sm h-100" readonly />
       </div>
     </div>
   </div>
@@ -164,6 +179,27 @@ defineExpose({
   padding: 15px;
   background: #f8f9fa;
   border-top: 1px solid #e9ecef;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+}
+
+.left-panel-footer .row {
+  height: 33.33%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.left-panel-footer .col-3 {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .form-label {
@@ -173,6 +209,7 @@ defineExpose({
   margin-bottom: 4px;
   text-transform: uppercase;
   display: block;
+  text-align: center;
 }
 
 .form-control {
@@ -182,6 +219,11 @@ defineExpose({
   border-radius: 4px;
   background-color: #fff;
   color: #495057;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .form-control:focus {
@@ -191,7 +233,7 @@ defineExpose({
 }
 
 .form-control-sm {
-  height: 28px;
+  height: 100%;
   font-size: 11px;
 }
 
@@ -206,8 +248,21 @@ defineExpose({
   }
 
   .form-control-sm {
-    height: 24px;
     font-size: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .left-panel-footer {
+    padding: 8px;
+  }
+
+  .form-control-sm {
+    font-size: 9px;
+  }
+
+  .form-label {
+    font-size: 9px;
   }
 }
 </style>

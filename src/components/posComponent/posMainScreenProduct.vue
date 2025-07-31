@@ -13,6 +13,7 @@
               id="divRightPanelProduct"
               ref="divRightPanelProduct"
               class="product-grid-container"
+              :class="{ 'with-pagination': showPagination, 'without-pagination': !showPagination }"
               :style="productGridStyle"
             >
               <div v-for="(row, rowIndex) in productGrid" :key="rowIndex" class="product-row">
@@ -83,7 +84,7 @@
     </div>
 
     <!-- Pagination Footer -->
-    <div v-if="hasProducts && products.length > 20" class="product-pagination-footer">
+    <div v-if="showPagination" class="product-pagination-footer">
       <posPageNavigation
         :currentPage="currentPage"
         :totalPages="totalPages"
@@ -111,6 +112,7 @@ const emit = defineEmits(['product-selected'])
 
 const products = computed(() => props.products || [])
 const hasProducts = computed(() => products.value && products.value.length > 0)
+const showPagination = computed(() => hasProducts.value && products.value.length > 20)
 
 const currentPage = ref(1)
 const pageSize = 20
@@ -224,6 +226,15 @@ const productGridStyle = computed(() => {
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding: 4px;
+}
+
+/* Spacing adjustments based on pagination visibility */
+.product-grid-container.with-pagination {
+  padding-bottom: 8px;
+}
+
+.product-grid-container.without-pagination {
+  padding-bottom: 4px;
 }
 
 .product-grid-container::-webkit-scrollbar {
@@ -377,6 +388,16 @@ const productGridStyle = computed(() => {
   .product-qty-value,
   .product-rate {
     font-size: 10px;
+  }
+
+  .product-grid-container.with-pagination {
+    padding-bottom: 6px;
+  }
+}
+
+@media (max-width: 576px) {
+  .product-grid-container.with-pagination {
+    padding-bottom: 4px;
   }
 }
 </style>
