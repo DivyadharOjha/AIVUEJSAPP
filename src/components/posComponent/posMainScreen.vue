@@ -153,7 +153,7 @@
     </div>
 
     <!-- Member Info Popup -->
-    <MemberInfoPopup
+    <posMemberPopup
       :isVisible="showMemberInfoPopup"
       :memberId="selectedMemberId"
       :position="popupPosition"
@@ -163,7 +163,7 @@
     />
 
     <!-- Employee Info Popup -->
-    <EmployeeInfoPopup
+    <posEmployeePopup
       :isVisible="showEmployeeInfoPopup"
       :employeeId="selectedEmployeeId"
       :position="employeePopupPosition"
@@ -191,8 +191,8 @@ import { healthAndBeautyProducts } from '../posData/healthAndBeauty'
 import { toysAndGamesProducts } from '../posData/toysAndGames'
 import { foodAndBeveragesProducts } from '../posData/foodAndBeverages'
 import { officeSuppliesProducts } from '../posData/officeSupplies'
-import MemberInfoPopup from '../posTemplate/MemberInfoPopup.vue'
-import EmployeeInfoPopup from '../posTemplate/EmployeeInfoPopup.vue'
+import posMemberPopup from '../posTemplate/posMemberPopup.vue'
+import posEmployeePopup from '../posTemplate/posEmployeePopup.vue'
 
 const selectedFooterBtn = ref('')
 const selectedProductGroup = ref<{ ProductGroupId: number; ProductGroupText: string } | null>(null)
