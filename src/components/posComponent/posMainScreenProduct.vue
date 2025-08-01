@@ -38,14 +38,12 @@
                         class="col-12 d-flex justify-content-center align-items-center product-img-row"
                       >
                         <img
-                          :src="
-                            product.ProductImage ||
-                            'https://via.placeholder.com/80x80?text=No+Image'
-                          "
+                          :src="product.ProductImage || 'https://picsum.photos/80/80?random=999'"
                           :alt="product.ProductName"
                           class="product-img w-100"
                           style="width: 100%; max-width: 100%; height: 35px; object-fit: contain"
                           @error="onImgError"
+                          @load="onImgLoad"
                         />
                       </div>
                       <!-- Product Name -->
@@ -168,7 +166,15 @@ function selectProduct(product: Product) {
 function onImgError(e: Event) {
   const target = e.target as HTMLImageElement
   if (target) {
-    target.src = 'https://via.placeholder.com/80x80?text=No+Image'
+    console.log('Image failed to load:', target.src)
+    target.src = 'https://picsum.photos/80/80?random=999'
+  }
+}
+
+function onImgLoad(e: Event) {
+  const target = e.target as HTMLImageElement
+  if (target) {
+    console.log('Image loaded successfully:', target.src)
   }
 }
 

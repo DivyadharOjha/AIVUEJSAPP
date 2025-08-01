@@ -7,8 +7,7 @@ export const foodAndBeveragesProducts: Product[] = [
     ProductCode: 'FOOD-001',
     ProductQuantity: 200,
     ProductRate: 2.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=101',
   },
   {
     ProductId: 2,
@@ -16,8 +15,7 @@ export const foodAndBeveragesProducts: Product[] = [
     ProductCode: 'FOOD-002',
     ProductQuantity: 100,
     ProductRate: 3.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=102',
   },
   {
     ProductId: 3,
@@ -25,8 +23,7 @@ export const foodAndBeveragesProducts: Product[] = [
     ProductCode: 'FOOD-003',
     ProductQuantity: 150,
     ProductRate: 1.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=103',
   },
   {
     ProductId: 4,
@@ -34,8 +31,7 @@ export const foodAndBeveragesProducts: Product[] = [
     ProductCode: 'FOOD-004',
     ProductQuantity: 80,
     ProductRate: 12.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=104',
   },
   {
     ProductId: 5,

@@ -8,7 +8,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 50,
     ProductRate: 699.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=1',
   },
   {
     ProductId: 2,
@@ -17,7 +17,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 30,
     ProductRate: 1299.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=2',
   },
   {
     ProductId: 3,
@@ -26,7 +26,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 100,
     ProductRate: 199.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=3',
   },
   {
     ProductId: 4,
@@ -35,7 +35,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 60,
     ProductRate: 299.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=4',
   },
   {
     ProductId: 5,
@@ -44,7 +44,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 40,
     ProductRate: 499.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=5',
   },
   {
     ProductId: 6,
@@ -53,7 +53,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 120,
     ProductRate: 29.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=6',
   },
   {
     ProductId: 7,
@@ -62,7 +62,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 110,
     ProductRate: 49.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=7',
   },
   {
     ProductId: 8,
@@ -71,7 +71,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 35,
     ProductRate: 199.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=8',
   },
   {
     ProductId: 9,
@@ -80,7 +80,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 25,
     ProductRate: 149.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=9',
   },
   {
     ProductId: 10,
@@ -89,7 +89,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 20,
     ProductRate: 129.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=10',
   },
   {
     ProductId: 11,
@@ -98,7 +98,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 80,
     ProductRate: 89.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=11',
   },
   {
     ProductId: 12,
@@ -107,7 +107,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 200,
     ProductRate: 19.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=12',
   },
   {
     ProductId: 13,
@@ -116,7 +116,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 75,
     ProductRate: 79.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=13',
   },
   {
     ProductId: 14,
@@ -125,7 +125,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 60,
     ProductRate: 59.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=14',
   },
   {
     ProductId: 15,
@@ -134,7 +134,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 45,
     ProductRate: 129.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=15',
   },
   {
     ProductId: 16,
@@ -143,7 +143,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 30,
     ProductRate: 399.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=16',
   },
   {
     ProductId: 17,
@@ -152,7 +152,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 25,
     ProductRate: 299.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=17',
   },
   {
     ProductId: 18,
@@ -161,7 +161,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 20,
     ProductRate: 199.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=18',
   },
   {
     ProductId: 19,
@@ -170,7 +170,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 40,
     ProductRate: 149.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=19',
   },
   {
     ProductId: 20,
@@ -179,7 +179,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 150,
     ProductRate: 39.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=20',
   },
   {
     ProductId: 21,
@@ -188,7 +188,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 80,
     ProductRate: 29.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=21',
   },
   {
     ProductId: 22,
@@ -197,7 +197,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 200,
     ProductRate: 9.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=22',
   },
   {
     ProductId: 23,
@@ -206,7 +206,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 100,
     ProductRate: 24.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=23',
   },
   {
     ProductId: 24,
@@ -215,7 +215,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 70,
     ProductRate: 34.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=24',
   },
   {
     ProductId: 25,
@@ -224,7 +224,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 300,
     ProductRate: 14.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=25',
   },
   {
     ProductId: 26,
@@ -233,7 +233,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 250,
     ProductRate: 7.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=26',
   },
   {
     ProductId: 27,
@@ -242,7 +242,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 60,
     ProductRate: 49.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=27',
   },
   {
     ProductId: 28,
@@ -251,7 +251,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 90,
     ProductRate: 79.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=28',
   },
   {
     ProductId: 29,
@@ -260,7 +260,7 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 120,
     ProductRate: 89.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=29',
   },
   {
     ProductId: 30,
@@ -269,6 +269,6 @@ export const electronicsProducts: Product[] = [
     ProductQuantity: 35,
     ProductRate: 129.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80',
+      'https://picsum.photos/400/300?random=30',
   },
 ]

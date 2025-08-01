@@ -8,7 +8,7 @@ export const booksAndMediaProducts: Product[] = [
     ProductQuantity: 120,
     ProductRate: 14.99,
     ProductImage:
-      'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80',
+      'https://via.placeholder.com/400x300/8B4513/FFFFFF?text=Novel',
   },
   {
     ProductId: 2,

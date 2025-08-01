@@ -18,16 +18,26 @@
             style="width: 22px; height: 22px"
           />
         </span>
-        <span title="Member">
+        <span
+          title="Member"
+          @click="showMemberPopup"
+          ref="memberIconRef"
+          style="cursor: pointer; position: relative"
+        >
           <img
             src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png"
             alt="Member"
             style="width: 22px; height: 22px"
           />
         </span>
-        <span title="Employee">
+        <span
+          title="Employee"
+          @click="showEmployeePopup"
+          ref="employeeIconRef"
+          style="cursor: pointer; position: relative"
+        >
           <img
-            src="https://cdn-icons-png.flaticon.com/512/1946/1946406.png"
+            src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png"
             alt="Employee"
             style="width: 22px; height: 22px"
           />
@@ -68,10 +78,10 @@
         <div class="row mb-2 align-items-center" style="height: 40px; min-height: 0">
           <!-- Top row content -->
           <div class="col">
-            <input type="text" class="form-control" placeholder="Textbox 1" />
+            <input type="text" class="form-control" placeholder="Search Barcode..." />
           </div>
           <div class="col">
-            <input type="text" class="form-control" placeholder="Textbox 2" />
+            <input type="text" class="form-control" placeholder="Search Product..." />
           </div>
         </div>
         <div class="row flex-grow-1" style="height: calc(100% - 40px); min-height: 0">
@@ -141,6 +151,26 @@
         <posMainScreenFooter @footerBtnClick="handleFooterBtnClick" />
       </div>
     </div>
+
+    <!-- Member Info Popup -->
+    <MemberInfoPopup
+      :isVisible="showMemberInfoPopup"
+      :memberId="selectedMemberId"
+      :position="popupPosition"
+      @close="closeMemberPopup"
+      @select-member="handleMemberSelect"
+      @edit-member="handleMemberEdit"
+    />
+
+    <!-- Employee Info Popup -->
+    <EmployeeInfoPopup
+      :isVisible="showEmployeeInfoPopup"
+      :employeeId="selectedEmployeeId"
+      :position="employeePopupPosition"
+      @close="closeEmployeePopup"
+      @select-employee="handleEmployeeSelect"
+      @edit-employee="handleEmployeeEdit"
+    />
   </div>
 </template>
 
@@ -161,6 +191,8 @@ import { healthAndBeautyProducts } from '../posData/healthAndBeauty'
 import { toysAndGamesProducts } from '../posData/toysAndGames'
 import { foodAndBeveragesProducts } from '../posData/foodAndBeverages'
 import { officeSuppliesProducts } from '../posData/officeSupplies'
+import MemberInfoPopup from '../posTemplate/MemberInfoPopup.vue'
+import EmployeeInfoPopup from '../posTemplate/EmployeeInfoPopup.vue'
 
 const selectedFooterBtn = ref('')
 const selectedProductGroup = ref<{ ProductGroupId: number; ProductGroupText: string } | null>(null)
@@ -171,6 +203,18 @@ const selectedProducts = ref<Product[]>([])
 const leftPanelComponent = ref()
 // Product group component reference
 const productGroupComponent = ref()
+
+// Member popup state
+const showMemberInfoPopup = ref(false)
+const selectedMemberId = ref<string | number>('')
+const popupPosition = ref({ x: 0, y: 0 })
+const memberIconRef = ref<HTMLElement>()
+
+// Employee popup state
+const showEmployeeInfoPopup = ref(false)
+const selectedEmployeeId = ref<string | number>('')
+const employeePopupPosition = ref({ x: 0, y: 0 })
+const employeeIconRef = ref<HTMLElement>()
 
 // Computed property to determine which section to show
 const showProductSection = computed(() => !selectedFooterBtn.value)
@@ -307,6 +351,64 @@ function addProductToLeftPanel(product: Product) {
       ProductRate: product.ProductRate,
     })
   }
+}
+
+// Member popup methods
+function showMemberPopup() {
+  if (memberIconRef.value) {
+    const rect = memberIconRef.value.getBoundingClientRect()
+    popupPosition.value = {
+      x: rect.left + rect.width / 2,
+      y: rect.bottom + 10, // 10px below the icon
+    }
+  }
+  selectedMemberId.value = 'M001' // Default member ID - you can make this dynamic
+  showMemberInfoPopup.value = true
+}
+
+function closeMemberPopup() {
+  showMemberInfoPopup.value = false
+}
+
+function handleMemberSelect(memberId: string | number) {
+  console.log('Selected member:', memberId)
+  // Handle member selection logic here
+  // For example, you could set the selected member in your POS system
+}
+
+function handleMemberEdit(memberId: string | number) {
+  console.log('Edit member:', memberId)
+  // Handle member edit logic here
+  // For example, open a member edit form
+}
+
+// Employee popup methods
+function showEmployeePopup() {
+  if (employeeIconRef.value) {
+    const rect = employeeIconRef.value.getBoundingClientRect()
+    employeePopupPosition.value = {
+      x: rect.left + rect.width / 2,
+      y: rect.bottom + 10, // 10px below the icon
+    }
+  }
+  selectedEmployeeId.value = 'E001' // Default employee ID - you can make this dynamic
+  showEmployeeInfoPopup.value = true
+}
+
+function closeEmployeePopup() {
+  showEmployeeInfoPopup.value = false
+}
+
+function handleEmployeeSelect(employeeId: string | number) {
+  console.log('Selected employee:', employeeId)
+  // Handle employee selection logic here
+  // For example, you could set the selected employee in your POS system
+}
+
+function handleEmployeeEdit(employeeId: string | number) {
+  console.log('Edit employee:', employeeId)
+  // Handle employee edit logic here
+  // For example, open an employee edit form
 }
 </script>
 

@@ -7,8 +7,7 @@ export const clothingAndApparelProducts: Product[] = [
     ProductCode: 'CLOTH-001',
     ProductQuantity: 200,
     ProductRate: 24.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=401',
   },
   {
     ProductId: 2,
@@ -16,8 +15,7 @@ export const clothingAndApparelProducts: Product[] = [
     ProductCode: 'CLOTH-002',
     ProductQuantity: 150,
     ProductRate: 59.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=402',
   },
   {
     ProductId: 3,

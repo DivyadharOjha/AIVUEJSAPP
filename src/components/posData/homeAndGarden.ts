@@ -7,8 +7,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-001',
     ProductQuantity: 40,
     ProductRate: 29.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=301',
   },
   {
     ProductId: 2,
@@ -16,8 +15,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-002',
     ProductQuantity: 80,
     ProductRate: 24.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=302',
   },
   {
     ProductId: 3,
@@ -25,8 +23,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-003',
     ProductQuantity: 25,
     ProductRate: 59.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=303',
   },
   {
     ProductId: 4,
@@ -34,8 +31,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-004',
     ProductQuantity: 60,
     ProductRate: 34.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=304',
   },
   {
     ProductId: 5,
@@ -43,8 +39,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-005',
     ProductQuantity: 100,
     ProductRate: 12.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=305',
   },
   {
     ProductId: 6,
@@ -52,8 +47,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-006',
     ProductQuantity: 70,
     ProductRate: 19.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=306',
   },
   {
     ProductId: 7,
@@ -61,8 +55,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-007',
     ProductQuantity: 120,
     ProductRate: 8.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=307',
   },
   {
     ProductId: 8,
@@ -70,8 +63,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-008',
     ProductQuantity: 85,
     ProductRate: 14.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=308',
   },
   {
     ProductId: 9,
@@ -79,8 +71,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-009',
     ProductQuantity: 35,
     ProductRate: 39.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=309',
   },
   {
     ProductId: 10,
@@ -88,8 +79,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-010',
     ProductQuantity: 30,
     ProductRate: 89.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=310',
   },
   {
     ProductId: 11,
@@ -97,8 +87,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-011',
     ProductQuantity: 65,
     ProductRate: 16.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=311',
   },
   {
     ProductId: 12,
@@ -106,8 +95,7 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-012',
     ProductQuantity: 90,
     ProductRate: 4.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=312',
   },
   {
     ProductId: 13,
@@ -115,7 +103,6 @@ export const homeAndGardenProducts: Product[] = [
     ProductCode: 'HOME-013',
     ProductQuantity: 50,
     ProductRate: 24.99,
-    ProductImage:
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+    ProductImage: 'https://picsum.photos/400/300?random=313',
   },
 ]
