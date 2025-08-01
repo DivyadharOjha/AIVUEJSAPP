@@ -171,6 +171,27 @@
       @select-employee="handleEmployeeSelect"
       @edit-employee="handleEmployeeEdit"
     />
+
+    <!-- Cash In/Out Collection Modal -->
+    <div v-if="showCashInOutModal" class="modal-overlay" @click="closeCashInOutModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h5 class="modal-title">Cash In/Out Collection</h5>
+          <button type="button" class="btn-close" @click="closeCashInOutModal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <posCashInOutColl
+            :initial-date="new Date()"
+            :initial-calendar-type="'gregorian'"
+            :show-events="true"
+            @date-selected="handleDateSelected"
+            @calendar-type-changed="handleCalendarTypeChanged"
+          />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -193,6 +214,7 @@ import { foodAndBeveragesProducts } from '../posData/foodAndBeverages'
 import { officeSuppliesProducts } from '../posData/officeSupplies'
 import posMemberPopup from '../posTemplate/posMemberPopup.vue'
 import posEmployeePopup from '../posTemplate/posEmployeePopup.vue'
+import posCashInOutColl from '../posTemplate/posCashInOutColl.vue'
 
 const selectedFooterBtn = ref('')
 const selectedProductGroup = ref<{ ProductGroupId: number; ProductGroupText: string } | null>(null)
@@ -215,6 +237,9 @@ const showEmployeeInfoPopup = ref(false)
 const selectedEmployeeId = ref<string | number>('')
 const employeePopupPosition = ref({ x: 0, y: 0 })
 const employeeIconRef = ref<HTMLElement>()
+
+// Cash In/Out Collection modal state
+const showCashInOutModal = ref(false)
 
 // Computed property to determine which section to show
 const showProductSection = computed(() => !selectedFooterBtn.value)
@@ -288,6 +313,7 @@ function handleFooterBtnClick(btn: string) {
 function handleHomeClick() {
   selectedFooterBtn.value = ''
   loadFirstProductGroup()
+  showCashInOutModal.value = true
 }
 
 function handleProductGroupSelected(group: { ProductGroupId: number; ProductGroupText: string }) {
@@ -410,6 +436,21 @@ function handleEmployeeEdit(employeeId: string | number) {
   // Handle employee edit logic here
   // For example, open an employee edit form
 }
+
+// Cash In/Out Collection modal methods
+function closeCashInOutModal() {
+  showCashInOutModal.value = false
+}
+
+function handleDateSelected(date: Date, calendarType: string, formattedDate: string) {
+  console.log('Date selected:', date, calendarType, formattedDate)
+  // Handle date selection logic here
+}
+
+function handleCalendarTypeChanged(calendarType: string) {
+  console.log('Calendar type changed:', calendarType)
+  // Handle calendar type change logic here
+}
 </script>
 
 <style scoped>
@@ -450,5 +491,75 @@ function handleEmployeeEdit(employeeId: string | number) {
   box-sizing: border-box;
   min-width: 0;
   flex-shrink: 0;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.btn-close:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.modal-body {
+  padding: 20px;
+  flex: 1;
+  overflow: auto;
 }
 </style>
