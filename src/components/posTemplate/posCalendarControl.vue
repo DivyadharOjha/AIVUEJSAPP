@@ -566,7 +566,29 @@ function previousMonth(): void {
         1,
       )
     }
-    selectedYear.value = currentDate.value.getFullYear()
+
+    // Update selectedYear based on the calendar type
+    switch (selectedCalendarType.value) {
+      case 'hijri': {
+        const newHijri = gregorianToHijri(currentDate.value)
+        selectedYear.value = newHijri.year
+        break
+      }
+      case 'shamshi': {
+        const newShamshi = gregorianToShamshi(currentDate.value)
+        selectedYear.value = newShamshi.year
+        break
+      }
+      case 'bikram': {
+        const newBikram = gregorianToBikram(currentDate.value)
+        selectedYear.value = newBikram.year
+        break
+      }
+      default: {
+        selectedYear.value = currentDate.value.getFullYear()
+        break
+      }
+    }
   } catch (error) {
     console.error('Error in previousMonth:', error)
     // Fallback to simple Gregorian navigation
@@ -624,7 +646,29 @@ function nextMonth(): void {
         1,
       )
     }
-    selectedYear.value = currentDate.value.getFullYear()
+
+    // Update selectedYear based on the calendar type
+    switch (selectedCalendarType.value) {
+      case 'hijri': {
+        const newHijri = gregorianToHijri(currentDate.value)
+        selectedYear.value = newHijri.year
+        break
+      }
+      case 'shamshi': {
+        const newShamshi = gregorianToShamshi(currentDate.value)
+        selectedYear.value = newShamshi.year
+        break
+      }
+      case 'bikram': {
+        const newBikram = gregorianToBikram(currentDate.value)
+        selectedYear.value = newBikram.year
+        break
+      }
+      default: {
+        selectedYear.value = currentDate.value.getFullYear()
+        break
+      }
+    }
   } catch (error) {
     console.error('Error in nextMonth:', error)
     // Fallback to simple Gregorian navigation
