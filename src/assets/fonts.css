@@ -1,0 +1,85 @@
+/* Times New Roman Font Definition */
+
+/* System Times New Roman (available on most systems) */
+.times-new-roman, .font-times {
+  font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+}
+
+/* If you want to use local TTF files, uncomment the @font-face rules below 
+   and place your TTF files in the src/assets/fonts/ directory */
+
+/*
+@font-face {
+  font-family: 'Times New Roman Custom';
+  src: url('./fonts/times-new-roman.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Times New Roman Custom';
+  src: url('./fonts/times-new-roman-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Times New Roman Custom';
+  src: url('./fonts/times-new-roman-italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Times New Roman Custom';
+  src: url('./fonts/times-new-roman-bold-italic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+.times-custom {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, serif;
+}
+*/
+
+/* CSS Classes for easy usage */
+.times-new-roman-bold {
+  font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-weight: 700;
+}
+
+.times-new-roman-italic {
+  font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-style: italic;
+}
+
+.times-new-roman-bold-italic {
+  font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* Global utility classes */
+.font-times-bold {
+  font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-weight: 700;
+}
+
+.font-times-italic {
+  font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-style: italic;
+}
+
+/* Text size utilities for Times New Roman */
+.times-xs { font-size: 0.75rem; }
+.times-sm { font-size: 0.875rem; }
+.times-base { font-size: 1rem; }
+.times-lg { font-size: 1.125rem; }
+.times-xl { font-size: 1.25rem; }
+.times-2xl { font-size: 1.5rem; }
+.times-3xl { font-size: 1.875rem; }
+.times-4xl { font-size: 2.25rem; }
