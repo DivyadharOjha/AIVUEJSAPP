@@ -28,6 +28,11 @@
   --color-background-mute: var(--vt-c-white-mute);
 
   --color-border: var(--vt-c-divider-light-2);
+
+  /* TTF Font Variables */
+  --font-family-ttf: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  --font-family-ttf-primary: 'Times New Roman Custom', 'Times New Roman', serif;
+  --font-family-ttf-fallback: Times, 'Liberation Serif', serif;
   --color-border-hover: var(--vt-c-divider-light-1);
 
   --color-heading: var(--vt-c-text-light-1);
@@ -67,6 +72,11 @@ body {
     background-color 0.5s;
   line-height: 1.6;
   font-family:
+    'Times New Roman Custom',
+    'Times New Roman',
+    Times,
+    'Liberation Serif',
+    serif,
     Inter,
     -apple-system,
     BlinkMacSystemFont,
@@ -78,9 +88,27 @@ body {
     'Fira Sans',
     'Droid Sans',
     'Helvetica Neue',
-    sans-serif;
+    sans-serif !important;
   font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Override Bootstrap's font-family for body and all elements */
+html body,
+body *,
+.container,
+.container-fluid,
+div,
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family:
+    'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif !important;
 }

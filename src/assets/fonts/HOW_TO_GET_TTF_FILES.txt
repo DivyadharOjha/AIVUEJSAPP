@@ -1,0 +1,40 @@
+How to Get Times New Roman TTF Files for Your Project
+=====================================================
+
+Option 1: Copy from Windows System Fonts
+----------------------------------------
+1. Open File Explorer
+2. Navigate to: C:\Windows\Fonts\
+3. Look for these files:
+   - times.ttf (Regular)
+   - timesbd.ttf (Bold) 
+   - timesi.ttf (Italic)
+   - timesbi.ttf (Bold Italic)
+4. Copy these files to your project's src/assets/fonts/ directory
+5. Rename them to match the expected names:
+   - times.ttf → times-new-roman.ttf
+   - timesbd.ttf → times-new-roman-bold.ttf
+   - timesi.ttf → times-new-roman-italic.ttf
+   - timesbi.ttf → times-new-roman-bold-italic.ttf
+
+Option 2: Download from Free Font Sites
+---------------------------------------
+- Font Squirrel: https://www.fontsquirrel.com/
+- DaFont: https://www.dafont.com/ (check licensing)
+- Google Fonts: https://fonts.google.com/ (for similar fonts)
+
+Option 3: Use Current System Font Setup (Recommended)
+-----------------------------------------------------
+The project is already configured to use Times New Roman from your system.
+No additional files needed! Just use the CSS classes:
+
+- .font-times
+- .times-new-roman-bold  
+- .times-new-roman-italic
+- .times-new-roman-bold-italic
+
+After Adding TTF Files:
+-----------------------
+1. Uncomment the @font-face rules in src/assets/fonts.css
+2. Use the .times-custom class instead of .font-times
+3. Restart your development server (npm run dev)

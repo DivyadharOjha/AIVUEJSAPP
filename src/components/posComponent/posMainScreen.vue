@@ -3,7 +3,9 @@
     <!-- Header Row -->
     <div class="row flex-shrink-0 header-row align-items-center" style="height: 40px">
       <div class="col d-flex align-items-center justify-content-start gap-2" style="height: 40px">
-        <h2 class="mb-0" style="font-size: 1.5rem; line-height: 40px; height: 40px">Focus</h2>
+        <h2 class="mb-0 pos-font-bold" style="font-size: 1.5rem; line-height: 40px; height: 40px">
+          Focus
+        </h2>
         <img
           src="https://www.focussoftnet.com/focus-logo-white-new.png"
           alt="Focus POS"

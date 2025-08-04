@@ -23,6 +23,12 @@
         />
       </div>
     </div>
+
+    <!-- Times New Roman Test Section -->
+    <div class="font-test-section">
+      <h3 class="section-title">Times New Roman TTF Font Testing</h3>
+      <TimesNewRomanTest />
+    </div>
   </div>
 </template>
 
@@ -32,6 +38,7 @@
 
 // New imports
 import posCalendarControl from './posCalendarControl.vue'
+import TimesNewRomanTest from '../posComponent/TimesNewRomanTest.vue'
 import { ref } from 'vue'
 
 // Interfaces
@@ -150,12 +157,20 @@ function formatDate(date: Date): string {
   overflow: hidden;
   padding: 20px;
   max-width: 100%;
-  min-height: 700px;
-  height: 700px;
+  min-height: 800px;
+  height: auto;
 }
 
 .calendar-control-section {
   width: 100%;
+}
+
+.font-test-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
 }
 
 .section-title {

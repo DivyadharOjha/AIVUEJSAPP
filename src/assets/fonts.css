@@ -1,0 +1,148 @@
+/* Times New Roman Font Definition */
+
+/* TTF Times New Roman (prioritized over system fonts) */
+.times-new-roman,
+.font-times {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+}
+
+/* ✅ Local TTF files are now ACTIVE - TTF files have been added to src/assets/fonts/ directory */
+
+@font-face {
+  font-family: 'Times New Roman Custom';
+  src: url('./fonts/times-new-roman.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Times New Roman Custom';
+  src: url('./fonts/times-new-roman-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Times New Roman Custom';
+  src: url('./fonts/times-new-roman-italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Times New Roman Custom';
+  src: url('./fonts/times-new-roman-bold-italic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+.times-custom {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, serif;
+}
+
+/* CSS Classes for easy usage - Using TTF fonts */
+.times-new-roman-bold {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-weight: 700;
+}
+
+.times-new-roman-italic {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-style: italic;
+}
+
+.times-new-roman-bold-italic {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* Global utility classes - Using TTF fonts */
+.font-times-bold {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-weight: 700;
+}
+
+.font-times-italic {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-style: italic;
+}
+
+/* Text size utilities for Times New Roman TTF */
+.times-xs {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-size: 0.75rem;
+}
+.times-sm {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-size: 0.875rem;
+}
+.times-base {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-size: 1rem;
+}
+.times-lg {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-size: 1.125rem;
+}
+.times-xl {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-size: 1.25rem;
+}
+.times-2xl {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-size: 1.5rem;
+}
+.times-3xl {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-size: 1.875rem;
+}
+.times-4xl {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-size: 2.25rem;
+}
+
+/* Global Application Font Classes */
+.app-font {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+}
+
+.app-font-bold {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-weight: 700;
+}
+
+.app-font-italic {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-style: italic;
+}
+
+/* POS Component specific font classes */
+.pos-font {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+}
+
+.pos-font-bold {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-weight: 700;
+}
+
+.pos-font-italic {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-style: italic;
+}
+
+/* Headers with TTF fonts */
+.ttf-heading {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-weight: 700;
+}
+
+.ttf-subheading {
+  font-family: 'Times New Roman Custom', 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-weight: 600;
+}

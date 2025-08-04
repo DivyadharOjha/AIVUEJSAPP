@@ -1,0 +1,12 @@
+# This file keeps the fonts directory in version control
+# 
+# To add Times New Roman TTF files:
+# 1. Add your TTF files to this directory
+# 2. Uncomment the @font-face rules in ../fonts.css
+# 3. Use the .times-custom class in your components
+#
+# Expected TTF files:
+# - times-new-roman.ttf
+# - times-new-roman-bold.ttf  
+# - times-new-roman-italic.ttf
+# - times-new-roman-bold-italic.ttf
