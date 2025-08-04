@@ -18,60 +18,10 @@
         <label class="form-label">Select Date</label>
         <posCalendarControl
           v-model="selectedDate"
-          placeholder="Select date for cash in/out..."
+          placeholder="Select date..."
           @date-selected="handleCalendarDateSelected"
         />
       </div>
-
-      <!-- Amount Input - Commented out -->
-      <!--
-        <div class="form-group mb-3">
-          <label class="form-label">Amount</label>
-          <input type="number" class="form-control" placeholder="Enter amount..." v-model="amount" />
-        </div>
-        -->
-
-      <!-- Type Selection - Commented out -->
-      <!--
-        <div class="form-group mb-3">
-          <label class="form-label">Type</label>
-          <select class="form-select" v-model="transactionType">
-            <option value="cash-in">Cash In</option>
-            <option value="cash-out">Cash Out</option>
-          </select>
-        </div>
-        -->
-
-      <!-- Description - Commented out -->
-      <!--
-        <div class="form-group mb-3">
-          <label class="form-label">Description</label>
-          <textarea
-            class="form-control"
-            rows="3"
-            placeholder="Enter description..."
-            v-model="description"
-          ></textarea>
-        </div>
-        -->
-
-      <!-- Action Buttons - Commented out -->
-      <!--
-        <div class="action-buttons">
-          <button
-            class="btn btn-primary me-2"
-            @click="handleSubmit"
-            :disabled="!selectedDate || !amount"
-          >
-            <i class="fas fa-save me-1"></i>
-            Save Transaction
-          </button>
-          <button class="btn btn-outline-secondary" @click="handleCancel">
-            <i class="fas fa-times me-1"></i>
-            Cancel
-          </button>
-        </div>
-        -->
     </div>
   </div>
 </template>
@@ -199,9 +149,9 @@ function formatDate(date: Date): string {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   padding: 20px;
-  max-width: 500px;
-  min-height: 400px;
-  height: 500px;
+  max-width: 100%;
+  min-height: 700px;
+  height: 700px;
 }
 
 .calendar-control-section {
