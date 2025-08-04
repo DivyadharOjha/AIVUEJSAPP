@@ -229,7 +229,7 @@ const calendarConfigs = {
 }
 
 // Multi-Calendar Conversion Functions
-// =================================
+// ===================================
 
 // 1. HIJRI CALENDAR (Lunar Calendar) - Using moment-hijri
 // ========================================================

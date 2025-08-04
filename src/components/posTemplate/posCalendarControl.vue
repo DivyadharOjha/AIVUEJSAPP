@@ -326,7 +326,33 @@ const displayValue = computed(() => {
 })
 
 const availableYears = computed(() => {
-  const currentYear = new Date().getFullYear()
+  let currentYear: number
+
+  switch (selectedCalendarType.value) {
+    case 'hijri': {
+      const today = new Date()
+      const hijriToday = gregorianToHijri(today)
+      currentYear = hijriToday.year
+      break
+    }
+    case 'shamshi': {
+      const today = new Date()
+      const shamshiToday = gregorianToShamshi(today)
+      currentYear = shamshiToday.year
+      break
+    }
+    case 'bikram': {
+      const today = new Date()
+      const bikramToday = gregorianToBikram(today)
+      currentYear = bikramToday.year
+      break
+    }
+    default: {
+      currentYear = new Date().getFullYear()
+      break
+    }
+  }
+
   const years = []
   for (let i = currentYear - 10; i <= currentYear + 10; i++) {
     years.push(i)
@@ -467,6 +493,31 @@ function closeDropdown(): void {
 
 function changeCalendarType(): void {
   console.log('Calendar type changed to:', selectedCalendarType.value)
+
+  // Update selected year based on the new calendar type
+  const today = new Date()
+  switch (selectedCalendarType.value) {
+    case 'hijri': {
+      const hijriToday = gregorianToHijri(today)
+      selectedYear.value = hijriToday.year
+      break
+    }
+    case 'shamshi': {
+      const shamshiToday = gregorianToShamshi(today)
+      selectedYear.value = shamshiToday.year
+      break
+    }
+    case 'bikram': {
+      const bikramToday = gregorianToBikram(today)
+      selectedYear.value = bikramToday.year
+      break
+    }
+    default: {
+      selectedYear.value = today.getFullYear()
+      break
+    }
+  }
+
   emit('calendar-type-changed', selectedCalendarType.value)
 }
 
@@ -587,7 +638,48 @@ function nextMonth(): void {
 }
 
 function changeYear(): void {
-  currentDate.value = new Date(selectedYear.value, currentDate.value.getMonth(), 1)
+  try {
+    const currentMonth = currentDate.value.getMonth()
+
+    switch (selectedCalendarType.value) {
+      case 'hijri': {
+        // For Hijri calendar, convert to Hijri year and month, then back to Gregorian
+        const currentHijri = gregorianToHijri(currentDate.value)
+        const hijriMoment = moment(
+          `${selectedYear.value}-${currentHijri.month.toString().padStart(2, '0')}-01`,
+          'iYYYY-iM-iD',
+        )
+        currentDate.value = hijriMoment.toDate()
+        break
+      }
+      case 'shamshi': {
+        // For Shamshi calendar, convert to Jalali year and month, then back to Gregorian
+        const currentShamshi = gregorianToShamshi(currentDate.value)
+        const jalaaliMoment = momentJalaali.jMoment(
+          `${selectedYear.value}/${currentShamshi.month}/01`,
+          'jYYYY/jM/jD',
+        )
+        currentDate.value = jalaaliMoment.toDate()
+        break
+      }
+      case 'bikram': {
+        // For Bikram calendar, convert to Nepali year and month, then back to Gregorian
+        const currentBikram = gregorianToBikram(currentDate.value)
+        const nepaliDate = new NepaliDate(selectedYear.value, currentBikram.month - 1, 1)
+        currentDate.value = nepaliDate.toJsDate()
+        break
+      }
+      default: {
+        // For Gregorian calendar, use simple year change
+        currentDate.value = new Date(selectedYear.value, currentMonth, 1)
+        break
+      }
+    }
+  } catch (error) {
+    console.error('Error in changeYear:', error)
+    // Fallback to simple Gregorian navigation
+    currentDate.value = new Date(selectedYear.value, currentDate.value.getMonth(), 1)
+  }
 }
 
 function selectDate(day: CalendarDay): void {
