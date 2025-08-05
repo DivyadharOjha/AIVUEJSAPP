@@ -33,6 +33,7 @@
                     ]"
                     style="height: 100%; min-height: 0; margin: 0"
                     :style="{ background: randomColors[shortcutGrid.flat().indexOf(item)] }"
+                    @click="handleShortcutClick(item)"
                   >
                     <div class="shortcut-name-row">
                       <span class="shortcut-name">{{ item.name }}</span>
@@ -87,7 +88,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { memberData } from '../../data/memberData'
+import { memberData, type FooterButtonData } from '../../data/memberData'
 import { itemData } from '../../data/itemData'
 import { taskData } from '../../data/taskData'
 import { transactionData } from '../../data/transactionData'
@@ -98,6 +99,9 @@ import { employeeSchemesData } from '../../data/employeeSchemesData'
 import { batchReportData } from '../../data/batchReportData'
 
 const props = defineProps<{ selectedButton: string }>()
+const emit = defineEmits<{
+  'shortcut-clicked': [shortcutId: string]
+}>()
 
 const displayedData = computed(() => {
   switch (props.selectedButton) {
@@ -195,6 +199,14 @@ const shortcutGridStyle = computed(() => {
     height: '100%',
   }
 })
+
+// Handle shortcut button click
+function handleShortcutClick(item: FooterButtonData) {
+  if (item && item.id) {
+    console.log(`Shortcut clicked: ${item.name} (ID: ${item.id})`)
+    emit('shortcut-clicked', item.id.toString())
+  }
+}
 </script>
 
 <style scoped>

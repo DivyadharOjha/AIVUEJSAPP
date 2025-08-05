@@ -67,6 +67,8 @@
           <div class="feature-list">
             <h4>Available Features:</h4>
             <ul>
+              <li>Search Member Screens (1, 2, 3)</li>
+              <li>Cash In/Out Collection (21)</li>
               <li>Cash In-Pay Details Form</li>
               <li>Calendar Control Component</li>
               <li>Multi-Calendar System</li>
@@ -91,6 +93,10 @@ import TimesNewRomanTest from '../posComponent/TimesNewRomanTest.vue'
 // Available tabs/screens
 const availableTabs = [
   { id: 'default', label: 'Default' },
+  { id: '1', label: 'Search Member 1' },
+  { id: '2', label: 'Search Member 2' },
+  { id: '3', label: 'Search Member 3' },
+  { id: '21', label: 'Cash In/Out Collection' },
   { id: 'cash-in-pay', label: 'Cash In-Pay' },
   { id: 'calendar-control', label: 'Calendar Control' },
   { id: 'multi-calendar', label: 'Multi Calendar' },

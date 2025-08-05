@@ -1,10 +1,7 @@
 <template>
   <div class="cash-inout-container">
-    <!-- Header Section -->
-    <div class="header-section">
-      <h2 class="form-title">Cash In/Out/Collection Details</h2>
-
-      <!-- Radio Buttons -->
+    <!-- Radio Buttons Section -->
+    <div class="radio-section">
       <div class="radio-group">
         <label class="radio-label">
           <input
@@ -200,24 +197,15 @@ function handleClear(): void {
   height: auto;
 }
 
-/* Header Section */
-.header-section {
+/* Radio Buttons Section */
+.radio-section {
   margin-bottom: 24px;
 }
 
-.form-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 16px;
-  text-align: center;
-}
-
-/* Radio Buttons */
 .radio-group {
   display: flex;
   gap: 24px;
-  justify-content: center;
+  justify-content: flex-start;
   margin-bottom: 20px;
 }
 

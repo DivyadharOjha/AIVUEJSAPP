@@ -111,6 +111,7 @@
                 <div style="height: 100%; min-height: 0; display: flex; flex-direction: column">
                   <posMainScreenFooterShortcut
                     :selectedButton="selectedFooterBtn"
+                    @shortcut-clicked="handleFooterShortcutClick"
                     style="height: 100%; min-height: 0"
                   />
                 </div>
@@ -152,9 +153,26 @@
                 <div style="height: 100%; min-height: 0; display: flex; flex-direction: column">
                   <!-- Dynamic Screen Content -->
                   <div class="shortcut-screen-container">
-                    <!-- Cash In-Pay Details Screen -->
-                    <div v-if="selectedShortcutScreen === 'cash-in-pay'" class="screen-content">
-                      <posCashInOutColl />
+                    <!-- Search Member Screens (IDs 1, 2, 3) -->
+                    <div
+                      v-if="
+                        selectedShortcutScreen === '1' ||
+                        selectedShortcutScreen === '2' ||
+                        selectedShortcutScreen === '3'
+                      "
+                      class="screen-content"
+                    >
+                      <posSearchMember
+                        :initial-search="''"
+                        @member-selected="handleMemberSelected"
+                        @close="handleSearchMemberClose"
+                        style="height: 100%; width: 100%"
+                      />
+                    </div>
+
+                    <!-- Cash In/Out Collection Screen (ID 21) -->
+                    <div v-if="selectedShortcutScreen === '21'" class="screen-content">
+                      <posCashInOutColl style="height: 100%; width: 100%" />
                     </div>
                   </div>
                 </div>
@@ -227,6 +245,9 @@
         </div>
       </div>
     </div>
+
+    <!-- Shortcut Manager (invisible utility component) -->
+    <posShortcutManager ref="shortcutManagerRef" />
   </div>
 </template>
 
@@ -251,6 +272,16 @@ import posMemberPopup from '../posTemplate/posMemberPopup.vue'
 import posEmployeePopup from '../posTemplate/posEmployeePopup.vue'
 import posCashInOutColl from '../posTemplate/posCashInOutColl.vue'
 import posShortcutPanel from '../posTemplate/posShortcutPanel.vue'
+import posShortcutManager from '../posTemplate/posShortcutManager.vue'
+import posSearchMember from '../posTemplate/posSearchMember.vue'
+
+// Member interface for search member component
+interface Member {
+  id: number
+  name: string
+  code: string
+  alias: string
+}
 
 const selectedFooterBtn = ref('')
 const selectedProductGroup = ref<{ ProductGroupId: number; ProductGroupText: string } | null>(null)
@@ -261,6 +292,8 @@ const selectedProducts = ref<Product[]>([])
 const leftPanelComponent = ref()
 // Product group component reference
 const productGroupComponent = ref()
+// Shortcut manager component reference
+const shortcutManagerRef = ref()
 
 // Member popup state
 const showMemberInfoPopup = ref(false)
@@ -339,6 +372,10 @@ async function loadFirstProductGroup() {
 onMounted(async () => {
   console.log('POS Main Screen mounted')
 
+  // Ensure initial state shows product section
+  selectedFooterBtn.value = ''
+  selectedShortcutScreen.value = ''
+
   // Wait for child components to be fully mounted
   await nextTick()
 
@@ -355,8 +392,8 @@ function handleFooterBtnClick(btn: string) {
 
 function handleHomeClick() {
   selectedFooterBtn.value = ''
+  selectedShortcutScreen.value = '' // Clear any active shortcut screen
   loadFirstProductGroup()
-  showCashInOutModal.value = true
 }
 
 function handleShortcutClick() {
@@ -368,9 +405,34 @@ function closeShortcutModal() {
 }
 
 function handleShortcutScreenSelected(screenId: string): void {
+  // Use the shortcut manager to open the screen
+  if (shortcutManagerRef.value) {
+    shortcutManagerRef.value.openShortcutScreen(screenId)
+  }
   selectedShortcutScreen.value = screenId
   showShortcutModal.value = false
   console.log('Shortcut screen selected:', screenId)
+}
+
+function handleMemberSelected(member: Member): void {
+  console.log('Member selected from search:', member)
+  // Handle member selection - you can add your logic here
+  // For example, close the search screen and use the selected member
+  selectedShortcutScreen.value = ''
+}
+
+function handleSearchMemberClose(): void {
+  console.log('Search member screen closed')
+  // Close the search member screen
+  selectedShortcutScreen.value = ''
+}
+
+// Handle footer shortcut click
+function handleFooterShortcutClick(shortcutId: string): void {
+  console.log(`Footer shortcut clicked: ${shortcutId}`)
+  selectedShortcutScreen.value = shortcutId
+  // Hide the footer shortcut component when a shortcut is selected
+  selectedFooterBtn.value = ''
 }
 
 function handleProductGroupSelected(group: { ProductGroupId: number; ProductGroupText: string }) {
@@ -628,13 +690,19 @@ function handleCalendarTypeChanged(calendarType: string) {
 
 .shortcut-screen-container {
   height: 100%;
+  width: 100%;
   overflow: auto;
-  padding: 20px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .screen-content {
   width: 100%;
   height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .calendar-section {
