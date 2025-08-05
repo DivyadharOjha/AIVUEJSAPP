@@ -1,7 +1,11 @@
 import type { FooterButtonData } from './memberData'
 
 export const taskData: FooterButtonData[] = [
-  { id: 1, name: 'Task 1', description: 'Pending' },
+  {
+    id: 1,
+    name: 'Cash In/Out/Collection',
+    description: 'transfering Amount to/from Counter/Account',
+  },
   { id: 2, name: 'Task 2', description: 'Completed' },
   { id: 3, name: 'Task 3', description: 'In Progress' },
   { id: 4, name: 'Task 4', description: 'Pending' },

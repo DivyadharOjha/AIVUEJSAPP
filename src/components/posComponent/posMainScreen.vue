@@ -20,6 +20,13 @@
             style="width: 22px; height: 22px"
           />
         </span>
+        <span title="Shortcut" @click="handleShortcutClick" style="cursor: pointer">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png"
+            alt="Shortcut"
+            style="width: 22px; height: 22px"
+          />
+        </span>
         <span
           title="Member"
           @click="showMemberPopup"
@@ -141,6 +148,17 @@
                   </div>
                 </div>
               </template>
+              <template v-else-if="showShortcutScreen">
+                <div style="height: 100%; min-height: 0; display: flex; flex-direction: column">
+                  <!-- Dynamic Screen Content -->
+                  <div class="shortcut-screen-container">
+                    <!-- Cash In-Pay Details Screen -->
+                    <div v-if="selectedShortcutScreen === 'cash-in-pay'" class="screen-content">
+                      <posCashInOutColl />
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -194,6 +212,21 @@
         </div>
       </div>
     </div>
+
+    <!-- Shortcut Panel Modal -->
+    <div v-if="showShortcutModal" class="modal-overlay" @click="closeShortcutModal">
+      <div class="modal-content shortcut-modal" @click.stop>
+        <div class="modal-header">
+          <h5 class="modal-title">Shortcut Panel</h5>
+          <button type="button" class="btn-close" @click="closeShortcutModal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <posShortcutPanel @screen-selected="handleShortcutScreenSelected" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -217,6 +250,7 @@ import { officeSuppliesProducts } from '../posData/officeSupplies'
 import posMemberPopup from '../posTemplate/posMemberPopup.vue'
 import posEmployeePopup from '../posTemplate/posEmployeePopup.vue'
 import posCashInOutColl from '../posTemplate/posCashInOutColl.vue'
+import posShortcutPanel from '../posTemplate/posShortcutPanel.vue'
 
 const selectedFooterBtn = ref('')
 const selectedProductGroup = ref<{ ProductGroupId: number; ProductGroupText: string } | null>(null)
@@ -243,9 +277,16 @@ const employeeIconRef = ref<HTMLElement>()
 // Cash In/Out Collection modal state
 const showCashInOutModal = ref(false)
 
+// Shortcut Panel modal state
+const showShortcutModal = ref(false)
+
+// Shortcut screen state
+const selectedShortcutScreen = ref<string>('default')
+
 // Computed property to determine which section to show
-const showProductSection = computed(() => !selectedFooterBtn.value)
+const showProductSection = computed(() => !selectedFooterBtn.value && !selectedShortcutScreen.value)
 const showFooterShortcut = computed(() => !!selectedFooterBtn.value)
+const showShortcutScreen = computed(() => !!selectedShortcutScreen.value)
 
 const productDataMap = {
   Electronics: electronicsProducts,
@@ -316,6 +357,20 @@ function handleHomeClick() {
   selectedFooterBtn.value = ''
   loadFirstProductGroup()
   showCashInOutModal.value = true
+}
+
+function handleShortcutClick() {
+  showShortcutModal.value = true
+}
+
+function closeShortcutModal() {
+  showShortcutModal.value = false
+}
+
+function handleShortcutScreenSelected(screenId: string): void {
+  selectedShortcutScreen.value = screenId
+  showShortcutModal.value = false
+  console.log('Shortcut screen selected:', screenId)
 }
 
 function handleProductGroupSelected(group: { ProductGroupId: number; ProductGroupText: string }) {
@@ -563,5 +618,97 @@ function handleCalendarTypeChanged(calendarType: string) {
   padding: 20px;
   flex: 1;
   overflow: auto;
+}
+
+.shortcut-modal {
+  width: 95%;
+  max-width: 1200px;
+  max-height: 95vh;
+}
+
+.shortcut-screen-container {
+  height: 100%;
+  overflow: auto;
+  padding: 20px;
+}
+
+.screen-content {
+  width: 100%;
+  height: 100%;
+}
+
+.calendar-section {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.font-test-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.default-screen {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.welcome-text {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.feature-list {
+  text-align: left;
+  max-width: 500px;
+  margin: 0 auto;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.feature-list h4 {
+  color: #333;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.feature-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+  color: #555;
+  position: relative;
+  padding-left: 20px;
+}
+
+.feature-list li:before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #28a745;
+  font-weight: bold;
+}
+
+.feature-list li:last-child {
+  border-bottom: none;
 }
 </style>

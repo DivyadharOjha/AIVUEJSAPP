@@ -1,151 +1,190 @@
 <template>
   <div class="cash-inout-container">
-    <!-- Previous implementation - commented out -->
-    <!--
-    <posCalendar
-      :initial-date="props.initialDate"
-      :initial-calendar-type="props.initialCalendarType"
-      :show-events="props.showEvents"
-      @date-selected="handleDateSelected"
-      @calendar-type-changed="handleCalendarTypeChanged"
-    />
-    -->
+    <!-- Header Section -->
+    <div class="header-section">
+      <h2 class="form-title">Cash In/Out/Collection Details</h2>
 
-    <!-- New implementation using posCalendarControl -->
-    <div class="calendar-control-section">
-      <!-- Date Selection -->
-      <div class="form-group mb-3">
-        <label class="form-label">Select Date</label>
-        <posCalendarControl
-          v-model="selectedDate"
-          placeholder="Select date..."
-          @date-selected="handleCalendarDateSelected"
-        />
+      <!-- Radio Buttons -->
+      <div class="radio-group">
+        <label class="radio-label">
+          <input
+            type="radio"
+            name="paymentType"
+            value="counter"
+            v-model="selectedPaymentType"
+            class="radio-input"
+          />
+          <span class="radio-custom"></span>
+          Counter
+        </label>
+        <label class="radio-label">
+          <input
+            type="radio"
+            name="paymentType"
+            value="account"
+            v-model="selectedPaymentType"
+            class="radio-input"
+          />
+          <span class="radio-custom"></span>
+          Account
+        </label>
       </div>
     </div>
 
-    <!-- Times New Roman Test Section -->
-    <div class="font-test-section">
-      <h3 class="section-title">Times New Roman TTF Font Testing</h3>
-      <TimesNewRomanTest />
+    <!-- Input Fields Section -->
+    <div class="input-section">
+      <!-- From Counter/Account Dropdown -->
+      <div class="form-row">
+        <label class="form-label"
+          >From {{ selectedPaymentType === 'counter' ? 'Counter' : 'Account' }}:</label
+        >
+        <div class="form-control-wrapper">
+          <select
+            v-model="selectedSource"
+            class="form-select"
+            :class="{ disabled: !selectedPaymentType }"
+          >
+            <option value="" disabled>Please select...</option>
+            <option v-for="option in sourceOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Remarks Field -->
+      <div class="form-row">
+        <label class="form-label">Remarks:</label>
+        <div class="form-control-wrapper">
+          <textarea
+            v-model="remarks"
+            class="form-textarea"
+            placeholder="Enter remarks..."
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Currency Details Section -->
+    <div class="currency-section">
+      <h3 class="section-title">Currency Details</h3>
+
+      <div class="table-container">
+        <table class="currency-table">
+          <thead>
+            <tr>
+              <th class="sno-col">S.No.</th>
+              <th class="currency-col">Currency Name</th>
+              <th class="amount-col">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(currency, index) in currencies" :key="currency.id">
+              <td class="sno-col">{{ index + 1 }}</td>
+              <td class="currency-col">{{ currency.name }}</td>
+              <td class="amount-col">
+                <div class="amount-input-group">
+                  <input
+                    type="number"
+                    v-model="currency.amount"
+                    class="amount-input"
+                    placeholder="0"
+                    min="0"
+                    step="0.01"
+                  />
+                  <select v-model="currency.type" class="type-select">
+                    <option value="D">D</option>
+                    <option value="C">C</option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Action Buttons Section -->
+    <div class="action-buttons">
+      <button @click="handleBack" class="btn btn-action">Back</button>
+      <button @click="handleSave" class="btn btn-action">Save</button>
+      <button @click="handleSaveAndPrint" class="btn btn-action">Save & Print</button>
+      <button @click="handleSearch" class="btn btn-action">Search</button>
+      <button @click="handleClear" class="btn btn-action">Clear</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// Previous imports - commented out
-// import posCalendar from './posCalendar.vue'
+import { ref, computed } from 'vue'
 
-// New imports
-import posCalendarControl from './posCalendarControl.vue'
-import TimesNewRomanTest from '../posComponent/TimesNewRomanTest.vue'
-import { ref } from 'vue'
+// Reactive data
+const selectedPaymentType = ref<'counter' | 'account' | null>(null)
+const selectedSource = ref('')
+const remarks = ref('')
 
-// Interfaces
-interface Props {
-  initialDate?: Date
-  initialCalendarType?: 'gregorian' | 'hijri' | 'shamshi' | 'bikram'
-  showEvents?: boolean
-}
+// Currency data
+const currencies = ref([
+  { id: 1, name: 'Indian Rupees', amount: 0, type: 'D' },
+  { id: 2, name: 'America (United States Dollar)', amount: 0, type: 'D' },
+])
 
-interface Transaction {
-  date: Date
-  amount: number
-  type: 'cash-in' | 'cash-out'
-  description: string
-  timestamp: Date
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  initialDate: () => new Date(),
-  initialCalendarType: 'gregorian',
-  showEvents: true,
+// Source options based on payment type
+const sourceOptions = computed(() => {
+  if (selectedPaymentType.value === 'counter') {
+    return [
+      { value: 'counter1', label: 'Counter 1' },
+      { value: 'counter2', label: 'Counter 2' },
+      { value: 'counter3', label: 'Counter 3' },
+    ]
+  } else if (selectedPaymentType.value === 'account') {
+    return [
+      { value: 'account1', label: 'Account 1' },
+      { value: 'account2', label: 'Account 2' },
+      { value: 'account3', label: 'Account 3' },
+    ]
+  }
+  return []
 })
 
-// Emits
-const emit = defineEmits<{
-  'date-selected': [date: Date, calendarType: string, formattedDate: string]
-  'calendar-type-changed': [calendarType: string]
-  'transaction-saved': [transaction: Transaction]
-  'transaction-cancelled': []
-}>()
-
-// Reactive data for new implementation
-const selectedDate = ref<Date | null>(props.initialDate)
-// Form fields - commented out since they're not being used
-/*
-const amount = ref<number | null>(null)
-const transactionType = ref<'cash-in' | 'cash-out'>('cash-in')
-const description = ref('')
-*/
-
-// Previous event handlers - commented out
-/*
-function handleDateSelected(date: Date, calendarType: string, formattedDate: string): void {
-  emit('date-selected', date, calendarType, formattedDate)
+// Event handlers
+function handleBack(): void {
+  console.log('Back button clicked')
+  // Add your back logic here
 }
 
-function handleCalendarTypeChanged(calendarType: string): void {
-  emit('calendar-type-changed', calendarType)
-}
-*/
-
-// New event handlers
-function handleCalendarDateSelected(date: Date): void {
-  selectedDate.value = date
-  console.log('Date selected for cash in/out:', date)
-
-  // Emit the date selection event for backward compatibility
-  emit('date-selected', date, 'gregorian', formatDate(date))
+function handleSave(): void {
+  console.log('Save button clicked')
+  console.log('Form data:', {
+    paymentType: selectedPaymentType.value,
+    source: selectedSource.value,
+    remarks: remarks.value,
+    currencies: currencies.value,
+  })
+  // Add your save logic here
 }
 
-// handleSubmit function - commented out since form fields are commented
-/*
-function handleSubmit(): void {
-  if (!selectedDate.value || !amount.value) {
-    console.warn('Please select a date and enter an amount')
-    return
-  }
+function handleSaveAndPrint(): void {
+  console.log('Save & Print button clicked')
+  // Add your save and print logic here
+}
 
-  const transaction = {
-    date: selectedDate.value,
-    amount: amount.value,
-    type: transactionType.value,
-    description: description.value,
-    timestamp: new Date(),
-  }
+function handleSearch(): void {
+  console.log('Search button clicked')
+  // Add your search logic here
+}
 
-  console.log('Saving transaction:', transaction)
-  emit('transaction-saved', transaction)
-
+function handleClear(): void {
+  console.log('Clear button clicked')
   // Reset form
-  selectedDate.value = props.initialDate
-  amount.value = null
-  transactionType.value = 'cash-in'
-  description.value = ''
-}
-*/
-
-// handleCancel function - commented out since form fields are commented
-/*
-function handleCancel(): void {
-  console.log('Transaction cancelled')
-  emit('transaction-cancelled')
-
-  // Reset form
-  selectedDate.value = props.initialDate
-  amount.value = null
-  transactionType.value = 'cash-in'
-  description.value = ''
-}
-*/
-
-// Utility function
-function formatDate(date: Date): string {
-  const day = date.getDate().toString().padStart(2, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const year = date.getFullYear()
-  return `${day}/${month}/${year}`
+  selectedPaymentType.value = null
+  selectedSource.value = ''
+  remarks.value = ''
+  currencies.value.forEach((currency) => {
+    currency.amount = 0
+    currency.type = 'D'
+  })
 }
 </script>
 
@@ -157,105 +196,286 @@ function formatDate(date: Date): string {
   overflow: hidden;
   padding: 20px;
   max-width: 100%;
-  min-height: 800px;
+  min-height: 600px;
   height: auto;
 }
 
-.calendar-control-section {
-  width: 100%;
+/* Header Section */
+.header-section {
+  margin-bottom: 24px;
 }
 
-.font-test-section {
-  margin-top: 20px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+.form-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
-.section-title {
-  color: #495057;
-  font-weight: 600;
-  border-bottom: 2px solid #e9ecef;
-  padding-bottom: 8px;
-}
-
-.form-label {
-  font-weight: 500;
-  color: #495057;
-  margin-bottom: 6px;
-}
-
-.form-control,
-.form-select {
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 14px;
-  transition: border-color 0.2s ease;
-}
-
-.form-control:focus,
-.form-select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  outline: none;
-}
-
-.action-buttons {
+/* Radio Buttons */
+.radio-group {
   display: flex;
-  gap: 8px;
-  margin-top: 20px;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
-.btn {
-  padding: 8px 16px;
-  font-size: 14px;
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
   font-weight: 500;
-  border-radius: 6px;
+  color: #333;
+}
+
+.radio-input {
+  display: none;
+}
+
+.radio-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  position: relative;
   transition: all 0.2s ease;
 }
 
-.btn-primary {
-  background-color: #007bff;
+.radio-input:checked + .radio-custom {
   border-color: #007bff;
-  color: white;
+  background-color: #007bff;
 }
 
-.btn-primary:hover:not(:disabled) {
-  background-color: #0056b3;
-  border-color: #0056b3;
+.radio-input:checked + .radio-custom::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background-color: white;
+  border-radius: 50%;
 }
 
-.btn-primary:disabled {
-  background-color: #6c757d;
-  border-color: #6c757d;
-  cursor: not-allowed;
+/* Input Section */
+.input-section {
+  margin-bottom: 24px;
 }
 
-.btn-outline-secondary {
+.form-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.form-label {
+  min-width: 120px;
+  font-weight: 500;
+  color: #333;
+  padding-top: 8px;
+}
+
+.form-control-wrapper {
+  flex: 1;
+}
+
+.form-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+  transition: border-color 0.2s ease;
+}
+
+.form-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-select.disabled {
+  background-color: #f8f9fa;
   color: #6c757d;
-  border-color: #6c757d;
-  background-color: transparent;
 }
 
-.btn-outline-secondary:hover {
+.form-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.form-textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Currency Section */
+.currency-section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.currency-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.currency-table th {
+  background-color: #495057;
   color: white;
-  background-color: #6c757d;
-  border-color: #6c757d;
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
 }
 
-/* Responsive design */
-@media (max-width: 576px) {
-  .cash-inout-container {
-    padding: 16px;
+.currency-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+}
+
+.currency-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.sno-col {
+  width: 80px;
+  text-align: center;
+}
+
+.currency-col {
+  flex: 1;
+}
+
+.amount-col {
+  width: 200px;
+}
+
+.amount-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.amount-input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: right;
+}
+
+.amount-input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.type-select {
+  width: 50px;
+  padding: 6px 4px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.type-select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #6c757d;
+  color: white;
+  min-width: 100px;
+}
+
+.btn-action:hover {
+  background-color: #5a6268;
+  transform: translateY(-1px);
+}
+
+.btn-action:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-label {
+    min-width: auto;
+    padding-top: 0;
+  }
+
+  .radio-group {
+    flex-direction: column;
+    gap: 12px;
   }
 
   .action-buttons {
     flex-direction: column;
   }
 
-  .btn {
+  .btn-action {
+    width: 100%;
+  }
+
+  .amount-input-group {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .type-select {
     width: 100%;
   }
 }
