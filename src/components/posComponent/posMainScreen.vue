@@ -20,13 +20,6 @@
             style="width: 22px; height: 22px"
           />
         </span>
-        <span title="Shortcut" @click="handleShortcutClick" style="cursor: pointer">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png"
-            alt="Shortcut"
-            style="width: 22px; height: 22px"
-          />
-        </span>
         <span
           title="Member"
           @click="showMemberPopup"
@@ -69,8 +62,11 @@
     </div>
 
     <!-- Body Row -->
-    <div class="row flex-grow-1 body-row align-items-stretch body-row-gap" style="min-height: 0">
-      <div class="col body-col h-100 me-3">
+    <div
+      class="row flex-grow-1 body-row align-items-stretch body-row-gap"
+      style="min-height: 0; overflow: hidden"
+    >
+      <div class="col body-col h-100 me-3" style="min-width: 0; overflow: hidden">
         <!-- Left body content -->
         <posMainScreenLeftPanel
           ref="leftPanelComponent"
@@ -81,10 +77,13 @@
       </div>
       <div
         class="col body-col h-100 d-flex flex-column"
-        style="min-width: 0; flex: 1; height: 100%; min-height: 0"
+        style="min-width: 0; flex: 1; height: 100%; min-height: 0; overflow: hidden"
       >
         <!-- Right body content -->
-        <div class="row mb-2 align-items-center" style="height: 40px; min-height: 0">
+        <div
+          class="row mb-2 align-items-center"
+          style="height: 40px; min-height: 0; flex-shrink: 0"
+        >
           <!-- Top row content -->
           <div class="col">
             <input type="text" class="form-control" placeholder="Search Barcode..." />
@@ -93,9 +92,12 @@
             <input type="text" class="form-control" placeholder="Search Product..." />
           </div>
         </div>
-        <div class="row flex-grow-1" style="height: calc(100% - 40px); min-height: 0">
+        <div
+          class="row flex-grow-1"
+          style="height: calc(100% - 40px); min-height: 0; overflow: hidden"
+        >
           <!-- Bottom row content -->
-          <div class="col h-100" style="min-height: 0">
+          <div class="col h-100" style="min-height: 0; overflow: hidden">
             <div
               id="divPOSMainScreenBodyLeftPanelSecondRow"
               style="
@@ -105,19 +107,31 @@
                 min-height: 0;
                 display: flex;
                 flex-direction: column;
+                overflow: hidden;
               "
             >
               <template v-if="showFooterShortcut">
-                <div style="height: 100%; min-height: 0; display: flex; flex-direction: column">
+                <div
+                  style="
+                    height: 100%;
+                    min-height: 0;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                  "
+                >
                   <posMainScreenFooterShortcut
                     :selectedButton="selectedFooterBtn"
                     @shortcut-clicked="handleFooterShortcutClick"
-                    style="height: 100%; min-height: 0"
+                    style="height: 100%; min-height: 0; overflow: hidden"
                   />
                 </div>
               </template>
               <template v-else-if="showProductSection">
-                <div class="row" style="height: 60px; flex-shrink: 0; min-height: 0">
+                <div
+                  class="row"
+                  style="height: 60px; flex-shrink: 0; min-height: 0; overflow: hidden"
+                >
                   <div
                     class="col-12"
                     id="divPOSMainScreenBodyLeftPanelSecondRowTop"
@@ -130,18 +144,18 @@
                     />
                   </div>
                 </div>
-                <div class="row" style="height: calc(100% - 60px); min-height: 0">
+                <div class="row" style="height: calc(100% - 60px); min-height: 0; overflow: hidden">
                   <div
                     class="col-12 h-100"
                     id="divPOSMainScreenBodyLeftPanelSecondRowBottom"
-                    style="min-height: 0"
+                    style="min-height: 0; overflow: hidden"
                   >
                     <posMainScreenProduct
                       v-if="selectedProductGroup"
                       :group="selectedProductGroup"
                       :products="selectedProducts"
                       @product-selected="handleProductSelected"
-                      style="height: 100%; min-height: 0"
+                      style="height: 100%; min-height: 0; overflow: hidden"
                     />
                     <div v-else class="d-flex align-items-center justify-content-center h-100">
                       <p class="text-muted">Please select a product group to view products.</p>
@@ -150,7 +164,15 @@
                 </div>
               </template>
               <template v-else-if="showShortcutScreen">
-                <div style="height: 100%; min-height: 0; display: flex; flex-direction: column">
+                <div
+                  style="
+                    height: 100%;
+                    min-height: 0;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                  "
+                >
                   <!-- Dynamic Screen Content -->
                   <div class="shortcut-screen-container">
                     <!-- Search Member Screens (IDs 1, 2, 3) -->
@@ -166,13 +188,13 @@
                         :initial-search="''"
                         @member-selected="handleMemberSelected"
                         @close="handleSearchMemberClose"
-                        style="height: 100%; width: 100%"
+                        style="height: 100%; width: 100%; overflow: hidden"
                       />
                     </div>
 
                     <!-- Cash In/Out Collection Screen (ID 21) -->
                     <div v-if="selectedShortcutScreen === '21'" class="screen-content">
-                      <posCashInOutColl style="height: 100%; width: 100%" />
+                      <posCashInOutColl style="height: 100%; width: 100%; overflow: hidden" />
                     </div>
                   </div>
                 </div>
@@ -211,6 +233,7 @@
     />
 
     <!-- Cash In/Out Collection Modal -->
+    <!--
     <div v-if="showCashInOutModal" class="modal-overlay" @click="closeCashInOutModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
@@ -230,8 +253,10 @@
         </div>
       </div>
     </div>
+    -->
 
     <!-- Shortcut Panel Modal -->
+    <!--
     <div v-if="showShortcutModal" class="modal-overlay" @click="closeShortcutModal">
       <div class="modal-content shortcut-modal" @click.stop>
         <div class="modal-header">
@@ -245,9 +270,10 @@
         </div>
       </div>
     </div>
+    -->
 
     <!-- Shortcut Manager (invisible utility component) -->
-    <posShortcutManager ref="shortcutManagerRef" />
+    <!-- <posShortcutManager ref="shortcutManagerRef" /> -->
   </div>
 </template>
 
@@ -271,8 +297,6 @@ import { officeSuppliesProducts } from '../posData/officeSupplies'
 import posMemberPopup from '../posTemplate/posMemberPopup.vue'
 import posEmployeePopup from '../posTemplate/posEmployeePopup.vue'
 import posCashInOutColl from '../posTemplate/posCashInOutColl.vue'
-import posShortcutPanel from '../posTemplate/posShortcutPanel.vue'
-import posShortcutManager from '../posTemplate/posShortcutManager.vue'
 import posSearchMember from '../posTemplate/posSearchMember.vue'
 
 // Member interface for search member component
@@ -293,7 +317,7 @@ const leftPanelComponent = ref()
 // Product group component reference
 const productGroupComponent = ref()
 // Shortcut manager component reference
-const shortcutManagerRef = ref()
+// const shortcutManagerRef = ref()
 
 // Member popup state
 const showMemberInfoPopup = ref(false)
@@ -308,10 +332,10 @@ const employeePopupPosition = ref({ x: 0, y: 0 })
 const employeeIconRef = ref<HTMLElement>()
 
 // Cash In/Out Collection modal state
-const showCashInOutModal = ref(false)
+// const showCashInOutModal = ref(false)
 
 // Shortcut Panel modal state
-const showShortcutModal = ref(false)
+// const showShortcutModal = ref(false)
 
 // Shortcut screen state
 const selectedShortcutScreen = ref<string>('default')
@@ -396,23 +420,19 @@ function handleHomeClick() {
   loadFirstProductGroup()
 }
 
-function handleShortcutClick() {
-  showShortcutModal.value = true
-}
+// function closeShortcutModal() {
+//   showShortcutModal.value = false
+// }
 
-function closeShortcutModal() {
-  showShortcutModal.value = false
-}
-
-function handleShortcutScreenSelected(screenId: string): void {
-  // Use the shortcut manager to open the screen
-  if (shortcutManagerRef.value) {
-    shortcutManagerRef.value.openShortcutScreen(screenId)
-  }
-  selectedShortcutScreen.value = screenId
-  showShortcutModal.value = false
-  console.log('Shortcut screen selected:', screenId)
-}
+// function handleShortcutScreenSelected(screenId: string): void {
+//   // Use the shortcut manager to open the screen
+//   if (shortcutManagerRef.value) {
+//     shortcutManagerRef.value.openShortcutScreen(screenId)
+//   }
+//   selectedShortcutScreen.value = screenId
+//   showShortcutModal.value = false
+//   console.log('Shortcut screen selected:', screenId)
+// }
 
 function handleMemberSelected(member: Member): void {
   console.log('Member selected from search:', member)
@@ -557,19 +577,19 @@ function handleEmployeeEdit(employeeId: string | number) {
 }
 
 // Cash In/Out Collection modal methods
-function closeCashInOutModal() {
-  showCashInOutModal.value = false
-}
+// function closeCashInOutModal() {
+//   showCashInOutModal.value = false
+// }
 
-function handleDateSelected(date: Date, calendarType: string, formattedDate: string) {
-  console.log('Date selected:', date, calendarType, formattedDate)
-  // Handle date selection logic here
-}
+// function handleDateSelected(date: Date, calendarType: string, formattedDate: string) {
+//   console.log('Date selected:', date, calendarType, formattedDate)
+//   // Handle date selection logic here
+// }
 
-function handleCalendarTypeChanged(calendarType: string) {
-  console.log('Calendar type changed:', calendarType)
-  // Handle calendar type change logic here
-}
+// function handleCalendarTypeChanged(calendarType: string) {
+//   console.log('Calendar type changed:', calendarType)
+//   // Handle calendar type change logic here
+// }
 </script>
 
 <style scoped>
@@ -591,15 +611,18 @@ function handleCalendarTypeChanged(calendarType: string) {
 }
 .header-row {
   padding: 10px !important;
+  flex-shrink: 0;
 }
 .body-row {
   padding: 15px !important;
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
+  overflow: hidden;
 }
 .footer-row {
   padding: 10px !important;
+  flex-shrink: 0;
 }
 .body-col {
   border: 1px solid gray !important;
@@ -610,6 +633,7 @@ function handleCalendarTypeChanged(calendarType: string) {
   box-sizing: border-box;
   min-width: 0;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 /* Modal styles */
@@ -645,6 +669,7 @@ function handleCalendarTypeChanged(calendarType: string) {
   padding: 16px 20px;
   border-bottom: 1px solid #e9ecef;
   background: #f8f9fa;
+  flex-shrink: 0;
 }
 
 .modal-title {
@@ -703,6 +728,7 @@ function handleCalendarTypeChanged(calendarType: string) {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .calendar-section {

@@ -194,12 +194,15 @@ function handleClear(): void {
   padding: 20px;
   max-width: 100%;
   min-height: 600px;
-  height: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Radio Buttons Section */
 .radio-section {
   margin-bottom: 24px;
+  flex-shrink: 0;
 }
 
 .radio-group {
@@ -251,6 +254,7 @@ function handleClear(): void {
 /* Input Section */
 .input-section {
   margin-bottom: 24px;
+  flex-shrink: 0;
 }
 
 .form-row {
@@ -312,6 +316,10 @@ function handleClear(): void {
 /* Currency Section */
 .currency-section {
   margin-bottom: 24px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .section-title {
@@ -409,6 +417,9 @@ function handleClear(): void {
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
 }
 
 .btn-action {
