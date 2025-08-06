@@ -90,10 +90,7 @@
                     min="0"
                     step="0.01"
                   />
-                  <select v-model="currency.type" class="type-select">
-                    <option value="D">D</option>
-                    <option value="C">C</option>
-                  </select>
+                  <button class="type-button">D</button>
                 </div>
               </td>
             </tr>
@@ -397,18 +394,28 @@ function handleClear(): void {
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.type-select {
+.type-button {
   width: 50px;
   padding: 6px 4px;
   border: 1px solid #ced4da;
   border-radius: 4px;
   font-size: 14px;
   text-align: center;
+  background-color: #f8f9fa;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.type-select:focus {
+.type-button:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.type-button:focus {
   border-color: #007bff;
   outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 /* Action Buttons */
@@ -474,7 +481,7 @@ function handleClear(): void {
     gap: 4px;
   }
 
-  .type-select {
+  .type-button {
     width: 100%;
   }
 }

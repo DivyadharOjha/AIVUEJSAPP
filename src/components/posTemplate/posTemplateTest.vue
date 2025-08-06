@@ -1,18 +1,5 @@
 <template>
   <div class="cash-inout-container">
-    <!-- New implementation using posCalendarControl -->
-    <div class="calendar-control-section">
-      <!-- Date Selection -->
-      <div class="form-group mb-3">
-        <label class="form-label">Select Date &nbsp;</label>
-        <posCalendarControl
-          v-model="selectedDate"
-          placeholder="Select date..."
-          @date-selected="handleCalendarDateSelected"
-        />
-      </div>
-    </div>
-
     <!-- Times New Roman Test Section -->
     <div class="font-test-section">
       <h3 class="section-title">Times New Roman TTF Font Testing</h3>
@@ -22,7 +9,6 @@
 </template>
 
 <script setup lang="ts">
-import posCalendarControl from './posCalendarControl.vue'
 import TimesNewRomanTest from '../posComponent/TimesNewRomanTest.vue'
 import { ref } from 'vue'
 
@@ -55,10 +41,10 @@ const emit = defineEmits<{
   'transaction-cancelled': []
 }>()
 
-// Reactive data for new implementation
+// Reactive data
 const selectedDate = ref<Date | null>(props.initialDate)
 
-// New event handlers
+// Event handlers
 function handleCalendarDateSelected(date: Date): void {
   selectedDate.value = date
   console.log('Date selected for cash in/out:', date)
@@ -86,10 +72,6 @@ function formatDate(date: Date): string {
   max-width: 100%;
   min-height: 800px;
   height: auto;
-}
-
-.calendar-control-section {
-  width: 100%;
 }
 
 .font-test-section {
