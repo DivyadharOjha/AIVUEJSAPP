@@ -36,7 +36,14 @@
               type="number"
               v-model="item.dynamicFields[field.FieldId]"
               class="dynamic-input"
-              @input="updateItemDynamicField(item, field.FieldId)"
+              @input="
+                (event: Event) => {
+                  const target = event.target as HTMLInputElement
+                  if (target) {
+                    handleDynamicFieldChange(item, field.FieldId, parseFloat(target.value))
+                  }
+                }
+              "
               min="0"
               step="0.01"
             />
@@ -93,30 +100,6 @@ const emit = defineEmits(['item-updated', 'item-removed', 'totals-updated'])
 
 // Reactive data
 const tableItems = ref<TableItem[]>(props.items)
-
-// Array of dark colors for header and footer (unused - keeping for future use)
-// const darkColors = [
-//   'rgb(33, 33, 33)', // Dark Gray
-//   'rgb(55, 71, 79)', // Blue Gray
-//   'rgb(69, 39, 160)', // Deep Purple
-//   'rgb(49, 27, 146)', // Indigo
-//   'rgb(27, 94, 32)', // Dark Green
-//   'rgb(183, 28, 28)', // Dark Red
-//   'rgb(230, 81, 0)', // Deep Orange
-//   'rgb(245, 124, 0)', // Orange
-//   'rgb(194, 24, 91)', // Pink
-//   'rgb(156, 39, 176)', // Purple
-//   'rgb(0, 96, 100)', // Teal
-//   'rgb(0, 87, 255)', // Blue
-//   'rgb(0, 150, 136)', // Cyan
-//   'rgb(76, 175, 80)', // Green
-//   'rgb(255, 152, 0)', // Amber
-//   'rgb(255, 87, 34)', // Deep Orange
-//   'rgb(121, 85, 72)', // Brown
-//   'rgb(96, 125, 139)', // Blue Gray
-//   'rgb(158, 158, 158)', // Gray
-//   'rgb(244, 67, 54)', // Red
-// ]
 
 // Stable colors that don't change on every render
 const headerColor = ref('')
@@ -199,36 +182,77 @@ function decreaseQuantity(item: TableItem) {
   })
 }
 
-// function updateItemDiscount(item: TableItem) {
-//   if (item.discount < 0) {
-//     item.discount = 0
-//   }
-//   const maxDiscount = item.rate * item.quantity
-//   if (item.discount > maxDiscount) {
-//     item.discount = maxDiscount
-//   }
-//   emit('item-updated', item)
-//   emit('totals-updated', {
-//     gross: totalGross.value,
-//     discount: totalDiscount.value,
-//     nett: totalNett.value,
-//     tax: totalTax.value,
-//     grandTotal: grandTotal.value,
-//   })
-// }
-
-function updateItemDynamicField(item: TableItem, fieldId: number) {
-  if (item.dynamicFields[fieldId] < 0) {
-    item.dynamicFields[fieldId] = 0
+// Common function for handling DynamicLineWiseField value changes
+function handleDynamicFieldChange(item: TableItem, fieldId: number, newValue: number) {
+  // Validate the new value
+  if (newValue < 0) {
+    newValue = 0
   }
-  emit('item-updated', item)
+
+  // Get the field details from store
+  const field = mainScreenStore.DynamicLineWiseField.find((f) => f.FieldId === fieldId)
+  if (!field) {
+    console.warn(`Field with ID ${fieldId} not found in DynamicLineWiseField`)
+    return
+  }
+
+  // Calculate maximum allowed value based on field type
+  const gross = item.rate * item.quantity
+  let maxValue = gross
+
+  // Special validation for percentage fields
+  if (
+    field.FieldName.toLowerCase().includes('%') ||
+    field.FieldName.toLowerCase().includes('percent')
+  ) {
+    maxValue = 100 // Maximum 100% for percentage fields
+  }
+
+  // Apply maximum value constraint
+  if (newValue > maxValue) {
+    newValue = maxValue
+  }
+
+  // Update the item's dynamic field value
+  item.dynamicFields[fieldId] = newValue
+
+  // Update the field value in store (if needed for global tracking)
+  field.FieldValue = newValue
+
+  // Recalculate item totals
+  const updatedNett = calculateNett(item)
+
+  // Emit item update event
+  emit('item-updated', {
+    ...item,
+    nett: updatedNett,
+  })
+
+  // Emit totals update event with recalculated values
   emit('totals-updated', {
     gross: totalGross.value,
     discount: totalDiscount.value,
     nett: totalNett.value,
     tax: totalTax.value,
     grandTotal: grandTotal.value,
+    dynamicFields: getDynamicFieldsSummary(),
   })
+
+  // Log the change for debugging
+  console.log(
+    `Dynamic field "${field.FieldName}" changed to ${newValue} for item ${item.productName}`,
+  )
+}
+
+// Helper function to get summary of all dynamic fields
+function getDynamicFieldsSummary() {
+  const summary: { [key: string]: number } = {}
+
+  mainScreenStore.DynamicLineWiseField.forEach((field) => {
+    summary[field.FieldName] = getDynamicFieldTotal(field.FieldId)
+  })
+
+  return summary
 }
 
 function calculateNett(item: TableItem) {
