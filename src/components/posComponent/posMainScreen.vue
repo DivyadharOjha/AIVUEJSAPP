@@ -298,6 +298,8 @@ import posMemberPopup from '../posTemplate/posMemberPopup.vue'
 import posEmployeePopup from '../posTemplate/posEmployeePopup.vue'
 import posCashInOutColl from '../posTemplate/posCashInOutColl.vue'
 import posSearchMember from '../posTemplate/posSearchMember.vue'
+import { useMainScreen } from '../../stores/posMainScreenStore'
+import { LineWiseField } from '../posDataStruct/posLinewiseFields'
 
 // Member interface for search member component
 interface Member {
@@ -392,8 +394,27 @@ async function loadFirstProductGroup() {
   console.log('Auto-loaded Electronics with', selectedProducts.value.length, 'products')
 }
 
+// Initialize dynamic linewise fields in store
+function initializeDynamicLineWiseFields() {
+  const mainScreenStore = useMainScreen()
+
+  const dynamicFields: LineWiseField[] = [
+    new LineWiseField(1, 1, 'Discount Amount', 1, 0),
+    new LineWiseField(2, 2, 'Discount %', 2, 0),
+    new LineWiseField(3, 3, 'GST', 3, 0),
+    new LineWiseField(4, 4, 'SGST', 4, 0),
+    new LineWiseField(5, 5, 'CGST', 5, 0),
+  ]
+
+  mainScreenStore.DynamicLineWiseField = dynamicFields
+  console.log('Dynamic linewise fields initialized:', dynamicFields)
+}
+
 // Auto-load first product group when component mounts
 onMounted(async () => {
+  // Initialize dynamic linewise fields
+  initializeDynamicLineWiseFields()
+
   // Ensure initial state shows product section
   selectedFooterBtn.value = ''
   selectedShortcutScreen.value = ''

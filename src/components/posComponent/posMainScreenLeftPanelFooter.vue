@@ -26,29 +26,24 @@
       </div>
     </div>
 
-    <!-- Row 2 -->
-    <div class="row mb-2 h-100">
+    <!-- Dynamic Fields Row -->
+    <div v-for="(field, index) in dynamicFields" :key="field.FieldId" class="row mb-2 h-100">
       <div class="col-3 h-100">
-        <label class="form-label">Discount Amount</label>
+        <label class="form-label">{{ field.FieldName }}</label>
       </div>
       <div class="col-3 h-100">
         <input
           type="text"
           class="form-control form-control-sm h-100"
-          v-model="discountAmount"
+          :value="getDynamicFieldValue(field.FieldId)"
           readonly
         />
       </div>
       <div class="col-3 h-100">
-        <label class="form-label">Schemes Amount</label>
+        <label class="form-label"></label>
       </div>
       <div class="col-3 h-100">
-        <input
-          type="text"
-          class="form-control form-control-sm h-100"
-          v-model="schemesAmount"
-          readonly
-        />
+        <input type="text" class="form-control form-control-sm h-100" readonly />
       </div>
     </div>
 
@@ -76,7 +71,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits, defineProps } from 'vue'
+import { ref, defineEmits, defineProps, computed } from 'vue'
+import { useMainScreen } from '../../stores/posMainScreenStore'
 
 // Props
 interface Props {
@@ -103,6 +99,12 @@ const emit = defineEmits([
   'update:schemesAmount',
   'update:taxableAmount',
 ])
+
+// Store for dynamic fields
+const mainScreenStore = useMainScreen()
+
+// Computed property for dynamic fields
+const dynamicFields = computed(() => mainScreenStore.DynamicLineWiseField)
 
 // Reactive data
 const totalProductCount = ref(props.totalProductCount)
@@ -148,6 +150,13 @@ watch(
     taxableAmount.value = newValue
   },
 )
+
+// Function to get dynamic field value (placeholder - would need table data)
+function getDynamicFieldValue(fieldId: number): number {
+  // This would need to be connected to the table data
+  // For now, returning 0 as placeholder
+  return 0
+}
 
 // Expose methods for parent component
 defineExpose({

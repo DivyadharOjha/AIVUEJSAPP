@@ -1,5 +1,5 @@
 <template>
-  <div class="pos-table-container">
+  <div class="table-wrapper">
     <table class="table">
       <thead :style="{ background: headerColor }">
         <tr>
@@ -9,11 +9,13 @@
           <th class="col-quantity">Quantity</th>
           <th class="col-rate">Rate</th>
           <th class="col-gross">Gross</th>
-          <th class="col-discount">Discount</th>
+          <!-- Dynamic Fields -->
+          <th v-for="field in dynamicFields" :key="field.FieldId" class="col-dynamic">
+            {{ field.FieldName }}
+          </th>
           <th class="col-nett">Nett</th>
         </tr>
       </thead>
-
       <tbody>
         <tr v-for="(item, index) in tableItems" :key="item.id" class="table-row">
           <td class="col-serial">{{ index + 1 }}</td>
@@ -28,20 +30,20 @@
           </td>
           <td class="col-rate">₹{{ item.rate.toFixed(2) }}</td>
           <td class="col-gross">₹{{ (item.rate * item.quantity).toFixed(2) }}</td>
-          <td class="col-discount">
+          <!-- Dynamic Field Inputs -->
+          <td v-for="field in dynamicFields" :key="field.FieldId" class="col-dynamic">
             <input
               type="number"
-              v-model="item.discount"
-              class="discount-input"
-              @input="updateItemDiscount(item)"
+              v-model="item.dynamicFields[field.FieldId]"
+              class="dynamic-input"
+              @input="updateItemDynamicField(item, field.FieldId)"
               min="0"
               step="0.01"
             />
           </td>
-          <td class="col-nett">₹{{ (item.rate * item.quantity - item.discount).toFixed(2) }}</td>
+          <td class="col-nett">₹{{ calculateNett(item).toFixed(2) }}</td>
         </tr>
       </tbody>
-
       <tfoot :style="{ background: footerColor }">
         <tr class="summary-row">
           <td class="col-serial"></td>
@@ -50,7 +52,10 @@
           <td class="col-quantity">Total: {{ totalQuantity }}</td>
           <td class="col-rate"></td>
           <td class="col-gross">₹{{ totalGross.toFixed(2) }}</td>
-          <td class="col-discount">₹{{ totalDiscount.toFixed(2) }}</td>
+          <!-- Dynamic Field Totals -->
+          <td v-for="field in dynamicFields" :key="field.FieldId" class="col-dynamic">
+            ₹{{ getDynamicFieldTotal(field.FieldId).toFixed(2) }}
+          </td>
           <td class="col-nett">₹{{ totalNett.toFixed(2) }}</td>
         </tr>
       </tfoot>
@@ -60,6 +65,7 @@
 
 <script setup lang="ts">
 import { ref, computed, defineEmits, onMounted } from 'vue'
+import { useMainScreen } from '../../stores/posMainScreenStore'
 
 // Props
 interface TableItem {
@@ -69,6 +75,7 @@ interface TableItem {
   quantity: number
   rate: number
   discount: number
+  dynamicFields: { [key: number]: number }
 }
 
 interface Props {
@@ -87,29 +94,29 @@ const emit = defineEmits(['item-updated', 'item-removed', 'totals-updated'])
 // Reactive data
 const tableItems = ref<TableItem[]>(props.items)
 
-// Array of dark colors for header and footer
-const darkColors = [
-  'rgb(33, 33, 33)', // Dark Gray
-  'rgb(55, 71, 79)', // Blue Gray
-  'rgb(69, 39, 160)', // Deep Purple
-  'rgb(49, 27, 146)', // Indigo
-  'rgb(27, 94, 32)', // Dark Green
-  'rgb(183, 28, 28)', // Dark Red
-  'rgb(230, 81, 0)', // Deep Orange
-  'rgb(245, 124, 0)', // Orange
-  'rgb(194, 24, 91)', // Pink
-  'rgb(156, 39, 176)', // Purple
-  'rgb(0, 96, 100)', // Teal
-  'rgb(0, 87, 255)', // Blue
-  'rgb(0, 150, 136)', // Cyan
-  'rgb(76, 175, 80)', // Green
-  'rgb(255, 152, 0)', // Amber
-  'rgb(255, 87, 34)', // Deep Orange
-  'rgb(121, 85, 72)', // Brown
-  'rgb(96, 125, 139)', // Blue Gray
-  'rgb(158, 158, 158)', // Gray
-  'rgb(244, 67, 54)', // Red
-]
+// Array of dark colors for header and footer (unused - keeping for future use)
+// const darkColors = [
+//   'rgb(33, 33, 33)', // Dark Gray
+//   'rgb(55, 71, 79)', // Blue Gray
+//   'rgb(69, 39, 160)', // Deep Purple
+//   'rgb(49, 27, 146)', // Indigo
+//   'rgb(27, 94, 32)', // Dark Green
+//   'rgb(183, 28, 28)', // Dark Red
+//   'rgb(230, 81, 0)', // Deep Orange
+//   'rgb(245, 124, 0)', // Orange
+//   'rgb(194, 24, 91)', // Pink
+//   'rgb(156, 39, 176)', // Purple
+//   'rgb(0, 96, 100)', // Teal
+//   'rgb(0, 87, 255)', // Blue
+//   'rgb(0, 150, 136)', // Cyan
+//   'rgb(76, 175, 80)', // Green
+//   'rgb(255, 152, 0)', // Amber
+//   'rgb(255, 87, 34)', // Deep Orange
+//   'rgb(121, 85, 72)', // Brown
+//   'rgb(96, 125, 139)', // Blue Gray
+//   'rgb(158, 158, 158)', // Gray
+//   'rgb(244, 67, 54)', // Red
+// ]
 
 // Stable colors that don't change on every render
 const headerColor = ref('')
@@ -152,6 +159,12 @@ const totalQuantity = computed(() => {
   }, 0)
 })
 
+// Store for dynamic fields
+const mainScreenStore = useMainScreen()
+
+// Computed property for dynamic fields
+const dynamicFields = computed(() => mainScreenStore.DynamicLineWiseField)
+
 // Methods
 function increaseQuantity(item: TableItem) {
   item.quantity++
@@ -186,13 +199,27 @@ function decreaseQuantity(item: TableItem) {
   })
 }
 
-function updateItemDiscount(item: TableItem) {
-  if (item.discount < 0) {
-    item.discount = 0
-  }
-  const maxDiscount = item.rate * item.quantity
-  if (item.discount > maxDiscount) {
-    item.discount = maxDiscount
+// function updateItemDiscount(item: TableItem) {
+//   if (item.discount < 0) {
+//     item.discount = 0
+//   }
+//   const maxDiscount = item.rate * item.quantity
+//   if (item.discount > maxDiscount) {
+//     item.discount = maxDiscount
+//   }
+//   emit('item-updated', item)
+//   emit('totals-updated', {
+//     gross: totalGross.value,
+//     discount: totalDiscount.value,
+//     nett: totalNett.value,
+//     tax: totalTax.value,
+//     grandTotal: grandTotal.value,
+//   })
+// }
+
+function updateItemDynamicField(item: TableItem, fieldId: number) {
+  if (item.dynamicFields[fieldId] < 0) {
+    item.dynamicFields[fieldId] = 0
   }
   emit('item-updated', item)
   emit('totals-updated', {
@@ -202,6 +229,21 @@ function updateItemDiscount(item: TableItem) {
     tax: totalTax.value,
     grandTotal: grandTotal.value,
   })
+}
+
+function calculateNett(item: TableItem) {
+  const gross = item.rate * item.quantity
+  const totalDynamicFields = Object.values(item.dynamicFields).reduce(
+    (sum, value) => sum + value,
+    0,
+  )
+  return gross - totalDynamicFields
+}
+
+function getDynamicFieldTotal(fieldId: number) {
+  return tableItems.value.reduce((total, item) => {
+    return total + (item.dynamicFields[fieldId] || 0)
+  }, 0)
 }
 
 // Add item to table (to be called from parent)
@@ -216,6 +258,12 @@ function addItem(product: {
   if (existingItem) {
     existingItem.quantity++
   } else {
+    // Initialize dynamic fields for new item
+    const dynamicFields: { [key: number]: number } = {}
+    mainScreenStore.DynamicLineWiseField.forEach((field) => {
+      dynamicFields[field.FieldId] = 0
+    })
+
     tableItems.value.push({
       id: product.ProductId,
       productName: product.ProductName,
@@ -223,6 +271,7 @@ function addItem(product: {
       quantity: 1,
       rate: product.ProductRate,
       discount: 0,
+      dynamicFields: dynamicFields,
     })
   }
 
@@ -263,56 +312,62 @@ defineExpose({
 </script>
 
 <style scoped>
-.pos-table-container {
+.table-wrapper {
   width: 100%;
   height: 100%;
   background: white;
   border: 1px solid #e9ecef;
   border-radius: 6px;
-  overflow: auto;
+  overflow-x: auto; /* Only horizontal scroll on wrapper */
+  overflow-y: hidden; /* No vertical scroll on wrapper */
   display: flex;
   flex-direction: column;
-  min-height: 0;
 }
 
 .table {
-  width: 100%;
   border-collapse: collapse;
   font-size: 13px;
   table-layout: fixed;
+  min-width: 1200px;
+  width: max-content;
+  background: white;
   height: 100%;
-  min-width: 800px;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  flex: 1;
+  margin: 0;
 }
 
 .table thead {
   border-bottom: 2px solid #dee2e6;
   height: 40px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
   flex-shrink: 0;
 }
 
 .table tbody {
   background: white;
-  overflow-y: auto;
-  overflow-x: hidden;
   flex: 1;
+  overflow-y: auto; /* Vertical scroll on tbody */
+  overflow-x: hidden; /* No horizontal scroll on tbody */
   min-height: 0;
-  height: 100%;
+  max-height: calc(100% - 80px); /* Account for thead and tfoot heights */
 }
 
 .table tfoot {
   border-top: 2px solid #dee2e6;
   height: 40px;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
   flex-shrink: 0;
 }
 
 /* Common styles for all table cells */
 .table th,
 .table td {
-  padding: 8px 5px;
+  padding: 6px 4px;
   border-bottom: 1px solid #f1f3f4;
   vertical-align: middle;
   box-sizing: border-box;
@@ -321,6 +376,7 @@ defineExpose({
   white-space: nowrap;
   height: 40px;
   text-align: center;
+  margin: 0;
 }
 
 /* Header specific styles */
@@ -348,49 +404,46 @@ defineExpose({
 .col-serial {
   width: 80px !important;
   min-width: 80px !important;
-  max-width: 80px !important;
 }
 
 .col-product {
   width: 200px !important;
   min-width: 200px !important;
-  max-width: 200px !important;
 }
 
 .col-code {
   width: 120px !important;
   min-width: 120px !important;
-  max-width: 120px !important;
 }
 
 .col-quantity {
   width: 100px !important;
   min-width: 100px !important;
-  max-width: 100px !important;
 }
 
 .col-rate {
   width: 100px !important;
   min-width: 100px !important;
-  max-width: 100px !important;
 }
 
 .col-gross {
   width: 100px !important;
   min-width: 100px !important;
-  max-width: 100px !important;
 }
 
 .col-discount {
   width: 100px !important;
   min-width: 100px !important;
-  max-width: 100px !important;
+}
+
+.col-dynamic {
+  width: 100px !important;
+  min-width: 100px !important;
 }
 
 .col-nett {
   width: 100px !important;
   min-width: 100px !important;
-  max-width: 100px !important;
   font-weight: 600;
 }
 
@@ -399,12 +452,12 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .qty-btn {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border: 1px solid #dee2e6;
   background: white;
   border-radius: 4px;
@@ -412,7 +465,7 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   transition: all 0.2s ease;
 }
@@ -431,11 +484,11 @@ defineExpose({
 
 /* Discount input */
 .discount-input {
-  width: 60px;
-  padding: 4px 6px;
+  width: 50px;
+  padding: 2px 4px;
   border: 1px solid #dee2e6;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 11px;
   text-align: center;
 }
 
@@ -445,55 +498,71 @@ defineExpose({
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-/* Custom scrollbar for container */
-.pos-table-container::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.pos-table-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
+/* Dynamic field input */
+.dynamic-input {
+  width: 50px;
+  padding: 2px 4px;
+  border: 1px solid #dee2e6;
   border-radius: 4px;
+  font-size: 11px;
+  text-align: center;
 }
 
-.pos-table-container::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+.dynamic-input:focus {
+  border-color: #007bff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.pos-table-container::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+/* Custom scrollbar for table wrapper (horizontal) */
+.table-wrapper::-webkit-scrollbar {
+  height: 12px;
 }
 
-/* Firefox scrollbar */
-.pos-table-container {
-  scrollbar-width: thin;
-  scrollbar-color: #c1c1c1 #f1f1f1;
+.table-wrapper::-webkit-scrollbar-track {
+  background: #e9ecef;
+  border-radius: 6px;
 }
 
-/* Custom scrollbar for tbody */
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #6c757d;
+  border-radius: 6px;
+  border: 2px solid #e9ecef;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #495057;
+}
+
+/* Custom scrollbar for table body (vertical) */
 .table tbody::-webkit-scrollbar {
-  width: 8px;
+  width: 12px;
 }
 
 .table tbody::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+  background: #e9ecef;
+  border-radius: 6px;
 }
 
 .table tbody::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+  background: #6c757d;
+  border-radius: 6px;
+  border: 2px solid #e9ecef;
 }
 
 .table tbody::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #495057;
 }
 
 /* Firefox scrollbar */
+.table-wrapper {
+  scrollbar-width: auto;
+  scrollbar-color: #6c757d #e9ecef;
+}
+
 .table tbody {
-  scrollbar-width: thin;
-  scrollbar-color: #c1c1c1 #f1f1f1;
+  scrollbar-width: auto;
+  scrollbar-color: #6c757d #e9ecef;
 }
 
 /* Responsive design */
@@ -510,7 +579,7 @@ defineExpose({
 }
 
 @media (max-width: 768px) {
-  .pos-table-container {
+  .table-wrapper {
     border-radius: 0;
   }
 
