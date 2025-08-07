@@ -394,8 +394,6 @@ async function loadFirstProductGroup() {
 
 // Auto-load first product group when component mounts
 onMounted(async () => {
-  console.log('POS Main Screen mounted')
-
   // Ensure initial state shows product section
   selectedFooterBtn.value = ''
   selectedShortcutScreen.value = ''

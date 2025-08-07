@@ -10,15 +10,8 @@
 
 <script setup lang="ts">
 import TimesNewRomanTest from '../posComponent/TimesNewRomanTest.vue'
-import { ref } from 'vue'
 
 // Interfaces
-interface Props {
-  initialDate?: Date
-  initialCalendarType?: 'gregorian' | 'hijri' | 'shamshi' | 'bikram'
-  showEvents?: boolean
-}
-
 interface Transaction {
   date: Date
   amount: number
@@ -27,39 +20,13 @@ interface Transaction {
   timestamp: Date
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  initialDate: () => new Date(),
-  initialCalendarType: 'gregorian',
-  showEvents: true,
-})
-
 // Emits
-const emit = defineEmits<{
+defineEmits<{
   'date-selected': [date: Date, calendarType: string, formattedDate: string]
   'calendar-type-changed': [calendarType: string]
   'transaction-saved': [transaction: Transaction]
   'transaction-cancelled': []
 }>()
-
-// Reactive data
-const selectedDate = ref<Date | null>(props.initialDate)
-
-// Event handlers
-function handleCalendarDateSelected(date: Date): void {
-  selectedDate.value = date
-  console.log('Date selected for cash in/out:', date)
-
-  // Emit the date selection event for backward compatibility
-  emit('date-selected', date, 'gregorian', formatDate(date))
-}
-
-// Utility function
-function formatDate(date: Date): string {
-  const day = date.getDate().toString().padStart(2, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const year = date.getFullYear()
-  return `${day}/${month}/${year}`
-}
 </script>
 
 <style scoped>
