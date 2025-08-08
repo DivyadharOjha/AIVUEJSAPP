@@ -205,6 +205,21 @@
       </div>
     </div>
 
+    <!-- Bill Settlement Modal -->
+    <div v-if="showBillSettlementModal" class="modal-overlay" @click="closeBillSettlementModal">
+      <div class="modal-content bill-settlement-modal" @click.stop>
+        <div class="modal-header">
+          <h5 class="modal-title">Bill Settlement</h5>
+          <button type="button" class="btn-close" @click="closeBillSettlementModal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <posBillSettlement style="height: 100%; width: 100%; overflow: hidden" />
+        </div>
+      </div>
+    </div>
+
     <!-- Footer Row -->
     <div class="row flex-shrink-0 footer-row" style="height: 60px">
       <div class="col">
@@ -231,54 +246,11 @@
       @select-employee="handleEmployeeSelect"
       @edit-employee="handleEmployeeEdit"
     />
-
-    <!-- Cash In/Out Collection Modal -->
-    <!--
-    <div v-if="showCashInOutModal" class="modal-overlay" @click="closeCashInOutModal">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h5 class="modal-title">Cash In/Out Collection</h5>
-          <button type="button" class="btn-close" @click="closeCashInOutModal">
-            <span>&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <posCashInOutColl
-            :initial-date="new Date()"
-            :initial-calendar-type="'gregorian'"
-            :show-events="true"
-            @date-selected="handleDateSelected"
-            @calendar-type-changed="handleCalendarTypeChanged"
-          />
-        </div>
-      </div>
-    </div>
-    -->
-
-    <!-- Shortcut Panel Modal -->
-    <!--
-    <div v-if="showShortcutModal" class="modal-overlay" @click="closeShortcutModal">
-      <div class="modal-content shortcut-modal" @click.stop>
-        <div class="modal-header">
-          <h5 class="modal-title">Shortcut Panel</h5>
-          <button type="button" class="btn-close" @click="closeShortcutModal">
-            <span>&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <posShortcutPanel @screen-selected="handleShortcutScreenSelected" />
-        </div>
-      </div>
-    </div>
-    -->
-
-    <!-- Shortcut Manager (invisible utility component) -->
-    <!-- <posShortcutManager ref="shortcutManagerRef" /> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, computed } from 'vue'
+import { ref, onMounted, nextTick, computed, watch } from 'vue'
 import posMainScreenFooter from './posMainScreenFooter.vue'
 import posMainScreenFooterShortcut from './posMainScreenFooterShortcut.vue'
 import posMainScreenProductGroup from './posMainScreenProductGroup.vue'
@@ -298,6 +270,7 @@ import posMemberPopup from '../posTemplate/posMemberPopup.vue'
 import posEmployeePopup from '../posTemplate/posEmployeePopup.vue'
 import posCashInOutColl from '../posTemplate/posCashInOutColl.vue'
 import posSearchMember from '../posTemplate/posSearchMember.vue'
+import posBillSettlement from '../posTemplate/posBillSettlement.vue'
 import { useMainScreen } from '../../stores/posMainScreenStore'
 import { LineWiseField } from '../posDataStruct/posLinewiseFields'
 
@@ -335,6 +308,21 @@ const employeeIconRef = ref<HTMLElement>()
 
 // Cash In/Out Collection modal state
 // const showCashInOutModal = ref(false)
+
+// Bill Settlement modal state
+const showBillSettlementModal = ref<boolean>(false)
+
+// Watch for modal state changes
+watch(showBillSettlementModal, (newValue) => {
+  console.log('Bill Settlement modal state changed to:', newValue)
+})
+
+// Close Bill Settlement modal function
+const closeBillSettlementModal = () => {
+  console.log('Bill Settlement modal closed')
+  showBillSettlementModal.value = false
+  console.log('Modal state after close:', showBillSettlementModal.value)
+}
 
 // Shortcut Panel modal state
 // const showShortcutModal = ref(false)
@@ -469,6 +457,16 @@ function handleSearchMemberClose(): void {
 // Handle footer shortcut click
 function handleFooterShortcutClick(shortcutId: string): void {
   console.log(`Footer shortcut clicked: ${shortcutId}`)
+
+  // Handle Bill Settlement modal (ID 22)
+  if (shortcutId === '22') {
+    console.log('Opening Bill Settlement modal...')
+    showBillSettlementModal.value = true
+    console.log('Modal state set to:', showBillSettlementModal.value)
+    selectedFooterBtn.value = ''
+    return
+  }
+
   selectedShortcutScreen.value = shortcutId
   // Hide the footer shortcut component when a shortcut is selected
   selectedFooterBtn.value = ''
@@ -823,5 +821,74 @@ function handleEmployeeEdit(employeeId: string | number) {
 
 .feature-list li:last-child {
   border-bottom: none;
+}
+
+/* Bill Settlement Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.bill-settlement-modal {
+  width: 95%;
+  max-width: 1400px;
+  height: 90vh;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e9ecef;
+  background: #f8f9fa;
+  border-radius: 8px 8px 0 0;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.btn-close:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.modal-body {
+  padding: 0;
+  flex: 1;
+  overflow: hidden;
 }
 </style>

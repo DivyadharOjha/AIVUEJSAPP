@@ -9,7 +9,7 @@
         <input
           type="text"
           class="form-control form-control-sm h-100"
-          v-model="totalProductCount"
+          :value="totalProductCount"
           readonly
         />
       </div>
@@ -20,14 +20,14 @@
         <input
           type="text"
           class="form-control form-control-sm h-100"
-          v-model="totalProductQuantity"
+          :value="totalProductQuantity"
           readonly
         />
       </div>
     </div>
 
     <!-- Dynamic Fields Row -->
-    <div v-for="(field, index) in dynamicFields" :key="field.FieldId" class="row mb-2 h-100">
+    <div v-for="field in dynamicFields" :key="field.FieldId" class="row mb-2 h-100">
       <div class="col-3 h-100">
         <label class="form-label">{{ field.FieldName }}</label>
       </div>
@@ -56,7 +56,7 @@
         <input
           type="text"
           class="form-control form-control-sm h-100"
-          v-model="taxableAmount"
+          :value="taxableAmount"
           readonly
         />
       </div>
@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits, defineProps, computed } from 'vue'
+import { defineProps, computed, withDefaults } from 'vue'
 import { useMainScreen } from '../../stores/posMainScreenStore'
 
 // Props
@@ -91,14 +91,7 @@ const props = withDefaults(defineProps<Props>(), {
   taxableAmount: 0,
 })
 
-// Emits
-const emit = defineEmits([
-  'update:totalProductCount',
-  'update:totalProductQuantity',
-  'update:discountAmount',
-  'update:schemesAmount',
-  'update:taxableAmount',
-])
+// No emits needed since we're using props only
 
 // Store for dynamic fields
 const mainScreenStore = useMainScreen()
@@ -106,80 +99,26 @@ const mainScreenStore = useMainScreen()
 // Computed property for dynamic fields
 const dynamicFields = computed(() => mainScreenStore.DynamicLineWiseField)
 
-// Reactive data
-const totalProductCount = ref(props.totalProductCount)
-const totalProductQuantity = ref(props.totalProductQuantity)
-const discountAmount = ref(props.discountAmount)
-const schemesAmount = ref(props.schemesAmount)
-const taxableAmount = ref(props.taxableAmount)
-
-// Watch for prop changes
-import { watch } from 'vue'
-
-watch(
-  () => props.totalProductCount,
-  (newValue) => {
-    totalProductCount.value = newValue
-  },
-)
-
-watch(
-  () => props.totalProductQuantity,
-  (newValue) => {
-    totalProductQuantity.value = newValue
-  },
-)
-
-watch(
-  () => props.discountAmount,
-  (newValue) => {
-    discountAmount.value = newValue
-  },
-)
-
-watch(
-  () => props.schemesAmount,
-  (newValue) => {
-    schemesAmount.value = newValue
-  },
-)
-
-watch(
-  () => props.taxableAmount,
-  (newValue) => {
-    taxableAmount.value = newValue
-  },
-)
+// Computed properties for template access
+const totalProductCount = computed(() => props.totalProductCount)
+const totalProductQuantity = computed(() => props.totalProductQuantity)
+const taxableAmount = computed(() => props.taxableAmount)
 
 // Function to get dynamic field value (placeholder - would need table data)
 function getDynamicFieldValue(fieldId: number): number {
   // This would need to be connected to the table data
   // For now, returning 0 as placeholder
+  console.log(fieldId)
   return 0
 }
 
-// Expose methods for parent component
+// Expose computed properties for external access if needed
 defineExpose({
-  updateTotalProductCount: (value: number) => {
-    totalProductCount.value = value
-    emit('update:totalProductCount', value)
-  },
-  updateTotalProductQuantity: (value: number) => {
-    totalProductQuantity.value = value
-    emit('update:totalProductQuantity', value)
-  },
-  updateDiscountAmount: (value: number) => {
-    discountAmount.value = value
-    emit('update:discountAmount', value)
-  },
-  updateSchemesAmount: (value: number) => {
-    schemesAmount.value = value
-    emit('update:schemesAmount', value)
-  },
-  updateTaxableAmount: (value: number) => {
-    taxableAmount.value = value
-    emit('update:taxableAmount', value)
-  },
+  totalProductCount,
+  totalProductQuantity,
+  taxableAmount,
+  dynamicFields,
+  getDynamicFieldValue,
 })
 </script>
 
