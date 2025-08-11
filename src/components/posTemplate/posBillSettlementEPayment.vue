@@ -8,7 +8,7 @@
           </div>
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="amount" class="form-label">Amount Due</label>
                   <input
@@ -33,6 +33,8 @@
                     <option value="imps">IMPS</option>
                   </select>
                 </div>
+              </div>
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="accountNumber" class="form-label">Account Number</label>
                   <input
@@ -54,7 +56,7 @@
                   />
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="transactionId" class="form-label">Transaction ID</label>
                   <input
@@ -75,15 +77,6 @@
                     v-model="referenceNumber"
                     placeholder="Reference Number"
                   />
-                </div>
-                <div class="mb-3">
-                  <label for="paymentStatus" class="form-label">Payment Status</label>
-                  <select class="form-control" id="paymentStatus" v-model="paymentStatus">
-                    <option value="pending">Pending</option>
-                    <option value="processing">Processing</option>
-                    <option value="completed">Completed</option>
-                    <option value="failed">Failed</option>
-                  </select>
                 </div>
               </div>
             </div>
@@ -107,9 +100,10 @@
                   <button type="button" class="btn btn-secondary" @click="resetForm">Reset</button>
                   <button
                     type="button"
-                    class="btn btn-success btn-lg"
+                    class="btn btn-success"
                     @click="processPayment"
                     :disabled="!isValidPayment"
+                    style="padding: 10px; width: fit-content;"
                   >
                     <i class="bi bi-credit-card me-2"></i>
                     Process E-Payment

@@ -8,7 +8,7 @@
           </div>
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="amount" class="form-label">Amount Due</label>
                   <input
@@ -30,6 +30,8 @@
                     placeholder="GV-2024-001"
                   />
                 </div>
+              </div>
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="voucherAmount" class="form-label">Voucher Amount</label>
                   <input
@@ -54,7 +56,7 @@
                   />
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="customerName" class="form-label">Customer Name</label>
                   <input
@@ -73,16 +75,6 @@
                     class="form-control"
                     id="issueDate"
                     v-model="issueDate"
-                    readonly
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="expiryDate" class="form-label">Expiry Date</label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    id="expiryDate"
-                    v-model="expiryDate"
                     readonly
                   />
                 </div>
@@ -108,9 +100,10 @@
                   <button type="button" class="btn btn-secondary" @click="resetForm">Reset</button>
                   <button
                     type="button"
-                    class="btn btn-success btn-lg"
+                    class="btn btn-success"
                     @click="processPayment"
                     :disabled="!isValidPayment"
+                    style="padding: 10px; width: fit-content"
                   >
                     <i class="bi bi-gift me-2"></i>
                     Pay with Gift Voucher

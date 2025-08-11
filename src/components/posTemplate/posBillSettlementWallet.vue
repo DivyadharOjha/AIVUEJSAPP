@@ -8,7 +8,7 @@
           </div>
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="amount" class="form-label">Amount Due</label>
                   <input
@@ -32,6 +32,8 @@
                     <option value="wechatpay">WeChat Pay</option>
                   </select>
                 </div>
+              </div>
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="walletId" class="form-label">Wallet ID/Email</label>
                   <input
@@ -55,7 +57,7 @@
                   />
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="transactionId" class="form-label">Transaction ID</label>
                   <input
@@ -76,17 +78,6 @@
                     v-model="paymentAmount"
                     placeholder="0.00"
                     step="0.01"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="remainingBalance" class="form-label">Remaining Balance</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="remainingBalance"
-                    v-model="remainingBalance"
-                    readonly
-                    placeholder="0.00"
                   />
                 </div>
               </div>
@@ -111,9 +102,10 @@
                   <button type="button" class="btn btn-secondary" @click="resetForm">Reset</button>
                   <button
                     type="button"
-                    class="btn btn-success btn-lg"
+                    class="btn btn-success"
                     @click="processPayment"
                     :disabled="!isValidPayment"
+                    style="padding: 10px; width: fit-content;"
                   >
                     <i class="bi bi-wallet2 me-2"></i>
                     Pay with Wallet

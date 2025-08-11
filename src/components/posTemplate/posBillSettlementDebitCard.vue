@@ -8,7 +8,7 @@
           </div>
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="amount" class="form-label">Amount Due</label>
                   <input
@@ -31,36 +31,32 @@
                     maxlength="19"
                   />
                 </div>
-                <div class="row">
-                  <div class="col-6">
-                    <div class="mb-3">
-                      <label for="expiryDate" class="form-label">Expiry Date</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="expiryDate"
-                        v-model="expiryDate"
-                        placeholder="MM/YY"
-                        maxlength="5"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="mb-3">
-                      <label for="pin" class="form-label">PIN</label>
-                      <input
-                        type="password"
-                        class="form-control"
-                        id="pin"
-                        v-model="pin"
-                        placeholder="****"
-                        maxlength="4"
-                      />
-                    </div>
-                  </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="expiryDate" class="form-label">Expiry Date</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="expiryDate"
+                    v-model="expiryDate"
+                    placeholder="MM/YY"
+                    maxlength="5"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="pin" class="form-label">PIN</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="pin"
+                    v-model="pin"
+                    placeholder="****"
+                    maxlength="4"
+                  />
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="cardholderName" class="form-label">Cardholder Name</label>
                   <input
@@ -104,9 +100,10 @@
                   <button type="button" class="btn btn-secondary" @click="resetForm">Reset</button>
                   <button
                     type="button"
-                    class="btn btn-success btn-lg"
+                    class="btn btn-success"
                     @click="processPayment"
                     :disabled="!isValidPayment"
+                    style="padding: 10px; width: fit-content"
                   >
                     <i class="bi bi-bank me-2"></i>
                     Pay Card

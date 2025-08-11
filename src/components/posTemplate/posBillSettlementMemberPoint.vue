@@ -8,7 +8,7 @@
           </div>
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="amount" class="form-label">Amount Due</label>
                   <input
@@ -30,6 +30,8 @@
                     placeholder="M001"
                   />
                 </div>
+              </div>
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="memberName" class="form-label">Member Name</label>
                   <input
@@ -53,7 +55,7 @@
                   />
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="pointsToRedeem" class="form-label">Points to Redeem</label>
                   <input
@@ -76,6 +78,10 @@
                     step="0.01"
                   />
                 </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="redeemedAmount" class="form-label">Redeemed Amount</label>
                   <input
@@ -87,6 +93,8 @@
                     placeholder="0.00"
                   />
                 </div>
+              </div>
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="remainingAmount" class="form-label">Remaining Amount</label>
                   <input
@@ -99,6 +107,11 @@
                   />
                 </div>
               </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <!-- Empty space to maintain 3-column layout -->
+                </div>
+              </div>
             </div>
             <div class="row mt-4">
               <div class="col-12">
@@ -106,9 +119,10 @@
                   <button type="button" class="btn btn-secondary" @click="resetForm">Reset</button>
                   <button
                     type="button"
-                    class="btn btn-success btn-lg"
+                    class="btn btn-success"
                     @click="processPayment"
                     :disabled="!isValidPayment"
+                    style="padding: 10px; width: fit-content"
                   >
                     <i class="bi bi-star me-2"></i>
                     Pay with Member Points

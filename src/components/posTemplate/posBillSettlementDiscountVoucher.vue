@@ -8,7 +8,7 @@
           </div>
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="amount" class="form-label">Amount Due</label>
                   <input
@@ -30,6 +30,8 @@
                     placeholder="SAVE20"
                   />
                 </div>
+              </div>
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="discountType" class="form-label">Discount Type</label>
                   <select class="form-control" id="discountType" v-model="discountType" readonly>
@@ -50,7 +52,7 @@
                   />
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="discountAmount" class="form-label">Discount Amount</label>
                   <input
@@ -73,6 +75,10 @@
                     placeholder="0.00"
                   />
                 </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="validUntil" class="form-label">Valid Until</label>
                   <input
@@ -83,6 +89,8 @@
                     readonly
                   />
                 </div>
+              </div>
+              <div class="col-md-8">
                 <div class="mb-3">
                   <label for="notes" class="form-label">Notes</label>
                   <textarea
@@ -101,9 +109,10 @@
                   <button type="button" class="btn btn-secondary" @click="resetForm">Reset</button>
                   <button
                     type="button"
-                    class="btn btn-success btn-lg"
+                    class="btn btn-success"
                     @click="processPayment"
                     :disabled="!isValidPayment"
+                    style="padding: 10px; width: fit-content"
                   >
                     <i class="bi bi-tag me-2"></i>
                     Apply Discount Voucher

@@ -48,47 +48,34 @@
                 </div>
               </div>
             </div>
-
-            <!-- Collapsible Additional Details -->
-            <div class="accordion mt-3" id="cashPaymentDetails">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
+            <div class="row">
+              <div class="col-12">
+                <div class="mb-3">
+                  <label for="notes" class="form-label">Notes</label>
+                  <textarea
+                    class="form-control"
+                    id="notes"
+                    v-model="notes"
+                    rows="3"
+                    placeholder="Enter any additional notes..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="d-flex justify-content-end gap-2">
+                  <button type="button" class="btn btn-secondary" @click="resetForm">Reset</button>
                   <button
-                    class="accordion-button"
-                    :class="{ collapsed: !isAdditionalDetailsOpen }"
                     type="button"
-                    @click="toggleAdditionalDetails"
-                    :aria-expanded="isAdditionalDetailsOpen"
-                    aria-controls="notesCollapse"
+                    class="btn pay-cash-btn"
+                    @click="processPayment"
+                    :disabled="!isValidPayment"
+                    style="padding: 10px; width: fit-content"
                   >
-                    <i class="bi bi-sticky me-2"></i>
-                    Additional Details
+                    <i class="bi bi-cash-coin me-2"></i>
+                    Pay Cash
                   </button>
-                </h2>
-                <div
-                  id="notesCollapse"
-                  class="accordion-collapse"
-                  :class="{
-                    'collapse show': isAdditionalDetailsOpen,
-                    collapse: !isAdditionalDetailsOpen,
-                  }"
-                >
-                  <div class="accordion-body">
-                    <div class="row">
-                      <div class="col-12">
-                        <div class="mb-3">
-                          <label for="notes" class="form-label">Notes</label>
-                          <textarea
-                            class="form-control"
-                            id="notes"
-                            v-model="notes"
-                            rows="3"
-                            placeholder="Enter any additional notes..."
-                          ></textarea>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -97,36 +84,10 @@
       </div>
     </div>
   </div>
-
-  <!-- Floating Action Panel -->
-  <posFloatingActionPanel
-    :payment-processed="paymentProcessed"
-    :is-valid-payment="isValidPayment"
-    payment-button-text="Pay Cash"
-    payment-icon="bi bi-cash-coin"
-    @reset="resetForm"
-    @process-payment="processPayment"
-    @print-receipt="printReceipt"
-    @email-receipt="emailReceipt"
-    @send-sms="sendSMS"
-    @new-transaction="newTransaction"
-    @close-payment="closePayment"
-  />
-
-  <!-- Debug Info (remove in production) -->
-  <div
-    class="position-fixed top-0 end-0 p-3"
-    style="z-index: 1001; background: rgba(0, 0, 0, 0.8); color: white; font-size: 12px"
-  >
-    <div>Cash Received: {{ cashReceived }}</div>
-    <div>Amount Due: {{ amountDue }}</div>
-    <div>Is Valid: {{ isValidPayment }}</div>
-  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import posFloatingActionPanel from './posFloatingActionPanel.vue'
+import { ref, computed, onMounted } from 'vue'
 
 interface CashPaymentData {
   type: 'cash'
@@ -138,15 +99,13 @@ interface CashPaymentData {
 }
 
 const emit = defineEmits<{
-  'payment-processed': [data: CashPaymentData | null]
+  'payment-processed': [data: CashPaymentData]
 }>()
 
 const amountDue = ref(0)
 const cashReceived = ref(0)
 const schemesDiscount = ref(0)
 const notes = ref('')
-const paymentProcessed = ref(false)
-const isAdditionalDetailsOpen = ref(true)
 
 const isValidPayment = computed(() => {
   // Allow payment if cash received is greater than 0 (less strict validation)
@@ -171,44 +130,12 @@ const processPayment = () => {
 
   emit('payment-processed', paymentData)
   console.log('Cash payment processed:', paymentData)
-  paymentProcessed.value = true
 }
 
 const resetForm = () => {
   cashReceived.value = 0
   schemesDiscount.value = 0
   notes.value = ''
-  paymentProcessed.value = false
-}
-
-const printReceipt = () => {
-  console.log('Printing receipt...')
-  // Implement print functionality
-}
-
-const emailReceipt = () => {
-  console.log('Emailing receipt...')
-  // Implement email functionality
-}
-
-const sendSMS = () => {
-  console.log('Sending SMS...')
-  // Implement SMS functionality
-}
-
-const newTransaction = () => {
-  console.log('Starting new transaction...')
-  resetForm()
-}
-
-const closePayment = () => {
-  console.log('Closing payment...')
-  paymentProcessed.value = false
-  emit('payment-processed', null)
-}
-
-const toggleAdditionalDetails = () => {
-  isAdditionalDetailsOpen.value = !isAdditionalDetailsOpen.value
 }
 
 onMounted(() => {
@@ -228,5 +155,24 @@ onMounted(() => {
 .btn-lg {
   padding: 0.75rem 1.5rem;
   font-size: 1.1rem;
+}
+
+.pay-cash-btn {
+  background-color: #5f9ea0;
+  color: #f0f8ff;
+  border: 1px solid #5f9ea0;
+  transition: all 0.3s ease;
+}
+
+.pay-cash-btn:hover {
+  background-color: #4a7c7e;
+  border-color: #4a7c7e;
+  color: #f0f8ff;
+}
+
+.pay-cash-btn:disabled {
+  background-color: #a0a0a0;
+  border-color: #a0a0a0;
+  color: #d0d0d0;
 }
 </style>
