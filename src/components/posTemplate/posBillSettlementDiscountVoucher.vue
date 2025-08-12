@@ -110,7 +110,6 @@
                           <tr>
                             <th width="100">Actions</th>
                             <th>Voucher Code</th>
-                            <th>Discount Type</th>
                             <th>Discount Value</th>
                             <th>Discount Amount</th>
                             <th>Final Amount</th>
@@ -142,14 +141,7 @@
                               </div>
                             </td>
                             <td>{{ record.voucherCode }}</td>
-                            <td>{{ record.discountType }}</td>
-                            <td>
-                              {{
-                                record.discountType === 'percentage'
-                                  ? record.discountValue + '%'
-                                  : '$' + record.discountValue.toFixed(2)
-                              }}
-                            </td>
+                            <td>${{ record.discountValue.toFixed(2) }}</td>
                             <td>${{ record.discountAmount.toFixed(2) }}</td>
                             <td>${{ record.finalAmount.toFixed(2) }}</td>
                             <td>{{ formatDate(record.validUntil) }}</td>
@@ -171,13 +163,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 
 interface DiscountVoucherPaymentRecord {
   id: string
   type: 'discountVoucher'
   voucherCode: string
-  discountType: 'percentage' | 'fixed'
   discountValue: number
   discountAmount: number
   finalAmount: number
@@ -215,7 +206,6 @@ const processPayment = () => {
     id: generateId(),
     type: 'discountVoucher',
     voucherCode: voucherCode.value,
-    discountType: 'fixed',
     discountValue: discountValue.value,
     discountAmount: discountAmount,
     finalAmount: finalAmount,
@@ -296,10 +286,17 @@ const formatTimestamp = (timestamp: string) => {
 const loadVoucherData = () => {
   // Simulate loading voucher data (in real app, this would be an API call)
   if (voucherCode.value.trim() !== '') {
-    discountType.value = 'percentage'
-    discountValue.value = 20
-    validUntil.value = '2024-12-31'
-    calculateDiscount()
+    // Simulate different voucher data based on voucher code
+    if (voucherCode.value === 'SAVE20') {
+      discountValue.value = 20
+      validUntil.value = '2024-12-31'
+    } else if (voucherCode.value === 'SAVE10') {
+      discountValue.value = 10
+      validUntil.value = '2024-12-31'
+    } else {
+      discountValue.value = 5
+      validUntil.value = '2024-12-31'
+    }
   }
 }
 
@@ -308,11 +305,21 @@ onMounted(() => {
   amountDue.value = 125.5
 })
 
+onUnmounted(() => {
+  // Clean up any potential memory leaks or references
+  paymentRecords.value = []
+  editingIndex.value = null
+})
+
 // Watch for changes in voucher code to load voucher data
-watch(voucherCode, loadVoucherData)
+watch(voucherCode, () => {
+  loadVoucherData()
+})
 
 // Watch for changes in discount value to calculate amounts
-watch([discountValue, discountType], calculateDiscount)
+watch(discountValue, () => {
+  // This will trigger recalculation when discount value changes
+})
 </script>
 
 <style scoped>

@@ -21,18 +21,6 @@
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="creditNoteNumber" class="form-label">Credit Note Number</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="creditNoteNumber"
-                    v-model="creditNoteNumber"
-                    placeholder="CN-2024-001"
-                  />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="mb-3">
                   <label for="creditNoteAmount" class="form-label">Amount Receive</label>
                   <input
                     type="number"
@@ -41,6 +29,18 @@
                     v-model="creditNoteAmount"
                     placeholder="0.00"
                     step="0.01"
+                  />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="creditNoteNumber" class="form-label">Credit Note Number</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="creditNoteNumber"
+                    v-model="creditNoteNumber"
+                    placeholder="CN-2024-001"
                   />
                 </div>
                 <div class="mb-3">

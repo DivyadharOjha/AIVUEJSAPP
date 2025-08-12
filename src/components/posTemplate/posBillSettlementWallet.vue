@@ -179,7 +179,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 
 interface WalletPaymentRecord {
   id: string
@@ -319,10 +319,24 @@ const generateTransactionId = () => {
 
 const loadWalletData = () => {
   // Simulate loading wallet data (in real app, this would be an API call)
-  if (walletId.value.trim() !== '' && walletType.value !== '') {
-    walletBalance.value = 500.0
-    paymentAmount.value = Math.min(amountDue.value, walletBalance.value)
-    calculateRemainingBalance()
+  if (memberId.value.trim() !== '') {
+    // Simulate different member data based on member ID
+    if (memberId.value === 'M001') {
+      memberName.value = 'John Doe'
+      walletBalance.value = 500.0
+    } else if (memberId.value === 'M002') {
+      memberName.value = 'Jane Smith'
+      walletBalance.value = 750.0
+    } else {
+      memberName.value = 'Unknown Member'
+      walletBalance.value = 0
+    }
+    amountReceive.value = Math.min(amountDue.value, walletBalance.value)
+  } else {
+    // Clear member data if member ID is empty
+    memberName.value = ''
+    walletBalance.value = 0
+    amountReceive.value = 0
   }
 }
 
@@ -332,11 +346,21 @@ onMounted(() => {
   generateTransactionId()
 })
 
-// Watch for changes in wallet ID or type to load wallet data
-watch([walletId, walletType], loadWalletData)
+onUnmounted(() => {
+  // Clean up any potential memory leaks or references
+  paymentRecords.value = []
+  editingIndex.value = null
+})
 
-// Watch for changes in payment amount to calculate remaining balance
-watch(paymentAmount, calculateRemainingBalance)
+// Watch for changes in member ID to load wallet data
+watch(memberId, () => {
+  loadWalletData()
+})
+
+// Watch for changes in amount receive to calculate remaining balance
+watch(amountReceive, () => {
+  // This will trigger recalculation when amount receive changes
+})
 </script>
 
 <style scoped>

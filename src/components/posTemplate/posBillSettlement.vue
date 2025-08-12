@@ -23,7 +23,11 @@
       <!-- Payment Content Area -->
       <div class="col-9">
         <div class="h-100 p-3 payment-content-container">
-          <component :is="currentPaymentComponent" v-if="currentPaymentComponent" />
+          <component
+            :is="currentPaymentComponent"
+            v-if="currentPaymentComponent"
+            :key="selectedPaymentType || 'default'"
+          />
           <div v-else class="d-flex align-items-center justify-content-center h-100">
             <div class="text-center text-muted">
               <h4>Select a Payment Type</h4>
@@ -80,7 +84,10 @@ const currentPaymentComponent = computed(() => {
 })
 
 const selectPaymentType = (paymentTypeId: string) => {
-  selectedPaymentType.value = paymentTypeId
+  // Add a small delay to ensure proper component cleanup
+  setTimeout(() => {
+    selectedPaymentType.value = paymentTypeId
+  }, 0)
 }
 </script>
 

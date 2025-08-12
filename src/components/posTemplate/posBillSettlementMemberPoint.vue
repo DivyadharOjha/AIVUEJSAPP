@@ -20,6 +20,8 @@
                     placeholder="0.00"
                   />
                 </div>
+              </div>
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="memberId" class="form-label">Member ID</label>
                   <input
@@ -43,6 +45,8 @@
                     readonly
                   />
                 </div>
+              </div>
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="availablePoints" class="form-label">Available Point</label>
                   <input
@@ -68,6 +72,20 @@
                     step="0.01"
                   />
                 </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="pointsToRedeem" class="form-label">Points to Redeem</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="pointsToRedeem"
+                    v-model="pointsToRedeem"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+              <div class="col-md-4">
                 <div class="mb-3">
                   <label for="redeemedAmount" class="form-label">Redeemed Amount</label>
                   <input
@@ -80,8 +98,6 @@
                   />
                 </div>
               </div>
-            </div>
-            <div class="row">
               <div class="col-md-4">
                 <div class="mb-3">
                   <label for="remainingAmount" class="form-label">Remaining Amount</label>
@@ -92,18 +108,6 @@
                     v-model="remainingAmount"
                     readonly
                     placeholder="0.00"
-                  />
-                </div>
-              </div>
-              <div class="col-md-8">
-                <div class="mb-3">
-                  <label for="pointsToRedeem" class="form-label">Points to Redeem</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="pointsToRedeem"
-                    v-model="pointsToRedeem"
-                    placeholder="0"
                   />
                 </div>
               </div>
@@ -315,8 +319,24 @@ const formatTimestamp = (timestamp: string) => {
 const loadMemberData = () => {
   // Simulate loading member data (in real app, this would be an API call)
   if (memberId.value.trim() !== '') {
-    memberName.value = 'John Doe'
-    availablePoints.value = 2500
+    // Simulate different member data based on member ID
+    if (memberId.value === 'M001') {
+      memberName.value = 'John Doe'
+      availablePoints.value = 2500
+      pointValue.value = 0.01
+    } else if (memberId.value === 'M002') {
+      memberName.value = 'Jane Smith'
+      availablePoints.value = 1800
+      pointValue.value = 0.01
+    } else {
+      memberName.value = 'Unknown Member'
+      availablePoints.value = 0
+      pointValue.value = 0.01
+    }
+  } else {
+    // Clear member data if member ID is empty
+    memberName.value = ''
+    availablePoints.value = 0
     pointValue.value = 0.01
   }
 }
@@ -324,6 +344,19 @@ const loadMemberData = () => {
 onMounted(() => {
   // Simulate amount due (in real app, this would come from props or store)
   amountDue.value = 125.5
+
+  // Set default member ID for testing
+  memberId.value = 'M001'
+
+  // Load member data
+  loadMemberData()
+
+  console.log('Member Point component mounted:', {
+    amountDue: amountDue.value,
+    memberId: memberId.value,
+    memberName: memberName.value,
+    availablePoints: availablePoints.value,
+  })
 })
 
 // Watch for changes in member ID to load member data
@@ -355,5 +388,27 @@ watch(pointsToRedeem, calculateRedeemedAmount)
 
 .btn-group .btn:last-child {
   margin-right: 0;
+}
+
+/* Ensure all form controls are visible */
+.form-control {
+  display: block !important;
+  visibility: visible !important;
+}
+
+.form-label {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Debug styles to ensure layout is working */
+.row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+
+.col-md-4 {
+  flex: 0 0 33.333333% !important;
+  max-width: 33.333333% !important;
 }
 </style>
