@@ -21,38 +21,14 @@
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="paymentMethod" class="form-label">Payment Method</label>
-                  <select class="form-control" id="paymentMethod" v-model="paymentMethod">
-                    <option value="">Select Method</option>
-                    <option value="bank_transfer">Bank Transfer</option>
-                    <option value="online_banking">Online Banking</option>
-                    <option value="mobile_banking">Mobile Banking</option>
-                    <option value="qr_payment">QR Payment</option>
-                    <option value="upi">UPI</option>
-                    <option value="neft">NEFT</option>
-                    <option value="imps">IMPS</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="mb-3">
-                  <label for="accountNumber" class="form-label">Account Number</label>
+                  <label for="amountReceive" class="form-label">Amount Receive</label>
                   <input
-                    type="text"
+                    type="number"
                     class="form-control"
-                    id="accountNumber"
-                    v-model="accountNumber"
-                    placeholder="Account Number"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="ifscCode" class="form-label">IFSC Code</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="ifscCode"
-                    v-model="ifscCode"
-                    placeholder="IFSC Code"
+                    id="amountReceive"
+                    v-model="amountReceive"
+                    placeholder="0.00"
+                    step="0.01"
                   />
                 </div>
               </div>
@@ -79,11 +55,9 @@
                   />
                 </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-12">
+              <div class="col-md-4">
                 <div class="mb-3">
-                  <label for="notes" class="form-label">Notes</label>
+                  <label for="notes" class="form-label">Note(s)</label>
                   <textarea
                     class="form-control"
                     id="notes"
@@ -103,11 +77,76 @@
                     class="btn btn-success"
                     @click="processPayment"
                     :disabled="!isValidPayment"
-                    style="padding: 10px; width: fit-content;"
+                    style="padding: 10px; width: fit-content"
                   >
                     <i class="bi bi-credit-card me-2"></i>
-                    Process E-Payment
+                    Pay EPayment
                   </button>
+                </div>
+              </div>
+            </div>
+            <!-- Payment Records Table -->
+            <div class="row mt-4" v-if="paymentRecords.length > 0">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Payment Records</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                          <tr>
+                            <th width="100">Actions</th>
+                            <th>Payment Method</th>
+                            <th>Account Number</th>
+                            <th>IFSC Code</th>
+                            <th>Amount</th>
+                            <th>Transaction ID</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Timestamp</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(record, index) in paymentRecords" :key="record.id">
+                            <td>
+                              <div class="btn-group" role="group">
+                                <button
+                                  type="button"
+                                  class="btn btn-sm btn-outline-primary"
+                                  @click="editRecord(index)"
+                                  title="Edit"
+                                >
+                                  <i class="bi bi-pencil"></i>
+                                </button>
+                                <button
+                                  type="button"
+                                  class="btn btn-sm btn-outline-danger"
+                                  @click="deleteRecord(index)"
+                                  title="Delete"
+                                >
+                                  <i class="bi bi-trash"></i>
+                                </button>
+                              </div>
+                            </td>
+                            <td>{{ record.paymentMethod }}</td>
+                            <td>{{ maskAccountNumber(record.accountNumber) }}</td>
+                            <td>{{ record.ifscCode }}</td>
+                            <td>${{ record.amount.toFixed(2) }}</td>
+                            <td>{{ record.transactionId }}</td>
+                            <td>
+                              <span :class="getStatusClass(record.paymentStatus)">
+                                {{ record.paymentStatus }}
+                              </span>
+                            </td>
+                            <td>{{ record.notes || '-' }}</td>
+                            <td>{{ formatTimestamp(record.timestamp) }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -121,12 +160,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 
-interface EPaymentData {
+interface EPaymentRecord {
+  id: string
   type: 'ePayment'
-  amountDue: number
   paymentMethod: string
   accountNumber: string
   ifscCode: string
+  amount: number
   transactionId: string
   referenceNumber: string
   paymentStatus: string
@@ -134,50 +174,114 @@ interface EPaymentData {
   timestamp: string
 }
 
-const emit = defineEmits<{
-  'payment-processed': [data: EPaymentData]
-}>()
+// Removed emit since we're not using it anymore
 
 const amountDue = ref(0)
-const paymentMethod = ref('')
-const accountNumber = ref('')
-const ifscCode = ref('')
+const amountReceive = ref(0)
 const transactionId = ref('')
 const referenceNumber = ref('')
-const paymentStatus = ref('pending')
 const notes = ref('')
+const paymentRecords = ref<EPaymentRecord[]>([])
+const editingIndex = ref<number | null>(null)
 
 const isValidPayment = computed(() => {
-  return (
-    paymentMethod.value !== '' && accountNumber.value.trim() !== '' && ifscCode.value.trim() !== ''
-  )
+  return amountReceive.value > 0 && referenceNumber.value.trim() !== ''
 })
 
 const processPayment = () => {
-  const paymentData: EPaymentData = {
+  const paymentRecord: EPaymentRecord = {
+    id: generateId(),
     type: 'ePayment',
-    amountDue: amountDue.value,
-    paymentMethod: paymentMethod.value,
-    accountNumber: accountNumber.value,
-    ifscCode: ifscCode.value,
+    paymentMethod: 'bank_transfer',
+    accountNumber: 'N/A',
+    ifscCode: 'N/A',
+    amount: amountReceive.value,
     transactionId: transactionId.value,
     referenceNumber: referenceNumber.value,
-    paymentStatus: paymentStatus.value,
+    paymentStatus: 'completed',
     notes: notes.value,
     timestamp: new Date().toISOString(),
   }
 
-  emit('payment-processed', paymentData)
-  console.log('E-Payment processed:', paymentData)
+  paymentRecords.value.push(paymentRecord)
+
+  // Recalculate amount due
+  recalculateAmountDue()
+
+  // Reset form and generate new transaction ID
+  resetForm()
+  generateTransactionId()
+
+  console.log('E-Payment record added:', paymentRecord)
+}
+
+const editRecord = (index: number) => {
+  const record = paymentRecords.value[index]
+  amountReceive.value = record.amount
+  transactionId.value = record.transactionId
+  referenceNumber.value = record.referenceNumber
+  notes.value = record.notes
+  editingIndex.value = index
+
+  // Remove the record from table
+  paymentRecords.value.splice(index, 1)
+
+  // Recalculate amount due
+  recalculateAmountDue()
+}
+
+const deleteRecord = (index: number) => {
+  paymentRecords.value.splice(index, 1)
+
+  // Recalculate amount due
+  recalculateAmountDue()
+}
+
+const recalculateAmountDue = () => {
+  // Calculate total amount from all records
+  const totalPaid = paymentRecords.value.reduce((sum, record) => {
+    return sum + record.amount
+  }, 0)
+
+  // Update amount due (assuming original amount due is stored somewhere)
+  // For now, we'll use a fixed original amount
+  const originalAmount = 125.5 // This should come from props or store
+  amountDue.value = Math.max(0, originalAmount - totalPaid)
 }
 
 const resetForm = () => {
-  paymentMethod.value = ''
-  accountNumber.value = ''
-  ifscCode.value = ''
+  amountReceive.value = 0
   referenceNumber.value = ''
-  paymentStatus.value = 'pending'
   notes.value = ''
+  editingIndex.value = null
+}
+
+const generateId = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2)
+}
+
+const formatTimestamp = (timestamp: string) => {
+  return new Date(timestamp).toLocaleString()
+}
+
+const maskAccountNumber = (accountNumber: string) => {
+  if (accountNumber.length >= 4) {
+    return `****${accountNumber.slice(-4)}`
+  }
+  return accountNumber
+}
+
+const getStatusClass = (status: string) => {
+  switch (status.toLowerCase()) {
+    case 'completed':
+      return 'badge bg-success'
+    case 'pending':
+      return 'badge bg-warning'
+    case 'failed':
+      return 'badge bg-danger'
+    default:
+      return 'badge bg-secondary'
+  }
 }
 
 const generateTransactionId = () => {
@@ -202,5 +306,18 @@ onMounted(() => {
 .btn-lg {
   padding: 0.75rem 1.5rem;
   font-size: 1.1rem;
+}
+
+.table-responsive {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.btn-group .btn {
+  margin-right: 2px;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
 }
 </style>

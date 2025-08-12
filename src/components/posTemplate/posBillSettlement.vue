@@ -4,7 +4,7 @@
       <!-- Payment Type Column -->
       <div class="col-3 border-end">
         <div class="d-flex flex-column h-100 p-3">
-          <div class="d-flex flex-column gap-2">
+          <div class="d-flex flex-column gap-2 payment-types-container">
             <button
               v-for="paymentType in paymentTypes"
               :key="paymentType.id"
@@ -22,12 +22,8 @@
 
       <!-- Payment Content Area -->
       <div class="col-9">
-        <div class="h-100 p-3">
-          <component
-            :is="currentPaymentComponent"
-            v-if="currentPaymentComponent"
-            @payment-processed="handlePaymentProcessed"
-          />
+        <div class="h-100 p-3 payment-content-container">
+          <component :is="currentPaymentComponent" v-if="currentPaymentComponent" />
           <div v-else class="d-flex align-items-center justify-content-center h-100">
             <div class="text-center text-muted">
               <h4>Select a Payment Type</h4>
@@ -86,11 +82,6 @@ const currentPaymentComponent = computed(() => {
 const selectPaymentType = (paymentTypeId: string) => {
   selectedPaymentType.value = paymentTypeId
 }
-
-const handlePaymentProcessed = (data: any) => {
-  console.log('Payment processed:', data)
-  // Handle payment processing logic here
-}
 </script>
 
 <style scoped>
@@ -115,5 +106,66 @@ const handlePaymentProcessed = (data: any) => {
   background-color: #146c43;
   border-color: #0f5132;
   box-shadow: 0 0 10px rgba(0, 100, 0, 0.3);
+}
+
+/* Scrollbar styles for left panel (payment types) */
+.payment-types-container {
+  height: calc(100vh - 2rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 5px;
+  position: relative;
+}
+
+.payment-types-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.payment-types-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.payment-types-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.payment-types-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Scrollbar styles for right panel (payment content) */
+.payment-content-container {
+  height: calc(100vh - 2rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 5px;
+  position: relative;
+}
+
+.payment-content-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.payment-content-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.payment-content-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.payment-content-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Firefox scrollbar styles */
+.payment-types-container,
+.payment-content-container {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
 }
 </style>

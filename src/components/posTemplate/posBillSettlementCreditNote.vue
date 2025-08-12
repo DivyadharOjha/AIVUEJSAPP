@@ -33,7 +33,7 @@
               </div>
               <div class="col-md-4">
                 <div class="mb-3">
-                  <label for="creditNoteAmount" class="form-label">Credit Note Amount</label>
+                  <label for="creditNoteAmount" class="form-label">Amount Receive</label>
                   <input
                     type="number"
                     class="form-control"
@@ -103,6 +103,68 @@
                 </div>
               </div>
             </div>
+
+            <!-- Payment Records Table -->
+            <div class="row mt-4" v-if="paymentRecords.length > 0">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Payment Records</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                          <tr>
+                            <th width="100">Actions</th>
+                            <th>Credit Note Number</th>
+                            <th>Customer Name</th>
+                            <th>Credit Note Amount</th>
+                            <th>Applied Amount</th>
+                            <th>Remaining Balance</th>
+                            <th>Issue Date</th>
+                            <th>Notes</th>
+                            <th>Timestamp</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(record, index) in paymentRecords" :key="record.id">
+                            <td>
+                              <div class="btn-group" role="group">
+                                <button
+                                  type="button"
+                                  class="btn btn-sm btn-outline-primary"
+                                  @click="editRecord(index)"
+                                  title="Edit"
+                                >
+                                  <i class="bi bi-pencil"></i>
+                                </button>
+                                <button
+                                  type="button"
+                                  class="btn btn-sm btn-outline-danger"
+                                  @click="deleteRecord(index)"
+                                  title="Delete"
+                                >
+                                  <i class="bi bi-trash"></i>
+                                </button>
+                              </div>
+                            </td>
+                            <td>{{ record.creditNoteNumber }}</td>
+                            <td>{{ record.customerName }}</td>
+                            <td>${{ record.creditNoteAmount.toFixed(2) }}</td>
+                            <td>${{ record.appliedAmount.toFixed(2) }}</td>
+                            <td>${{ record.remainingBalance.toFixed(2) }}</td>
+                            <td>{{ formatDate(record.issueDate) }}</td>
+                            <td>{{ record.notes || '-' }}</td>
+                            <td>{{ formatTimestamp(record.timestamp) }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -113,11 +175,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 
-interface CreditNotePaymentData {
+interface CreditNotePaymentRecord {
+  id: string
   type: 'creditNote'
-  amountDue: number
   creditNoteNumber: string
   creditNoteAmount: number
+  appliedAmount: number
   remainingBalance: number
   customerName: string
   issueDate: string
@@ -126,9 +189,7 @@ interface CreditNotePaymentData {
   timestamp: string
 }
 
-const emit = defineEmits<{
-  'payment-processed': [data: CreditNotePaymentData]
-}>()
+// Removed emit since we're not using it anymore
 
 const amountDue = ref(0)
 const creditNoteNumber = ref('')
@@ -138,6 +199,8 @@ const customerName = ref('')
 const issueDate = ref('')
 const expiryDate = ref('')
 const notes = ref('')
+const paymentRecords = ref<CreditNotePaymentRecord[]>([])
+const editingIndex = ref<number | null>(null)
 
 const isValidPayment = computed(() => {
   return (
@@ -158,11 +221,14 @@ const calculateRemainingBalance = () => {
 }
 
 const processPayment = () => {
-  const paymentData: CreditNotePaymentData = {
+  const appliedAmount = Math.min(creditNoteAmount.value, amountDue.value)
+
+  const paymentRecord: CreditNotePaymentRecord = {
+    id: generateId(),
     type: 'creditNote',
-    amountDue: amountDue.value,
     creditNoteNumber: creditNoteNumber.value,
     creditNoteAmount: creditNoteAmount.value,
+    appliedAmount: appliedAmount,
     remainingBalance: remainingBalance.value,
     customerName: customerName.value,
     issueDate: issueDate.value,
@@ -171,8 +237,52 @@ const processPayment = () => {
     timestamp: new Date().toISOString(),
   }
 
-  emit('payment-processed', paymentData)
-  console.log('Credit note payment processed:', paymentData)
+  paymentRecords.value.push(paymentRecord)
+
+  // Recalculate amount due
+  recalculateAmountDue()
+
+  // Reset form
+  resetForm()
+
+  console.log('Credit note payment record added:', paymentRecord)
+}
+
+const editRecord = (index: number) => {
+  const record = paymentRecords.value[index]
+  creditNoteNumber.value = record.creditNoteNumber
+  creditNoteAmount.value = record.creditNoteAmount
+  remainingBalance.value = record.remainingBalance
+  customerName.value = record.customerName
+  issueDate.value = record.issueDate
+  expiryDate.value = record.expiryDate
+  notes.value = record.notes
+  editingIndex.value = index
+
+  // Remove the record from table
+  paymentRecords.value.splice(index, 1)
+
+  // Recalculate amount due
+  recalculateAmountDue()
+}
+
+const deleteRecord = (index: number) => {
+  paymentRecords.value.splice(index, 1)
+
+  // Recalculate amount due
+  recalculateAmountDue()
+}
+
+const recalculateAmountDue = () => {
+  // Calculate total amount from all records
+  const totalPaid = paymentRecords.value.reduce((sum, record) => {
+    return sum + record.appliedAmount
+  }, 0)
+
+  // Update amount due (assuming original amount due is stored somewhere)
+  // For now, we'll use a fixed original amount
+  const originalAmount = 125.5 // This should come from props or store
+  amountDue.value = Math.max(0, originalAmount - totalPaid)
 }
 
 const resetForm = () => {
@@ -183,6 +293,19 @@ const resetForm = () => {
   issueDate.value = ''
   expiryDate.value = ''
   notes.value = ''
+  editingIndex.value = null
+}
+
+const generateId = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2)
+}
+
+const formatTimestamp = (timestamp: string) => {
+  return new Date(timestamp).toLocaleString()
+}
+
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString()
 }
 
 onMounted(() => {
@@ -209,5 +332,18 @@ watch(creditNoteAmount, calculateRemainingBalance)
 .btn-lg {
   padding: 0.75rem 1.5rem;
   font-size: 1.1rem;
+}
+
+.table-responsive {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.btn-group .btn {
+  margin-right: 2px;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
 }
 </style>
