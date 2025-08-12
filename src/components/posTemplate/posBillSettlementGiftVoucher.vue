@@ -129,9 +129,6 @@
             <div class="row mt-4" v-if="paymentRecords.length > 0">
               <div class="col-12">
                 <div class="card">
-                  <div class="card-header">
-                    <h5 class="mb-0">Payment Records</h5>
-                  </div>
                   <div class="card-body">
                     <div class="table-responsive">
                       <table class="table table-striped table-hover">
@@ -157,7 +154,8 @@
                                   @click="editRecord(index)"
                                   title="Edit"
                                 >
-                                  <i class="bi bi-pencil"></i>
+                                  <i class="bi bi-pencil-fill"></i>
+                                  <span class="ms-1 d-none d-sm-inline">Edit</span>
                                 </button>
                                 <button
                                   type="button"
@@ -165,7 +163,8 @@
                                   @click="deleteRecord(index)"
                                   title="Delete"
                                 >
-                                  <i class="bi bi-trash"></i>
+                                  <i class="bi bi-trash-fill"></i>
+                                  <span class="ms-1 d-none d-sm-inline">Delete</span>
                                 </button>
                               </div>
                             </td>
@@ -368,5 +367,72 @@ watch(voucherCode, loadVoucherData)
 
 .btn-group .btn:last-child {
   margin-right: 0;
+}
+
+/* Scrollbar styles */
+.card-body {
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+.card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Firefox scrollbar styles */
+.card-body {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Action buttons styling */
+.btn-group .btn {
+  margin-right: 2px;
+  min-width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
+}
+
+.btn-group .btn i {
+  font-size: 14px;
+}
+
+/* Ensure buttons are visible */
+.btn-outline-primary,
+.btn-outline-danger {
+  border-width: 1px;
+  font-weight: 500;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
 }
 </style>

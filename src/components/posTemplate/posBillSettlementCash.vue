@@ -81,12 +81,9 @@
             </div>
 
             <!-- Payment Records Table -->
-            <div class="row mt-4" v-if="paymentRecords.length > 0">
+            <div class="row mt-4" v-if="cashRecords.length > 0">
               <div class="col-12">
                 <div class="card">
-                  <div class="card-header">
-                    <h5 class="mb-0">Payment Records</h5>
-                  </div>
                   <div class="card-body">
                     <div class="table-responsive">
                       <table class="table table-striped table-hover">
@@ -101,7 +98,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(record, index) in paymentRecords" :key="record.id">
+                          <tr v-for="(record, index) in cashRecords" :key="record.id">
                             <td>
                               <div class="btn-group" role="group">
                                 <button
@@ -110,7 +107,8 @@
                                   @click="editRecord(index)"
                                   title="Edit"
                                 >
-                                  <i class="bi bi-pencil"></i>
+                                  <i class="bi bi-pencil-fill"></i>
+                                  <span class="ms-1 d-none d-sm-inline">Edit</span>
                                 </button>
                                 <button
                                   type="button"
@@ -118,7 +116,8 @@
                                   @click="deleteRecord(index)"
                                   title="Delete"
                                 >
-                                  <i class="bi bi-trash"></i>
+                                  <i class="bi bi-trash-fill"></i>
+                                  <span class="ms-1 d-none d-sm-inline">Delete</span>
                                 </button>
                               </div>
                             </td>
@@ -146,26 +145,23 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { usePaymentStore, type CashPaymentRecord } from '../../stores/paymentStore'
 
-interface CashPaymentRecord {
-  id: string
-  type: 'cash'
-  cashReceived: number
-  schemesDiscount: number
-  notes: string
-  timestamp: string
-}
+const emit = defineEmits<{
+  'payment-record-added': [record: { id: string; type: string; cashReceived: number }]
+  'payment-record-removed': [recordId: string]
+}>()
 
+// Use the payment store
+const paymentStore = usePaymentStore()
 
-
-// Removed emit since we're not using it anymore
-
-const amountDue = ref(0)
 const cashReceived = ref(0)
 const schemesDiscount = ref(0)
 const notes = ref('')
-const paymentRecords = ref<CashPaymentRecord[]>([])
 const editingIndex = ref<number | null>(null)
+
+// Get amount due from store
+const amountDue = computed(() => paymentStore.currentAmountDue)
 
 const isValidPayment = computed(() => {
   const isValid = cashReceived.value > 0
@@ -175,6 +171,22 @@ const isValidPayment = computed(() => {
     isValid: isValid,
   })
   return isValid
+})
+
+// Type guard function to check if record is a cash payment
+const isCashRecord = (record: unknown): record is CashPaymentRecord => {
+  return Boolean(
+    record &&
+      typeof record === 'object' &&
+      record !== null &&
+      'type' in record &&
+      (record as { type: string }).type === 'cash',
+  )
+}
+
+// Computed property for filtered cash records
+const cashRecords = computed(() => {
+  return paymentStore.componentRecords.cash.filter(isCashRecord)
 })
 
 const processPayment = () => {
@@ -187,48 +199,48 @@ const processPayment = () => {
     timestamp: new Date().toISOString(),
   }
 
-  paymentRecords.value.push(paymentRecord)
+  // Add to store directly
+  paymentStore.componentRecords.cash.push(paymentRecord)
 
-  // Recalculate amount due
-  recalculateAmountDue()
+  // Emit the payment record to parent
+  emit('payment-record-added', {
+    id: paymentRecord.id,
+    type: 'cash',
+    cashReceived: paymentRecord.cashReceived,
+  })
 
-  // Reset form
-  resetForm()
+  // Form will be cleared by user manually or when switching components
 
   console.log('Cash payment record added:', paymentRecord)
 }
 
 const editRecord = (index: number) => {
-  const record = paymentRecords.value[index]
-  cashReceived.value = record.cashReceived
-  schemesDiscount.value = record.schemesDiscount
-  notes.value = record.notes
-  editingIndex.value = index
+  const record = paymentStore.componentRecords.cash[index]
 
-  // Remove the record from table
-  paymentRecords.value.splice(index, 1)
+  if (isCashRecord(record)) {
+    cashReceived.value = record.cashReceived
+    schemesDiscount.value = record.schemesDiscount
+    notes.value = record.notes
+    editingIndex.value = index
 
-  // Recalculate amount due
-  recalculateAmountDue()
+    // Emit removal event
+    emit('payment-record-removed', record.id)
+
+    // Remove the record from store
+    paymentStore.componentRecords.cash.splice(index, 1)
+  }
 }
 
 const deleteRecord = (index: number) => {
-  paymentRecords.value.splice(index, 1)
+  const record = paymentStore.componentRecords.cash[index]
 
-  // Recalculate amount due
-  recalculateAmountDue()
-}
+  if (isCashRecord(record)) {
+    // Emit removal event
+    emit('payment-record-removed', record.id)
 
-const recalculateAmountDue = () => {
-  // Calculate total amount from all records
-  const totalPaid = paymentRecords.value.reduce((sum, record) => {
-    return sum + (record.cashReceived - record.schemesDiscount)
-  }, 0)
-
-  // Update amount due (assuming original amount due is stored somewhere)
-  // For now, we'll use a fixed original amount
-  const originalAmount = 125.5 // This should come from props or store
-  amountDue.value = Math.max(0, originalAmount - totalPaid)
+    // Remove from store
+    paymentStore.componentRecords.cash.splice(index, 1)
+  }
 }
 
 const resetForm = () => {
@@ -247,8 +259,21 @@ const formatTimestamp = (timestamp: string) => {
 }
 
 onMounted(() => {
-  // Simulate amount due (in real app, this would come from props or store)
-  amountDue.value = 125.5
+  // Load existing records from store
+  const existingRecords = paymentStore.getComponentRecords('cash')
+  if (existingRecords.length > 0) {
+    // Filter and validate only cash records
+    const validCashRecords = existingRecords.filter(isCashRecord).map((record) => ({
+      id: record.id || generateId(),
+      type: 'cash' as const,
+      cashReceived: record.cashReceived || 0,
+      schemesDiscount: record.schemesDiscount || 0,
+      notes: record.notes || '',
+      timestamp: record.timestamp || new Date().toISOString(),
+    }))
+
+    paymentStore.componentRecords.cash = validCashRecords
+  }
 })
 </script>
 
@@ -293,5 +318,72 @@ onMounted(() => {
 
 .btn-group .btn:last-child {
   margin-right: 0;
+}
+
+/* Scrollbar styles */
+.card-body {
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+.card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Firefox scrollbar styles */
+.card-body {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Action buttons styling */
+.btn-group .btn {
+  margin-right: 2px;
+  min-width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
+}
+
+.btn-group .btn i {
+  font-size: 14px;
+}
+
+/* Ensure buttons are visible */
+.btn-outline-primary,
+.btn-outline-danger {
+  border-width: 1px;
+  font-weight: 500;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
 }
 </style>

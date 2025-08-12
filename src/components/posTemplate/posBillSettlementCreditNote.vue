@@ -105,12 +105,9 @@
             </div>
 
             <!-- Payment Records Table -->
-            <div class="row mt-4" v-if="paymentRecords.length > 0">
+            <div class="row mt-4" v-if="creditNoteRecords.length > 0">
               <div class="col-12">
                 <div class="card">
-                  <div class="card-header">
-                    <h5 class="mb-0">Payment Records</h5>
-                  </div>
                   <div class="card-body">
                     <div class="table-responsive">
                       <table class="table table-striped table-hover">
@@ -128,7 +125,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(record, index) in paymentRecords" :key="record.id">
+                          <tr v-for="(record, index) in creditNoteRecords" :key="record.id">
                             <td>
                               <div class="btn-group" role="group">
                                 <button
@@ -137,7 +134,8 @@
                                   @click="editRecord(index)"
                                   title="Edit"
                                 >
-                                  <i class="bi bi-pencil"></i>
+                                  <i class="bi bi-pencil-fill"></i>
+                                  <span class="ms-1 d-none d-sm-inline">Edit</span>
                                 </button>
                                 <button
                                   type="button"
@@ -145,7 +143,8 @@
                                   @click="deleteRecord(index)"
                                   title="Delete"
                                 >
-                                  <i class="bi bi-trash"></i>
+                                  <i class="bi bi-trash-fill"></i>
+                                  <span class="ms-1 d-none d-sm-inline">Delete</span>
                                 </button>
                               </div>
                             </td>
@@ -173,25 +172,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { usePaymentStore, type CreditNotePaymentRecord } from '../../stores/paymentStore'
 
-interface CreditNotePaymentRecord {
-  id: string
-  type: 'creditNote'
-  creditNoteNumber: string
-  creditNoteAmount: number
-  appliedAmount: number
-  remainingBalance: number
-  customerName: string
-  issueDate: string
-  expiryDate: string
-  notes: string
-  timestamp: string
-}
+const emit = defineEmits<{
+  'payment-record-added': [record: { id: string; type: string; amount: number }]
+  'payment-record-removed': [recordId: string]
+}>()
 
-// Removed emit since we're not using it anymore
+// Use the payment store
+const paymentStore = usePaymentStore()
 
-const amountDue = ref(0)
 const creditNoteNumber = ref('')
 const creditNoteAmount = ref(0)
 const remainingBalance = ref(0)
@@ -199,8 +190,10 @@ const customerName = ref('')
 const issueDate = ref('')
 const expiryDate = ref('')
 const notes = ref('')
-const paymentRecords = ref<CreditNotePaymentRecord[]>([])
 const editingIndex = ref<number | null>(null)
+
+// Get amount due from store
+const amountDue = computed(() => paymentStore.currentAmountDue)
 
 const isValidPayment = computed(() => {
   return (
@@ -210,6 +203,22 @@ const isValidPayment = computed(() => {
     issueDate.value !== '' &&
     expiryDate.value !== ''
   )
+})
+
+// Type guard function to check if record is a credit note payment
+const isCreditNoteRecord = (record: unknown): record is CreditNotePaymentRecord => {
+  return Boolean(
+    record &&
+      typeof record === 'object' &&
+      record !== null &&
+      'type' in record &&
+      (record as { type: string }).type === 'creditNote',
+  )
+}
+
+// Computed property for filtered credit note records
+const creditNoteRecords = computed(() => {
+  return paymentStore.componentRecords.creditNote.filter(isCreditNoteRecord)
 })
 
 const calculateRemainingBalance = () => {
@@ -237,52 +246,50 @@ const processPayment = () => {
     timestamp: new Date().toISOString(),
   }
 
-  paymentRecords.value.push(paymentRecord)
+  // Add to store directly
+  paymentStore.componentRecords.creditNote.push(paymentRecord)
 
-  // Recalculate amount due
-  recalculateAmountDue()
-
-  // Reset form
-  resetForm()
+  // Emit the payment record to parent
+  emit('payment-record-added', {
+    id: paymentRecord.id,
+    type: 'creditNote',
+    amount: paymentRecord.appliedAmount,
+  })
 
   console.log('Credit note payment record added:', paymentRecord)
 }
 
 const editRecord = (index: number) => {
-  const record = paymentRecords.value[index]
-  creditNoteNumber.value = record.creditNoteNumber
-  creditNoteAmount.value = record.creditNoteAmount
-  remainingBalance.value = record.remainingBalance
-  customerName.value = record.customerName
-  issueDate.value = record.issueDate
-  expiryDate.value = record.expiryDate
-  notes.value = record.notes
-  editingIndex.value = index
+  const record = paymentStore.componentRecords.creditNote[index]
 
-  // Remove the record from table
-  paymentRecords.value.splice(index, 1)
+  if (isCreditNoteRecord(record)) {
+    creditNoteNumber.value = record.creditNoteNumber
+    creditNoteAmount.value = record.creditNoteAmount
+    remainingBalance.value = record.remainingBalance
+    customerName.value = record.customerName
+    issueDate.value = record.issueDate
+    expiryDate.value = record.expiryDate
+    notes.value = record.notes
+    editingIndex.value = index
 
-  // Recalculate amount due
-  recalculateAmountDue()
+    // Emit removal event
+    emit('payment-record-removed', record.id)
+
+    // Remove the record from store
+    paymentStore.componentRecords.creditNote.splice(index, 1)
+  }
 }
 
 const deleteRecord = (index: number) => {
-  paymentRecords.value.splice(index, 1)
+  const record = paymentStore.componentRecords.creditNote[index]
 
-  // Recalculate amount due
-  recalculateAmountDue()
-}
+  if (isCreditNoteRecord(record)) {
+    // Emit removal event
+    emit('payment-record-removed', record.id)
 
-const recalculateAmountDue = () => {
-  // Calculate total amount from all records
-  const totalPaid = paymentRecords.value.reduce((sum, record) => {
-    return sum + record.appliedAmount
-  }, 0)
-
-  // Update amount due (assuming original amount due is stored somewhere)
-  // For now, we'll use a fixed original amount
-  const originalAmount = 125.5 // This should come from props or store
-  amountDue.value = Math.max(0, originalAmount - totalPaid)
+    // Remove from store
+    paymentStore.componentRecords.creditNote.splice(index, 1)
+  }
 }
 
 const resetForm = () => {
@@ -309,8 +316,27 @@ const formatDate = (date: string) => {
 }
 
 onMounted(() => {
-  // Simulate amount due (in real app, this would come from props or store)
-  amountDue.value = 125.5
+  // Load existing records from store
+  const existingRecords = paymentStore.getComponentRecords('creditNote')
+  if (existingRecords.length > 0) {
+    // Filter and validate only credit note records
+    const validCreditNoteRecords = existingRecords.filter(isCreditNoteRecord).map((record) => ({
+      id: record.id || generateId(),
+      type: 'creditNote' as const,
+      creditNoteNumber: record.creditNoteNumber || '',
+      creditNoteAmount: record.creditNoteAmount || 0,
+      appliedAmount: record.appliedAmount || 0,
+      remainingBalance: record.remainingBalance || 0,
+      customerName: record.customerName || '',
+      issueDate: record.issueDate || '',
+      expiryDate: record.expiryDate || '',
+      notes: record.notes || '',
+      timestamp: record.timestamp || new Date().toISOString(),
+    }))
+
+    paymentStore.componentRecords.creditNote = validCreditNoteRecords
+  }
+
   // Set default dates
   const today = new Date()
   issueDate.value = today.toISOString().split('T')[0]
@@ -318,9 +344,6 @@ onMounted(() => {
   expiry.setFullYear(expiry.getFullYear() + 1)
   expiryDate.value = expiry.toISOString().split('T')[0]
 })
-
-// Watch for changes in credit note amount to calculate remaining balance
-watch(creditNoteAmount, calculateRemainingBalance)
 </script>
 
 <style scoped>
@@ -345,5 +368,72 @@ watch(creditNoteAmount, calculateRemainingBalance)
 
 .btn-group .btn:last-child {
   margin-right: 0;
+}
+
+/* Scrollbar styles */
+.card-body {
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+.card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Firefox scrollbar styles */
+.card-body {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Action buttons styling */
+.btn-group .btn {
+  margin-right: 2px;
+  min-width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
+}
+
+.btn-group .btn i {
+  font-size: 14px;
+}
+
+/* Ensure buttons are visible */
+.btn-outline-primary,
+.btn-outline-danger {
+  border-width: 1px;
+  font-weight: 500;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
 }
 </style>

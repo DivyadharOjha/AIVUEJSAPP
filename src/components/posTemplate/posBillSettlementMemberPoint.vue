@@ -87,7 +87,7 @@
               </div>
               <div class="col-md-4">
                 <div class="mb-3">
-                  <label for="redeemedAmount" class="form-label">Redeemed Amount</label>
+                  <label for="redeemedAmount" class="form-label">Amount Receive</label>
                   <input
                     type="number"
                     class="form-control"
@@ -133,9 +133,6 @@
             <div class="row mt-4" v-if="paymentRecords.length > 0">
               <div class="col-12">
                 <div class="card">
-                  <div class="card-header">
-                    <h5 class="mb-0">Payment Records</h5>
-                  </div>
                   <div class="card-body">
                     <div class="table-responsive">
                       <table class="table table-striped table-hover">
@@ -161,7 +158,8 @@
                                   @click="editRecord(index)"
                                   title="Edit"
                                 >
-                                  <i class="bi bi-pencil"></i>
+                                  <i class="bi bi-pencil-fill"></i>
+                                  <span class="ms-1 d-none d-sm-inline">Edit</span>
                                 </button>
                                 <button
                                   type="button"
@@ -169,7 +167,8 @@
                                   @click="deleteRecord(index)"
                                   title="Delete"
                                 >
-                                  <i class="bi bi-trash"></i>
+                                  <i class="bi bi-trash-fill"></i>
+                                  <span class="ms-1 d-none d-sm-inline">Delete</span>
                                 </button>
                               </div>
                             </td>
@@ -196,24 +195,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { usePaymentStore, type MemberPointPaymentRecord } from '../../stores/paymentStore'
 
-interface MemberPointPaymentRecord {
-  id: string
-  type: 'memberPoint'
-  memberId: string
-  memberName: string
-  availablePoints: number
-  pointsToRedeem: number
-  pointValue: number
-  redeemedAmount: number
-  remainingAmount: number
-  timestamp: string
-}
+const emit = defineEmits<{
+  'payment-record-added': [record: { id: string; type: string; amount: number }]
+  'payment-record-removed': [recordId: string]
+}>()
 
-// Removed emit since we're not using it anymore
+// Use the payment store
+const paymentStore = usePaymentStore()
 
-const amountDue = ref(0)
 const memberId = ref('')
 const memberName = ref('')
 const availablePoints = ref(0)
@@ -221,8 +213,10 @@ const pointsToRedeem = ref(0)
 const pointValue = ref(0.01)
 const redeemedAmount = ref(0)
 const remainingAmount = ref(0)
-const paymentRecords = ref<MemberPointPaymentRecord[]>([])
 const editingIndex = ref<number | null>(null)
+
+// Get amount due from store
+const amountDue = computed(() => paymentStore.currentAmountDue)
 
 const isValidPayment = computed(() => {
   return (
@@ -230,6 +224,22 @@ const isValidPayment = computed(() => {
     pointsToRedeem.value > 0 &&
     pointsToRedeem.value <= availablePoints.value
   )
+})
+
+// Type guard function to check if record is a member point payment
+const isMemberPointRecord = (record: unknown): record is MemberPointPaymentRecord => {
+  return Boolean(
+    record &&
+      typeof record === 'object' &&
+      record !== null &&
+      'type' in record &&
+      (record as { type: string }).type === 'memberPoint',
+  )
+}
+
+// Computed property for filtered member point records
+const memberPointRecords = computed(() => {
+  return paymentStore.componentRecords.memberPoint.filter(isMemberPointRecord)
 })
 
 const calculateRedeemedAmount = () => {
@@ -248,16 +258,19 @@ const processPayment = () => {
     pointValue: pointValue.value,
     redeemedAmount: redeemedAmount.value,
     remainingAmount: remainingAmount.value,
+    notes: '', // Add empty notes field
     timestamp: new Date().toISOString(),
   }
 
-  paymentRecords.value.push(paymentRecord)
+  // Add to store directly
+  paymentStore.componentRecords.memberPoint.push(paymentRecord)
 
-  // Recalculate amount due
-  recalculateAmountDue()
-
-  // Reset form
-  resetForm()
+  // Emit the payment record to parent
+  emit('payment-record-added', {
+    id: paymentRecord.id,
+    type: 'memberPoint',
+    amount: paymentRecord.redeemedAmount,
+  })
 
   console.log('Member point payment record added:', paymentRecord)
 }
@@ -410,5 +423,72 @@ watch(pointsToRedeem, calculateRedeemedAmount)
 .col-md-4 {
   flex: 0 0 33.333333% !important;
   max-width: 33.333333% !important;
+}
+
+/* Scrollbar styles */
+.card-body {
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+.card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Firefox scrollbar styles */
+.card-body {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Action buttons styling */
+.btn-group .btn {
+  margin-right: 2px;
+  min-width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
+}
+
+.btn-group .btn i {
+  font-size: 14px;
+}
+
+/* Ensure buttons are visible */
+.btn-outline-primary,
+.btn-outline-danger {
+  border-width: 1px;
+  font-weight: 500;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
 }
 </style>
