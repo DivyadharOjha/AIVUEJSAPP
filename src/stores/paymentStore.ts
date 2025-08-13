@@ -211,6 +211,47 @@ export const usePaymentStore = defineStore('payment', () => {
     }
   }
 
+  const cleanInvalidRecords = () => {
+    // Clean credit card records
+    componentRecords.value.creditCard = componentRecords.value.creditCard.filter(
+      (record) => record.cardType && record.cardType.trim() !== '' && record.amount > 0,
+    )
+
+    // Clean debit card records
+    componentRecords.value.debitCard = componentRecords.value.debitCard.filter(
+      (record) => record.cardType && record.cardType.trim() !== '' && record.amount > 0,
+    )
+
+    // Clean other component records
+    componentRecords.value.cash = componentRecords.value.cash.filter(
+      (record) => record.cashReceived > 0,
+    )
+
+    componentRecords.value.creditNote = componentRecords.value.creditNote.filter(
+      (record) => record.appliedAmount > 0,
+    )
+
+    componentRecords.value.memberPoint = componentRecords.value.memberPoint.filter(
+      (record) => record.redeemedAmount > 0,
+    )
+
+    componentRecords.value.giftVoucher = componentRecords.value.giftVoucher.filter(
+      (record) => record.appliedAmount > 0,
+    )
+
+    componentRecords.value.discountVoucher = componentRecords.value.discountVoucher.filter(
+      (record) => record.discountAmount > 0,
+    )
+
+    componentRecords.value.wallet = componentRecords.value.wallet.filter(
+      (record) => record.amount > 0,
+    )
+
+    componentRecords.value.ePayment = componentRecords.value.ePayment.filter(
+      (record) => record.amount > 0,
+    )
+  }
+
   const setOriginalAmountDue = (amount: number) => {
     originalAmountDue.value = amount
   }
@@ -253,6 +294,7 @@ export const usePaymentStore = defineStore('payment', () => {
     getComponentRecords,
     clearComponentRecords,
     clearAllRecords,
+    cleanInvalidRecords,
     setOriginalAmountDue,
     getBalanceBadgeClass,
     getBalanceText,

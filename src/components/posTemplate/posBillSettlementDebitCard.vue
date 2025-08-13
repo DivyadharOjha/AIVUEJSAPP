@@ -218,6 +218,13 @@
                   class="btn btn-success"
                   @click="processPayment"
                   :disabled="!isValidPayment"
+                  :title="
+                    !selectedCardType.trim()
+                      ? 'Please select a card type'
+                      : !amountReceive.value
+                        ? 'Please enter an amount'
+                        : 'Process payment'
+                  "
                 >
                   <i class="bi bi-credit-card me-2"></i>
                   Pay Card
@@ -230,10 +237,7 @@
     </div>
 
     <!-- Row 4: Payment Records Table (Dynamic height) -->
-    <div
-      class="row table-row flex-grow-1"
-      v-if="paymentStore.componentRecords.debitCard.length > 0"
-    >
+    <div class="row table-row flex-grow-1" v-if="debitCardRecords.length > 0">
       <div class="col-12">
         <div class="card-body table-container">
           <div class="card">
@@ -278,7 +282,12 @@
                       </td>
                       <td>
                         <span class="badge" :class="getCardTypeBadgeClass(record.cardType)">
-                          {{ (record.cardType || 'Unknown').toUpperCase() }}
+                          {{
+                            (record.cardType && record.cardType.trim() !== ''
+                              ? record.cardType
+                              : 'Unknown'
+                            ).toUpperCase()
+                          }}
                         </span>
                       </td>
                       <td>{{ maskCardNumber(record.cardNumber) }}</td>
@@ -304,7 +313,21 @@ import { ref, computed, onMounted } from 'vue'
 import { usePaymentStore, type DebitCardPaymentRecord } from '../../stores/paymentStore'
 
 const emit = defineEmits<{
-  'payment-record-added': [record: { id: string; type: string; amount: number }]
+  'payment-record-added': [
+    record: {
+      id: string
+      type: string
+      cardType: string
+      cardNumber: string
+      expiryDate: string
+      cvv: string
+      cardholderName: string
+      transactionId: string
+      amount: number
+      notes: string
+      timestamp: string
+    },
+  ]
   'payment-record-removed': [recordId: string]
 }>()
 
@@ -325,7 +348,7 @@ const editingIndex = ref<number | null>(null)
 const amountDue = computed(() => paymentStore.currentAmountDue)
 
 const isValidPayment = computed(() => {
-  return amountReceive.value > 0
+  return amountReceive.value > 0 && selectedCardType.value.trim() !== ''
 })
 
 // Type guard function to check if record is a debit card payment
@@ -341,10 +364,24 @@ const isDebitCardRecord = (record: unknown): record is DebitCardPaymentRecord =>
 
 // Computed property for filtered debit card records
 const debitCardRecords = computed(() => {
-  return paymentStore.componentRecords.debitCard.filter(isDebitCardRecord)
+  return paymentStore.componentRecords.debitCard
+    .filter(isDebitCardRecord)
+    .filter((record) => record.cardType && record.cardType.trim() !== '' && record.amount > 0)
 })
 
 const processPayment = () => {
+  console.log('Processing debit card payment:', {
+    selectedCardType: selectedCardType.value,
+    amountReceive: amountReceive.value,
+    isValid: selectedCardType.value.trim() !== '' && amountReceive.value > 0,
+  })
+
+  // Additional validation to prevent empty records
+  if (!selectedCardType.value.trim() || amountReceive.value <= 0) {
+    console.warn('Invalid payment data: Card type or amount is missing')
+    return
+  }
+
   const paymentRecord: DebitCardPaymentRecord = {
     id: generateId(),
     type: 'debitCard',
@@ -359,15 +396,23 @@ const processPayment = () => {
     timestamp: new Date().toISOString(),
   }
 
-  // Add to store directly
-  paymentStore.componentRecords.debitCard.push(paymentRecord)
-
-  // Emit the payment record to parent
+  // Emit the payment record to parent (let parent handle store addition)
   emit('payment-record-added', {
     id: paymentRecord.id,
     type: 'debitCard',
+    cardType: paymentRecord.cardType,
+    cardNumber: paymentRecord.cardNumber,
+    expiryDate: paymentRecord.expiryDate,
+    cvv: paymentRecord.cvv,
+    cardholderName: paymentRecord.cardholderName,
+    transactionId: paymentRecord.transactionId,
     amount: paymentRecord.amount,
+    notes: paymentRecord.notes,
+    timestamp: paymentRecord.timestamp,
   })
+
+  // Clear amount field for next payment
+  amountReceive.value = 0
 
   // Generate new transaction ID for next payment
   generateTransactionId()
@@ -470,23 +515,29 @@ const getCardTypeBadgeClass = (cardType: string) => {
 }
 
 onMounted(() => {
+  // Clean any invalid records from the store
+  paymentStore.cleanInvalidRecords()
+
   // Load existing records from store
   const existingRecords = paymentStore.getComponentRecords('debitCard')
   if (existingRecords.length > 0) {
-    // Filter and validate only debit card records
-    const validDebitCardRecords = existingRecords.filter(isDebitCardRecord).map((record) => ({
-      id: record.id || generateId(),
-      type: 'debitCard' as const,
-      cardType: record.cardType || 'other',
-      cardNumber: record.cardNumber || '',
-      expiryDate: record.expiryDate || '',
-      cvv: record.cvv || '',
-      cardholderName: record.cardholderName || '',
-      transactionId: record.transactionId || '',
-      amount: record.amount || 0,
-      notes: record.notes || '',
-      timestamp: record.timestamp || new Date().toISOString(),
-    }))
+    // Filter and validate only debit card records with valid data
+    const validDebitCardRecords = existingRecords
+      .filter(isDebitCardRecord)
+      .filter((record) => record.cardType && record.cardType.trim() !== '' && record.amount > 0)
+      .map((record) => ({
+        id: record.id || generateId(),
+        type: 'debitCard' as const,
+        cardType: record.cardType || 'other',
+        cardNumber: record.cardNumber || '',
+        expiryDate: record.expiryDate || '',
+        cvv: record.cvv || '',
+        cardholderName: record.cardholderName || '',
+        transactionId: record.transactionId || '',
+        amount: record.amount || 0,
+        notes: record.notes || '',
+        timestamp: record.timestamp || new Date().toISOString(),
+      }))
 
     paymentStore.componentRecords.debitCard = validDebitCardRecords
   }

@@ -86,7 +86,7 @@
               </div>
             </div>
             <!-- Payment Records Table -->
-            <div class="row mt-4" v-if="paymentRecords.length > 0">
+            <div class="row mt-4" v-if="ePaymentRecords.length > 0">
               <div class="col-12">
                 <div class="card">
                   <div class="card-body">
@@ -106,7 +106,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(record, index) in paymentRecords" :key="record.id">
+                          <tr v-for="(record, index) in ePaymentRecords" :key="record.id">
                             <td>
                               <div class="btn-group" role="group">
                                 <button
@@ -158,33 +158,43 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { usePaymentStore, type EPaymentRecord } from '../../stores/paymentStore'
 
-interface EPaymentRecord {
-  id: string
-  type: 'ePayment'
-  paymentMethod: string
-  accountNumber: string
-  ifscCode: string
-  amount: number
-  transactionId: string
-  referenceNumber: string
-  paymentStatus: string
-  notes: string
-  timestamp: string
-}
+const emit = defineEmits<{
+  'payment-record-added': [record: { id: string; type: string; amount: number }]
+  'payment-record-removed': [recordId: string]
+}>()
 
-// Removed emit since we're not using it anymore
+// Use the payment store
+const paymentStore = usePaymentStore()
 
-const amountDue = ref(0)
 const amountReceive = ref(0)
 const transactionId = ref('')
 const referenceNumber = ref('')
 const notes = ref('')
-const paymentRecords = ref<EPaymentRecord[]>([])
 const editingIndex = ref<number | null>(null)
+
+// Get amount due from store
+const amountDue = computed(() => paymentStore.currentAmountDue)
 
 const isValidPayment = computed(() => {
   return amountReceive.value > 0 && referenceNumber.value.trim() !== ''
+})
+
+// Type guard function to check if record is an e-payment
+const isEPaymentRecord = (record: unknown): record is EPaymentRecord => {
+  return Boolean(
+    record &&
+      typeof record === 'object' &&
+      record !== null &&
+      'type' in record &&
+      (record as { type: string }).type === 'ePayment',
+  )
+}
+
+// Computed property for filtered e-payment records
+const ePaymentRecords = computed(() => {
+  return paymentStore.componentRecords.ePayment.filter(isEPaymentRecord)
 })
 
 const processPayment = () => {
@@ -202,50 +212,53 @@ const processPayment = () => {
     timestamp: new Date().toISOString(),
   }
 
-  paymentRecords.value.push(paymentRecord)
+  // Add to store directly
+  paymentStore.componentRecords.ePayment.push(paymentRecord)
 
-  // Recalculate amount due
-  recalculateAmountDue()
+  // Emit the payment record to parent
+  emit('payment-record-added', {
+    id: paymentRecord.id,
+    type: 'ePayment',
+    amount: paymentRecord.amount,
+  })
 
-  // Reset form and generate new transaction ID
-  resetForm()
+  // Clear amount field for next payment
+  amountReceive.value = 0
+
+  // Generate new transaction ID for next payment
   generateTransactionId()
 
   console.log('E-Payment record added:', paymentRecord)
 }
 
 const editRecord = (index: number) => {
-  const record = paymentRecords.value[index]
-  amountReceive.value = record.amount
-  transactionId.value = record.transactionId
-  referenceNumber.value = record.referenceNumber
-  notes.value = record.notes
-  editingIndex.value = index
+  const record = paymentStore.componentRecords.ePayment[index]
 
-  // Remove the record from table
-  paymentRecords.value.splice(index, 1)
+  if (isEPaymentRecord(record)) {
+    amountReceive.value = record.amount
+    transactionId.value = record.transactionId
+    referenceNumber.value = record.referenceNumber
+    notes.value = record.notes
+    editingIndex.value = index
 
-  // Recalculate amount due
-  recalculateAmountDue()
+    // Emit removal event
+    emit('payment-record-removed', record.id)
+
+    // Remove the record from store
+    paymentStore.componentRecords.ePayment.splice(index, 1)
+  }
 }
 
 const deleteRecord = (index: number) => {
-  paymentRecords.value.splice(index, 1)
+  const record = paymentStore.componentRecords.ePayment[index]
 
-  // Recalculate amount due
-  recalculateAmountDue()
-}
+  if (isEPaymentRecord(record)) {
+    // Emit removal event
+    emit('payment-record-removed', record.id)
 
-const recalculateAmountDue = () => {
-  // Calculate total amount from all records
-  const totalPaid = paymentRecords.value.reduce((sum, record) => {
-    return sum + record.amount
-  }, 0)
-
-  // Update amount due (assuming original amount due is stored somewhere)
-  // For now, we'll use a fixed original amount
-  const originalAmount = 125.5 // This should come from props or store
-  amountDue.value = Math.max(0, originalAmount - totalPaid)
+    // Remove from store
+    paymentStore.componentRecords.ePayment.splice(index, 1)
+  }
 }
 
 const resetForm = () => {
@@ -290,8 +303,27 @@ const generateTransactionId = () => {
 }
 
 onMounted(() => {
-  // Simulate amount due (in real app, this would come from props or store)
-  amountDue.value = 125.5
+  // Load existing records from store
+  const existingRecords = paymentStore.getComponentRecords('ePayment')
+  if (existingRecords.length > 0) {
+    // Filter and validate only e-payment records
+    const validEPaymentRecords = existingRecords.filter(isEPaymentRecord).map((record) => ({
+      id: record.id || generateId(),
+      type: 'ePayment' as const,
+      paymentMethod: record.paymentMethod || 'bank_transfer',
+      accountNumber: record.accountNumber || 'N/A',
+      ifscCode: record.ifscCode || 'N/A',
+      amount: record.amount || 0,
+      transactionId: record.transactionId || '',
+      referenceNumber: record.referenceNumber || '',
+      paymentStatus: record.paymentStatus || 'completed',
+      notes: record.notes || '',
+      timestamp: record.timestamp || new Date().toISOString(),
+    }))
+
+    paymentStore.componentRecords.ePayment = validEPaymentRecords
+  }
+
   generateTransactionId()
 })
 </script>

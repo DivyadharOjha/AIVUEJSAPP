@@ -82,6 +82,9 @@
                     id="pointsToRedeem"
                     v-model="pointsToRedeem"
                     placeholder="0"
+                    @keyup.enter="calculateRedeemedAmount"
+                    @blur="calculateRedeemedAmount"
+                    title="Enter points to redeem. Press Enter or click outside to calculate amount."
                   />
                 </div>
               </div>
@@ -121,6 +124,15 @@
                     class="btn btn-success"
                     @click="processPayment"
                     :disabled="!isValidPayment"
+                    :title="
+                      !memberId.trim()
+                        ? 'Please enter member ID'
+                        : !pointsToRedeem
+                          ? 'Please enter points to redeem'
+                          : pointsToRedeem > availablePoints
+                            ? 'Points to redeem cannot exceed available points'
+                            : 'Process payment'
+                    "
                     style="padding: 10px; width: fit-content"
                   >
                     <i class="bi bi-star me-2"></i>
@@ -130,7 +142,7 @@
               </div>
             </div>
             <!-- Payment Records Table -->
-            <div class="row mt-4" v-if="paymentRecords.length > 0">
+            <div class="row mt-4" v-if="memberPointRecords.length > 0">
               <div class="col-12">
                 <div class="card">
                   <div class="card-body">
@@ -149,7 +161,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(record, index) in paymentRecords" :key="record.id">
+                          <tr v-for="(record, index) in memberPointRecords" :key="record.id">
                             <td>
                               <div class="btn-group" role="group">
                                 <button
@@ -195,7 +207,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { usePaymentStore, type MemberPointPaymentRecord } from '../../stores/paymentStore'
 
 const emit = defineEmits<{
@@ -219,11 +231,23 @@ const editingIndex = ref<number | null>(null)
 const amountDue = computed(() => paymentStore.currentAmountDue)
 
 const isValidPayment = computed(() => {
-  return (
-    memberId.value.trim() !== '' &&
-    pointsToRedeem.value > 0 &&
-    pointsToRedeem.value <= availablePoints.value
-  )
+  const hasMemberId = memberId.value.trim() !== ''
+  const hasPoints = pointsToRedeem.value > 0
+  const pointsValid = pointsToRedeem.value <= availablePoints.value
+
+  const isValid = hasMemberId && hasPoints && pointsValid
+
+  console.log('Member point validation:', {
+    memberId: memberId.value,
+    hasMemberId: hasMemberId,
+    pointsToRedeem: pointsToRedeem.value,
+    hasPoints: hasPoints,
+    availablePoints: availablePoints.value,
+    pointsValid: pointsValid,
+    isValid: isValid,
+  })
+
+  return isValid
 })
 
 // Type guard function to check if record is a member point payment
@@ -239,15 +263,60 @@ const isMemberPointRecord = (record: unknown): record is MemberPointPaymentRecor
 
 // Computed property for filtered member point records
 const memberPointRecords = computed(() => {
-  return paymentStore.componentRecords.memberPoint.filter(isMemberPointRecord)
+  const allRecords = paymentStore.componentRecords.memberPoint
+  const filteredRecords = allRecords
+    .filter(isMemberPointRecord)
+    .filter(
+      (record) => record.memberId && record.memberId.trim() !== '' && record.redeemedAmount > 0,
+    )
+
+  console.log('Member point records computed:', {
+    allRecords: allRecords,
+    filteredRecords: filteredRecords,
+    totalRecords: allRecords.length,
+    filteredCount: filteredRecords.length,
+  })
+
+  return filteredRecords
 })
 
 const calculateRedeemedAmount = () => {
+  console.log('Calculating redeemed amount:', {
+    pointsToRedeem: pointsToRedeem.value,
+    pointValue: pointValue.value,
+    amountDue: amountDue.value,
+  })
+
   redeemedAmount.value = pointsToRedeem.value * pointValue.value
   remainingAmount.value = Math.max(0, amountDue.value - redeemedAmount.value)
+
+  console.log('Calculated values:', {
+    redeemedAmount: redeemedAmount.value,
+    remainingAmount: remainingAmount.value,
+  })
 }
 
 const processPayment = () => {
+  console.log('Processing member point payment:', {
+    memberId: memberId.value,
+    pointsToRedeem: pointsToRedeem.value,
+    redeemedAmount: redeemedAmount.value,
+    isValid:
+      memberId.value.trim() !== '' &&
+      pointsToRedeem.value > 0 &&
+      pointsToRedeem.value <= availablePoints.value,
+  })
+
+  // Additional validation to prevent empty records
+  if (
+    !memberId.value.trim() ||
+    pointsToRedeem.value <= 0 ||
+    pointsToRedeem.value > availablePoints.value
+  ) {
+    console.warn('Invalid payment data: Required fields are missing or invalid')
+    return
+  }
+
   const paymentRecord: MemberPointPaymentRecord = {
     id: generateId(),
     type: 'memberPoint',
@@ -266,50 +335,77 @@ const processPayment = () => {
   paymentStore.componentRecords.memberPoint.push(paymentRecord)
 
   // Emit the payment record to parent
-  emit('payment-record-added', {
+  const emitData = {
     id: paymentRecord.id,
     type: 'memberPoint',
     amount: paymentRecord.redeemedAmount,
-  })
+  }
+
+  console.log('Emitting member point data:', emitData)
+  emit('payment-record-added', emitData)
+
+  // Clear amount field for next payment
+  pointsToRedeem.value = 0
 
   console.log('Member point payment record added:', paymentRecord)
+  console.log('Store records after adding:', paymentStore.componentRecords.memberPoint)
 }
 
+// Watch for changes in points to redeem to automatically calculate amounts
+watch(pointsToRedeem, () => {
+  calculateRedeemedAmount()
+})
+
+// Watch for changes in point value to recalculate amounts
+watch(pointValue, () => {
+  calculateRedeemedAmount()
+})
+
+// Watch for changes in member ID to load member data
+watch(memberId, () => {
+  loadMemberData()
+})
+
+// Watch for changes in member point records
+watch(
+  () => paymentStore.componentRecords.memberPoint,
+  (newRecords) => {
+    console.log('Member point records changed:', newRecords)
+  },
+  { deep: true },
+)
+
 const editRecord = (index: number) => {
-  const record = paymentRecords.value[index]
-  memberId.value = record.memberId
-  memberName.value = record.memberName
-  availablePoints.value = record.availablePoints
-  pointsToRedeem.value = record.pointsToRedeem
-  pointValue.value = record.pointValue
-  redeemedAmount.value = record.redeemedAmount
-  remainingAmount.value = record.remainingAmount
-  editingIndex.value = index
+  const record = paymentStore.componentRecords.memberPoint[index]
 
-  // Remove the record from table
-  paymentRecords.value.splice(index, 1)
+  if (isMemberPointRecord(record)) {
+    memberId.value = record.memberId
+    memberName.value = record.memberName
+    availablePoints.value = record.availablePoints
+    pointsToRedeem.value = record.pointsToRedeem
+    pointValue.value = record.pointValue
+    redeemedAmount.value = record.redeemedAmount
+    remainingAmount.value = record.remainingAmount
+    editingIndex.value = index
 
-  // Recalculate amount due
-  recalculateAmountDue()
+    // Emit removal event
+    emit('payment-record-removed', record.id)
+
+    // Remove the record from store
+    paymentStore.componentRecords.memberPoint.splice(index, 1)
+  }
 }
 
 const deleteRecord = (index: number) => {
-  paymentRecords.value.splice(index, 1)
+  const record = paymentStore.componentRecords.memberPoint[index]
 
-  // Recalculate amount due
-  recalculateAmountDue()
-}
+  if (isMemberPointRecord(record)) {
+    // Emit removal event
+    emit('payment-record-removed', record.id)
 
-const recalculateAmountDue = () => {
-  // Calculate total amount from all records
-  const totalPaid = paymentRecords.value.reduce((sum, record) => {
-    return sum + record.redeemedAmount
-  }, 0)
-
-  // Update amount due (assuming original amount due is stored somewhere)
-  // For now, we'll use a fixed original amount
-  const originalAmount = 125.5 // This should come from props or store
-  amountDue.value = Math.max(0, originalAmount - totalPaid)
+    // Remove from store
+    paymentStore.componentRecords.memberPoint.splice(index, 1)
+  }
 }
 
 const resetForm = () => {
@@ -352,11 +448,40 @@ const loadMemberData = () => {
     availablePoints.value = 0
     pointValue.value = 0.01
   }
+
+  // Recalculate amounts after loading member data
+  calculateRedeemedAmount()
 }
 
 onMounted(() => {
-  // Simulate amount due (in real app, this would come from props or store)
-  amountDue.value = 125.5
+  // Clean any invalid records from the store
+  paymentStore.cleanInvalidRecords()
+
+  // Load existing records from store
+  const existingRecords = paymentStore.getComponentRecords('memberPoint')
+  if (existingRecords.length > 0) {
+    // Filter and validate only member point records with valid data
+    const validMemberPointRecords = existingRecords
+      .filter(isMemberPointRecord)
+      .filter(
+        (record) => record.memberId && record.memberId.trim() !== '' && record.redeemedAmount > 0,
+      )
+      .map((record) => ({
+        id: record.id || generateId(),
+        type: 'memberPoint' as const,
+        memberId: record.memberId || '',
+        memberName: record.memberName || '',
+        availablePoints: record.availablePoints || 0,
+        pointsToRedeem: record.pointsToRedeem || 0,
+        pointValue: record.pointValue || 0.01,
+        redeemedAmount: record.redeemedAmount || 0,
+        remainingAmount: record.remainingAmount || 0,
+        notes: record.notes || '',
+        timestamp: record.timestamp || new Date().toISOString(),
+      }))
+
+    paymentStore.componentRecords.memberPoint = validMemberPointRecords
+  }
 
   // Set default member ID for testing
   memberId.value = 'M001'
@@ -371,12 +496,6 @@ onMounted(() => {
     availablePoints: availablePoints.value,
   })
 })
-
-// Watch for changes in member ID to load member data
-watch(memberId, loadMemberData)
-
-// Watch for changes in points to redeem to calculate amounts
-watch(pointsToRedeem, calculateRedeemedAmount)
 </script>
 
 <style scoped>

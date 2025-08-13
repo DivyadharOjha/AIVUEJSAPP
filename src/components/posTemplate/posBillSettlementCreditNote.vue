@@ -95,6 +95,9 @@
                     class="btn btn-success"
                     @click="processPayment"
                     :disabled="!isValidPayment"
+                    :title="
+                      !creditNoteAmount ? 'Please enter credit note amount' : 'Process payment'
+                    "
                     style="padding: 10px; width: fit-content"
                   >
                     <i class="bi bi-receipt me-2"></i>
@@ -172,7 +175,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { usePaymentStore, type CreditNotePaymentRecord } from '../../stores/paymentStore'
 
 const emit = defineEmits<{
@@ -196,13 +199,15 @@ const editingIndex = ref<number | null>(null)
 const amountDue = computed(() => paymentStore.currentAmountDue)
 
 const isValidPayment = computed(() => {
-  return (
-    creditNoteNumber.value.trim() !== '' &&
-    creditNoteAmount.value > 0 &&
-    customerName.value.trim() !== '' &&
-    issueDate.value !== '' &&
-    expiryDate.value !== ''
-  )
+  const hasAmount = creditNoteAmount.value > 0
+
+  console.log('Credit note validation (simplified):', {
+    creditNoteAmount: creditNoteAmount.value,
+    hasAmount: hasAmount,
+    isValid: hasAmount,
+  })
+
+  return hasAmount
 })
 
 // Type guard function to check if record is a credit note payment
@@ -218,7 +223,24 @@ const isCreditNoteRecord = (record: unknown): record is CreditNotePaymentRecord 
 
 // Computed property for filtered credit note records
 const creditNoteRecords = computed(() => {
-  return paymentStore.componentRecords.creditNote.filter(isCreditNoteRecord)
+  const allRecords = paymentStore.componentRecords.creditNote
+  const filteredRecords = allRecords
+    .filter(isCreditNoteRecord)
+    .filter(
+      (record) =>
+        record.creditNoteNumber &&
+        record.creditNoteNumber.trim() !== '' &&
+        record.appliedAmount > 0,
+    )
+
+  console.log('Credit note records computed:', {
+    allRecords: allRecords,
+    filteredRecords: filteredRecords,
+    totalRecords: allRecords.length,
+    filteredCount: filteredRecords.length,
+  })
+
+  return filteredRecords
 })
 
 const calculateRemainingBalance = () => {
@@ -230,18 +252,31 @@ const calculateRemainingBalance = () => {
 }
 
 const processPayment = () => {
+  console.log('Processing credit note payment:', {
+    creditNoteAmount: creditNoteAmount.value,
+    isValid: creditNoteAmount.value > 0,
+  })
+
+  // Additional validation to prevent empty records
+  if (creditNoteAmount.value <= 0) {
+    console.warn('Invalid payment data: Credit note amount is missing or zero')
+    return
+  }
+
   const appliedAmount = Math.min(creditNoteAmount.value, amountDue.value)
 
   const paymentRecord: CreditNotePaymentRecord = {
     id: generateId(),
     type: 'creditNote',
-    creditNoteNumber: creditNoteNumber.value,
+    creditNoteNumber: creditNoteNumber.value || `CN-${Date.now()}`,
     creditNoteAmount: creditNoteAmount.value,
     appliedAmount: appliedAmount,
     remainingBalance: remainingBalance.value,
-    customerName: customerName.value,
-    issueDate: issueDate.value,
-    expiryDate: expiryDate.value,
+    customerName: customerName.value || 'Customer',
+    issueDate: issueDate.value || new Date().toISOString().split('T')[0],
+    expiryDate:
+      expiryDate.value ||
+      new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     notes: notes.value,
     timestamp: new Date().toISOString(),
   }
@@ -250,14 +285,25 @@ const processPayment = () => {
   paymentStore.componentRecords.creditNote.push(paymentRecord)
 
   // Emit the payment record to parent
-  emit('payment-record-added', {
+  const emitData = {
     id: paymentRecord.id,
     type: 'creditNote',
     amount: paymentRecord.appliedAmount,
-  })
+  }
+
+  console.log('Emitting credit note data:', emitData)
+  emit('payment-record-added', emitData)
+
+  // Clear amount field for next payment
+  creditNoteAmount.value = 0
 
   console.log('Credit note payment record added:', paymentRecord)
 }
+
+// Watch for changes in credit note amount to recalculate remaining balance
+watch(creditNoteAmount, () => {
+  calculateRemainingBalance()
+})
 
 const editRecord = (index: number) => {
   const record = paymentStore.componentRecords.creditNote[index]
@@ -316,23 +362,34 @@ const formatDate = (date: string) => {
 }
 
 onMounted(() => {
+  // Clean any invalid records from the store
+  paymentStore.cleanInvalidRecords()
+
   // Load existing records from store
   const existingRecords = paymentStore.getComponentRecords('creditNote')
   if (existingRecords.length > 0) {
-    // Filter and validate only credit note records
-    const validCreditNoteRecords = existingRecords.filter(isCreditNoteRecord).map((record) => ({
-      id: record.id || generateId(),
-      type: 'creditNote' as const,
-      creditNoteNumber: record.creditNoteNumber || '',
-      creditNoteAmount: record.creditNoteAmount || 0,
-      appliedAmount: record.appliedAmount || 0,
-      remainingBalance: record.remainingBalance || 0,
-      customerName: record.customerName || '',
-      issueDate: record.issueDate || '',
-      expiryDate: record.expiryDate || '',
-      notes: record.notes || '',
-      timestamp: record.timestamp || new Date().toISOString(),
-    }))
+    // Filter and validate only credit note records with valid data
+    const validCreditNoteRecords = existingRecords
+      .filter(isCreditNoteRecord)
+      .filter(
+        (record) =>
+          record.creditNoteNumber &&
+          record.creditNoteNumber.trim() !== '' &&
+          record.appliedAmount > 0,
+      )
+      .map((record) => ({
+        id: record.id || generateId(),
+        type: 'creditNote' as const,
+        creditNoteNumber: record.creditNoteNumber || '',
+        creditNoteAmount: record.creditNoteAmount || 0,
+        appliedAmount: record.appliedAmount || 0,
+        remainingBalance: record.remainingBalance || 0,
+        customerName: record.customerName || '',
+        issueDate: record.issueDate || '',
+        expiryDate: record.expiryDate || '',
+        notes: record.notes || '',
+        timestamp: record.timestamp || new Date().toISOString(),
+      }))
 
     paymentStore.componentRecords.creditNote = validCreditNoteRecords
   }

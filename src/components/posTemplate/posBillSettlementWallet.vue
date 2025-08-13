@@ -113,7 +113,7 @@
               </div>
             </div>
             <!-- Payment Records Table -->
-            <div class="row mt-4" v-if="paymentRecords.length > 0">
+            <div class="row mt-4" v-if="walletRecords.length > 0">
               <div class="col-12">
                 <div class="card">
                   <div class="card-body">
@@ -132,7 +132,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(record, index) in paymentRecords" :key="record.id">
+                          <tr v-for="(record, index) in walletRecords" :key="record.id">
                             <td>
                               <div class="btn-group" role="group">
                                 <button
@@ -178,32 +178,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { usePaymentStore, type WalletPaymentRecord } from '../../stores/paymentStore'
 
-interface WalletPaymentRecord {
-  id: string
-  type: 'wallet'
-  walletType: string
-  walletId: string
-  walletBalance: number
-  amount: number
-  transactionId: string
-  remainingBalance: number
-  notes: string
-  timestamp: string
-}
+const emit = defineEmits<{
+  'payment-record-added': [record: { id: string; type: string; amount: number }]
+  'payment-record-removed': [recordId: string]
+}>()
 
-// Removed emit since we're not using it anymore
+// Use the payment store
+const paymentStore = usePaymentStore()
 
-const amountDue = ref(0)
 const memberId = ref('')
 const memberName = ref('')
 const walletBalance = ref(0)
 const amountReceive = ref(0)
 const transactionId = ref('')
 const notes = ref('')
-const paymentRecords = ref<WalletPaymentRecord[]>([])
 const editingIndex = ref<number | null>(null)
+
+// Get amount due from store
+const amountDue = computed(() => paymentStore.currentAmountDue)
 
 const isValidPayment = computed(() => {
   return (
@@ -212,6 +207,22 @@ const isValidPayment = computed(() => {
     amountReceive.value <= walletBalance.value &&
     amountReceive.value <= amountDue.value
   )
+})
+
+// Type guard function to check if record is a wallet payment
+const isWalletRecord = (record: unknown): record is WalletPaymentRecord => {
+  return Boolean(
+    record &&
+      typeof record === 'object' &&
+      record !== null &&
+      'type' in record &&
+      (record as { type: string }).type === 'wallet',
+  )
+}
+
+// Computed property for filtered wallet records
+const walletRecords = computed(() => {
+  return paymentStore.componentRecords.wallet.filter(isWalletRecord)
 })
 
 const calculateRemainingBalance = () => {
@@ -238,52 +249,55 @@ const processPayment = () => {
     timestamp: new Date().toISOString(),
   }
 
-  paymentRecords.value.push(paymentRecord)
+  // Add to store directly
+  paymentStore.componentRecords.wallet.push(paymentRecord)
 
-  // Recalculate amount due
-  recalculateAmountDue()
+  // Emit the payment record to parent
+  emit('payment-record-added', {
+    id: paymentRecord.id,
+    type: 'wallet',
+    amount: paymentRecord.amount,
+  })
 
-  // Reset form and generate new transaction ID
-  resetForm()
+  // Clear amount field for next payment
+  amountReceive.value = 0
+
+  // Generate new transaction ID for next payment
   generateTransactionId()
 
   console.log('Wallet payment record added:', paymentRecord)
 }
 
 const editRecord = (index: number) => {
-  const record = paymentRecords.value[index]
-  memberId.value = record.walletId
-  memberName.value = 'Member Name' // This would be loaded from API
-  walletBalance.value = record.walletBalance
-  amountReceive.value = record.amount
-  transactionId.value = record.transactionId
-  notes.value = record.notes
-  editingIndex.value = index
+  const record = paymentStore.componentRecords.wallet[index]
 
-  // Remove the record from table
-  paymentRecords.value.splice(index, 1)
+  if (isWalletRecord(record)) {
+    memberId.value = record.walletId
+    memberName.value = 'Member Name' // This would be loaded from API
+    walletBalance.value = record.walletBalance
+    amountReceive.value = record.amount
+    transactionId.value = record.transactionId
+    notes.value = record.notes
+    editingIndex.value = index
 
-  // Recalculate amount due
-  recalculateAmountDue()
+    // Emit removal event
+    emit('payment-record-removed', record.id)
+
+    // Remove the record from store
+    paymentStore.componentRecords.wallet.splice(index, 1)
+  }
 }
 
 const deleteRecord = (index: number) => {
-  paymentRecords.value.splice(index, 1)
+  const record = paymentStore.componentRecords.wallet[index]
 
-  // Recalculate amount due
-  recalculateAmountDue()
-}
+  if (isWalletRecord(record)) {
+    // Emit removal event
+    emit('payment-record-removed', record.id)
 
-const recalculateAmountDue = () => {
-  // Calculate total amount from all records
-  const totalPaid = paymentRecords.value.reduce((sum, record) => {
-    return sum + record.amount
-  }, 0)
-
-  // Update amount due (assuming original amount due is stored somewhere)
-  // For now, we'll use a fixed original amount
-  const originalAmount = 125.5 // This should come from props or store
-  amountDue.value = Math.max(0, originalAmount - totalPaid)
+    // Remove from store
+    paymentStore.componentRecords.wallet.splice(index, 1)
+  }
 }
 
 const resetForm = () => {
@@ -345,20 +359,26 @@ onMounted(() => {
   generateTransactionId()
 })
 
-onUnmounted(() => {
-  // Clean up any potential memory leaks or references
-  paymentRecords.value = []
-  editingIndex.value = null
-})
+onMounted(() => {
+  // Load existing records from store
+  const existingRecords = paymentStore.getComponentRecords('wallet')
+  if (existingRecords.length > 0) {
+    // Filter and validate only wallet records
+    const validWalletRecords = existingRecords.filter(isWalletRecord).map((record) => ({
+      id: record.id || generateId(),
+      type: 'wallet' as const,
+      walletType: record.walletType || 'digital',
+      walletId: record.walletId || '',
+      walletBalance: record.walletBalance || 0,
+      amount: record.amount || 0,
+      transactionId: record.transactionId || '',
+      remainingBalance: record.remainingBalance || 0,
+      notes: record.notes || '',
+      timestamp: record.timestamp || new Date().toISOString(),
+    }))
 
-// Watch for changes in member ID to load wallet data
-watch(memberId, () => {
-  loadWalletData()
-})
-
-// Watch for changes in amount receive to calculate remaining balance
-watch(amountReceive, () => {
-  // This will trigger recalculation when amount receive changes
+    paymentStore.componentRecords.wallet = validWalletRecords
+  }
 })
 </script>
 

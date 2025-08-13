@@ -97,7 +97,7 @@
               </div>
             </div>
             <!-- Payment Records Table -->
-            <div class="row mt-4" v-if="paymentRecords.length > 0">
+            <div class="row mt-4" v-if="discountVoucherRecords.length > 0">
               <div class="col-12">
                 <div class="card">
                   <div class="card-body">
@@ -116,7 +116,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(record, index) in paymentRecords" :key="record.id">
+                          <tr v-for="(record, index) in discountVoucherRecords" :key="record.id">
                             <td>
                               <div class="btn-group" role="group">
                                 <button
@@ -162,33 +162,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { usePaymentStore, type DiscountVoucherPaymentRecord } from '../../stores/paymentStore'
 
-interface DiscountVoucherPaymentRecord {
-  id: string
-  type: 'discountVoucher'
-  voucherCode: string
-  discountValue: number
-  discountAmount: number
-  finalAmount: number
-  validUntil: string
-  notes: string
-  timestamp: string
-}
+const emit = defineEmits<{
+  'payment-record-added': [record: { id: string; type: string; amount: number }]
+  'payment-record-removed': [recordId: string]
+}>()
 
-// Removed emit since we're not using it anymore
+// Use the payment store
+const paymentStore = usePaymentStore()
 
-const amountDue = ref(0)
 const voucherCode = ref('')
 const discountValue = ref(0)
 const amountReceive = ref(0)
 const validUntil = ref('')
 const notes = ref('')
-const paymentRecords = ref<DiscountVoucherPaymentRecord[]>([])
 const editingIndex = ref<number | null>(null)
+
+// Get amount due from store
+const amountDue = computed(() => paymentStore.currentAmountDue)
 
 const isValidPayment = computed(() => {
   return voucherCode.value.trim() !== '' && discountValue.value > 0 && amountReceive.value > 0
+})
+
+// Type guard function to check if record is a discount voucher payment
+const isDiscountVoucherRecord = (record: unknown): record is DiscountVoucherPaymentRecord => {
+  return Boolean(
+    record &&
+      typeof record === 'object' &&
+      record !== null &&
+      'type' in record &&
+      (record as { type: string }).type === 'discountVoucher',
+  )
+}
+
+// Computed property for filtered discount voucher records
+const discountVoucherRecords = computed(() => {
+  return paymentStore.componentRecords.discountVoucher.filter(isDiscountVoucherRecord)
 })
 
 const calculateDiscount = () => {
@@ -213,50 +225,51 @@ const processPayment = () => {
     timestamp: new Date().toISOString(),
   }
 
-  paymentRecords.value.push(paymentRecord)
+  // Add to store directly
+  paymentStore.componentRecords.discountVoucher.push(paymentRecord)
 
-  // Recalculate amount due
-  recalculateAmountDue()
+  // Emit the payment record to parent
+  emit('payment-record-added', {
+    id: paymentRecord.id,
+    type: 'discountVoucher',
+    amount: paymentRecord.discountAmount,
+  })
 
-  // Reset form
-  resetForm()
+  // Clear amount field for next payment
+  amountReceive.value = 0
 
   console.log('Discount voucher payment record added:', paymentRecord)
 }
 
 const editRecord = (index: number) => {
-  const record = paymentRecords.value[index]
-  voucherCode.value = record.voucherCode
-  discountValue.value = record.discountValue
-  amountReceive.value = record.discountAmount
-  validUntil.value = record.validUntil
-  notes.value = record.notes
-  editingIndex.value = index
+  const record = paymentStore.componentRecords.discountVoucher[index]
 
-  // Remove the record from table
-  paymentRecords.value.splice(index, 1)
+  if (isDiscountVoucherRecord(record)) {
+    voucherCode.value = record.voucherCode
+    discountValue.value = record.discountValue
+    amountReceive.value = record.discountAmount
+    validUntil.value = record.validUntil
+    notes.value = record.notes
+    editingIndex.value = index
 
-  // Recalculate amount due
-  recalculateAmountDue()
+    // Emit removal event
+    emit('payment-record-removed', record.id)
+
+    // Remove the record from store
+    paymentStore.componentRecords.discountVoucher.splice(index, 1)
+  }
 }
 
 const deleteRecord = (index: number) => {
-  paymentRecords.value.splice(index, 1)
+  const record = paymentStore.componentRecords.discountVoucher[index]
 
-  // Recalculate amount due
-  recalculateAmountDue()
-}
+  if (isDiscountVoucherRecord(record)) {
+    // Emit removal event
+    emit('payment-record-removed', record.id)
 
-const recalculateAmountDue = () => {
-  // Calculate total amount from all records
-  const totalPaid = paymentRecords.value.reduce((sum, record) => {
-    return sum + record.discountAmount
-  }, 0)
-
-  // Update amount due (assuming original amount due is stored somewhere)
-  // For now, we'll use a fixed original amount
-  const originalAmount = 125.5 // This should come from props or store
-  amountDue.value = Math.max(0, originalAmount - totalPaid)
+    // Remove from store
+    paymentStore.componentRecords.discountVoucher.splice(index, 1)
+  }
 }
 
 const resetForm = () => {
@@ -304,20 +317,27 @@ onMounted(() => {
   amountDue.value = 125.5
 })
 
-onUnmounted(() => {
-  // Clean up any potential memory leaks or references
-  paymentRecords.value = []
-  editingIndex.value = null
-})
+onMounted(() => {
+  // Load existing records from store
+  const existingRecords = paymentStore.getComponentRecords('discountVoucher')
+  if (existingRecords.length > 0) {
+    // Filter and validate only discount voucher records
+    const validDiscountVoucherRecords = existingRecords
+      .filter(isDiscountVoucherRecord)
+      .map((record) => ({
+        id: record.id || generateId(),
+        type: 'discountVoucher' as const,
+        voucherCode: record.voucherCode || '',
+        discountValue: record.discountValue || 0,
+        discountAmount: record.discountAmount || 0,
+        finalAmount: record.finalAmount || 0,
+        validUntil: record.validUntil || '',
+        notes: record.notes || '',
+        timestamp: record.timestamp || new Date().toISOString(),
+      }))
 
-// Watch for changes in voucher code to load voucher data
-watch(voucherCode, () => {
-  loadVoucherData()
-})
-
-// Watch for changes in discount value to calculate amounts
-watch(discountValue, () => {
-  // This will trigger recalculation when discount value changes
+    paymentStore.componentRecords.discountVoucher = validDiscountVoucherRecords
+  }
 })
 </script>
 

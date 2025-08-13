@@ -122,6 +122,8 @@ const getBalanceBadgeClass = () => paymentStore.getBalanceBadgeClass()
 const getBalanceText = () => paymentStore.getBalanceText()
 
 const handlePaymentRecordAdded = (record: any) => {
+  console.log('Payment record added:', record)
+
   // Convert component record to store format
   const storeRecord = {
     id: record.id,
@@ -137,6 +139,8 @@ const handlePaymentRecordAdded = (record: any) => {
     timestamp: new Date().toISOString(),
     details: record,
   }
+
+  console.log('Store record:', storeRecord)
   paymentStore.addPaymentRecord(storeRecord)
 }
 

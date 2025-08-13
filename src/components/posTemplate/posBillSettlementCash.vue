@@ -23,7 +23,7 @@
               </div>
               <div class="col-md-4">
                 <div class="mb-3">
-                  <label for="cashReceived" class="form-label">Cash Amount Received</label>
+                  <label for="cashReceived" class="form-label">Amount Received</label>
                   <input
                     type="number"
                     class="form-control"
@@ -81,7 +81,7 @@
             </div>
 
             <!-- Payment Records Table -->
-            <div class="row mt-4" v-if="cashRecords.length > 0">
+            <div class="row mt-4" v-if="showTable">
               <div class="col-12">
                 <div class="card">
                   <div class="card-body">
@@ -148,7 +148,16 @@ import { ref, computed, onMounted } from 'vue'
 import { usePaymentStore, type CashPaymentRecord } from '../../stores/paymentStore'
 
 const emit = defineEmits<{
-  'payment-record-added': [record: { id: string; type: string; cashReceived: number }]
+  'payment-record-added': [
+    record: {
+      id: string
+      type: string
+      cashReceived: number
+      schemesDiscount: number
+      notes: string
+      timestamp: string
+    },
+  ]
   'payment-record-removed': [recordId: string]
 }>()
 
@@ -189,6 +198,11 @@ const cashRecords = computed(() => {
   return paymentStore.componentRecords.cash.filter(isCashRecord)
 })
 
+// Computed property for table visibility
+const showTable = computed(() => {
+  return cashRecords.value.length > 0
+})
+
 const processPayment = () => {
   const paymentRecord: CashPaymentRecord = {
     id: generateId(),
@@ -199,17 +213,18 @@ const processPayment = () => {
     timestamp: new Date().toISOString(),
   }
 
-  // Add to store directly
-  paymentStore.componentRecords.cash.push(paymentRecord)
-
-  // Emit the payment record to parent
+  // Emit the payment record to parent (let parent handle store addition)
   emit('payment-record-added', {
     id: paymentRecord.id,
     type: 'cash',
     cashReceived: paymentRecord.cashReceived,
+    schemesDiscount: paymentRecord.schemesDiscount,
+    notes: paymentRecord.notes,
+    timestamp: paymentRecord.timestamp,
   })
 
-  // Form will be cleared by user manually or when switching components
+  // Clear amount field for next payment
+  cashReceived.value = 0
 
   console.log('Cash payment record added:', paymentRecord)
 }
@@ -259,18 +274,24 @@ const formatTimestamp = (timestamp: string) => {
 }
 
 onMounted(() => {
+  // Clean any invalid records from the store
+  paymentStore.cleanInvalidRecords()
+
   // Load existing records from store
   const existingRecords = paymentStore.getComponentRecords('cash')
   if (existingRecords.length > 0) {
-    // Filter and validate only cash records
-    const validCashRecords = existingRecords.filter(isCashRecord).map((record) => ({
-      id: record.id || generateId(),
-      type: 'cash' as const,
-      cashReceived: record.cashReceived || 0,
-      schemesDiscount: record.schemesDiscount || 0,
-      notes: record.notes || '',
-      timestamp: record.timestamp || new Date().toISOString(),
-    }))
+    // Filter and validate only cash records with valid data
+    const validCashRecords = existingRecords
+      .filter(isCashRecord)
+      .filter((record) => record.cashReceived > 0)
+      .map((record) => ({
+        id: record.id || generateId(),
+        type: 'cash' as const,
+        cashReceived: record.cashReceived || 0,
+        schemesDiscount: record.schemesDiscount || 0,
+        notes: record.notes || '',
+        timestamp: record.timestamp || new Date().toISOString(),
+      }))
 
     paymentStore.componentRecords.cash = validCashRecords
   }

@@ -126,7 +126,7 @@
               </div>
             </div>
             <!-- Payment Records Table -->
-            <div class="row mt-4" v-if="paymentRecords.length > 0">
+            <div class="row mt-4" v-if="giftVoucherRecords.length > 0">
               <div class="col-12">
                 <div class="card">
                   <div class="card-body">
@@ -145,7 +145,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(record, index) in paymentRecords" :key="record.id">
+                          <tr v-for="(record, index) in giftVoucherRecords" :key="record.id">
                             <td>
                               <div class="btn-group" role="group">
                                 <button
@@ -191,25 +191,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { usePaymentStore, type GiftVoucherPaymentRecord } from '../../stores/paymentStore'
 
-interface GiftVoucherPaymentRecord {
-  id: string
-  type: 'giftVoucher'
-  voucherCode: string
-  voucherAmount: number
-  appliedAmount: number
-  remainingBalance: number
-  customerName: string
-  issueDate: string
-  expiryDate: string
-  notes: string
-  timestamp: string
-}
+const emit = defineEmits<{
+  'payment-record-added': [record: { id: string; type: string; amount: number }]
+  'payment-record-removed': [recordId: string]
+}>()
 
-// Removed emit since we're not using it anymore
+// Use the payment store
+const paymentStore = usePaymentStore()
 
-const amountDue = ref(0)
 const voucherCode = ref('')
 const voucherAmount = ref(0)
 const amountReceive = ref(0)
@@ -218,11 +210,29 @@ const customerName = ref('')
 const issueDate = ref('')
 const expiryDate = ref('')
 const notes = ref('')
-const paymentRecords = ref<GiftVoucherPaymentRecord[]>([])
 const editingIndex = ref<number | null>(null)
+
+// Get amount due from store
+const amountDue = computed(() => paymentStore.currentAmountDue)
 
 const isValidPayment = computed(() => {
   return voucherCode.value.trim() !== '' && voucherAmount.value > 0 && amountReceive.value > 0
+})
+
+// Type guard function to check if record is a gift voucher payment
+const isGiftVoucherRecord = (record: unknown): record is GiftVoucherPaymentRecord => {
+  return Boolean(
+    record &&
+      typeof record === 'object' &&
+      record !== null &&
+      'type' in record &&
+      (record as { type: string }).type === 'giftVoucher',
+  )
+}
+
+// Computed property for filtered gift voucher records
+const giftVoucherRecords = computed(() => {
+  return paymentStore.componentRecords.giftVoucher.filter(isGiftVoucherRecord)
 })
 
 const calculateRemainingBalance = () => {
@@ -250,53 +260,54 @@ const processPayment = () => {
     timestamp: new Date().toISOString(),
   }
 
-  paymentRecords.value.push(paymentRecord)
+  // Add to store directly
+  paymentStore.componentRecords.giftVoucher.push(paymentRecord)
 
-  // Recalculate amount due
-  recalculateAmountDue()
+  // Emit the payment record to parent
+  emit('payment-record-added', {
+    id: paymentRecord.id,
+    type: 'giftVoucher',
+    amount: paymentRecord.appliedAmount,
+  })
 
-  // Reset form
-  resetForm()
+  // Clear amount field for next payment
+  amountReceive.value = 0
 
   console.log('Gift voucher payment record added:', paymentRecord)
 }
 
 const editRecord = (index: number) => {
-  const record = paymentRecords.value[index]
-  voucherCode.value = record.voucherCode
-  voucherAmount.value = record.voucherAmount
-  amountReceive.value = record.appliedAmount
-  remainingBalance.value = record.remainingBalance
-  customerName.value = record.customerName
-  issueDate.value = record.issueDate
-  expiryDate.value = record.expiryDate
-  notes.value = record.notes
-  editingIndex.value = index
+  const record = paymentStore.componentRecords.giftVoucher[index]
 
-  // Remove the record from table
-  paymentRecords.value.splice(index, 1)
+  if (isGiftVoucherRecord(record)) {
+    voucherCode.value = record.voucherCode
+    voucherAmount.value = record.voucherAmount
+    amountReceive.value = record.appliedAmount
+    remainingBalance.value = record.remainingBalance
+    customerName.value = record.customerName
+    issueDate.value = record.issueDate
+    expiryDate.value = record.expiryDate
+    notes.value = record.notes
+    editingIndex.value = index
 
-  // Recalculate amount due
-  recalculateAmountDue()
+    // Emit removal event
+    emit('payment-record-removed', record.id)
+
+    // Remove the record from store
+    paymentStore.componentRecords.giftVoucher.splice(index, 1)
+  }
 }
 
 const deleteRecord = (index: number) => {
-  paymentRecords.value.splice(index, 1)
+  const record = paymentStore.componentRecords.giftVoucher[index]
 
-  // Recalculate amount due
-  recalculateAmountDue()
-}
+  if (isGiftVoucherRecord(record)) {
+    // Emit removal event
+    emit('payment-record-removed', record.id)
 
-const recalculateAmountDue = () => {
-  // Calculate total amount from all records
-  const totalPaid = paymentRecords.value.reduce((sum, record) => {
-    return sum + record.appliedAmount
-  }, 0)
-
-  // Update amount due (assuming original amount due is stored somewhere)
-  // For now, we'll use a fixed original amount
-  const originalAmount = 125.5 // This should come from props or store
-  amountDue.value = Math.max(0, originalAmount - totalPaid)
+    // Remove from store
+    paymentStore.componentRecords.giftVoucher.splice(index, 1)
+  }
 }
 
 const resetForm = () => {
@@ -337,12 +348,27 @@ const loadVoucherData = () => {
 }
 
 onMounted(() => {
-  // Simulate amount due (in real app, this would come from props or store)
-  amountDue.value = 125.5
-})
+  // Load existing records from store
+  const existingRecords = paymentStore.getComponentRecords('giftVoucher')
+  if (existingRecords.length > 0) {
+    // Filter and validate only gift voucher records
+    const validGiftVoucherRecords = existingRecords.filter(isGiftVoucherRecord).map((record) => ({
+      id: record.id || generateId(),
+      type: 'giftVoucher' as const,
+      voucherCode: record.voucherCode || '',
+      voucherAmount: record.voucherAmount || 0,
+      appliedAmount: record.appliedAmount || 0,
+      remainingBalance: record.remainingBalance || 0,
+      customerName: record.customerName || '',
+      issueDate: record.issueDate || '',
+      expiryDate: record.expiryDate || '',
+      notes: record.notes || '',
+      timestamp: record.timestamp || new Date().toISOString(),
+    }))
 
-// Watch for changes in voucher code to load voucher data
-watch(voucherCode, loadVoucherData)
+    paymentStore.componentRecords.giftVoucher = validGiftVoucherRecords
+  }
+})
 </script>
 
 <style scoped>
