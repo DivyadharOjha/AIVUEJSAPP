@@ -5,3 +5,5 @@ alwaysApply: true
 - use bootstarp responsive layout.
 - always use Composition API style in component.
 - always use <script setup lang="ts"> for script tag.
+- always use camelCase (first latter small) while new component creation.
+- component name must be multi-word.
