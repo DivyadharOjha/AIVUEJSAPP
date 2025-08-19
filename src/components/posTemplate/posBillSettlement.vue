@@ -172,6 +172,9 @@ const selectPaymentType = (paymentTypeId: string) => {
 onMounted(() => {
   // Initialize the store with the original amount due
   paymentStore.setOriginalAmountDue(125.5)
+
+  // Set default payment type (optional - remove if you want user to select manually)
+  // selectedPaymentType.value = 'giftVoucher'
 })
 </script>
 

@@ -41,15 +41,16 @@
                     id="voucherCode"
                     v-model="voucherCode"
                     placeholder="GV-2024-001"
+                    @blur="loadVoucherData"
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="voucherAmount" class="form-label">Voucher Actual Amount</label>
+                  <label for="voucherActualAmount" class="form-label">Voucher Actual Amount</label>
                   <input
                     type="number"
                     class="form-control"
-                    id="voucherAmount"
-                    v-model="voucherAmount"
+                    id="voucherActualAmount"
+                    v-model="voucherActualAmount"
                     readonly
                     placeholder="0.00"
                     step="0.01"
@@ -66,6 +67,8 @@
                     v-model="amountReceive"
                     placeholder="0.00"
                     step="0.01"
+                    @keyup.enter="handleAmountReceiveChange"
+                    @blur="handleAmountReceiveChange"
                   />
                 </div>
                 <div class="mb-3">
@@ -169,12 +172,34 @@
                               </div>
                             </td>
                             <td>{{ record.voucherCode }}</td>
-                            <td>${{ record.voucherAmount.toFixed(2) }}</td>
-                            <td>${{ record.appliedAmount.toFixed(2) }}</td>
-                            <td>${{ record.remainingBalance.toFixed(2) }}</td>
-                            <td>{{ formatDate(record.expiryDate) }}</td>
+                            <td>
+                              {{
+                                record.voucherActualAmount !== undefined
+                                  ? '$' + record.voucherActualAmount.toFixed(2)
+                                  : '-'
+                              }}
+                            </td>
+                            <td>
+                              {{
+                                record.amountReceive !== undefined
+                                  ? '$' + record.amountReceive.toFixed(2)
+                                  : '-'
+                              }}
+                            </td>
+                            <td>
+                              {{
+                                record.remainingBalance !== undefined
+                                  ? '$' + record.remainingBalance.toFixed(2)
+                                  : '-'
+                              }}
+                            </td>
+                            <td>
+                              {{ record.expiryDate ? formatDate(record.expiryDate) : '-' }}
+                            </td>
                             <td>{{ record.notes || '-' }}</td>
-                            <td>{{ formatTimestamp(record.timestamp) }}</td>
+                            <td>
+                              {{ record.timestamp ? formatTimestamp(record.timestamp) : '-' }}
+                            </td>
                           </tr>
                         </tbody>
                       </table>
@@ -202,21 +227,31 @@ const emit = defineEmits<{
 // Use the payment store
 const paymentStore = usePaymentStore()
 
+// Create a reactive reference to the gift voucher records with proper typing
+const giftVoucherRecordsRef = ref<GiftVoucherPaymentRecord[]>([])
+
+// Individual reactive refs for form data
 const voucherCode = ref('')
-const voucherAmount = ref(0)
+const voucherActualAmount = ref(0)
 const amountReceive = ref(0)
 const remainingBalance = ref(0)
 const customerName = ref('')
 const issueDate = ref('')
 const expiryDate = ref('')
 const notes = ref('')
+
 const editingIndex = ref<number | null>(null)
 
 // Get amount due from store
 const amountDue = computed(() => paymentStore.currentAmountDue)
 
+// Computed property for gift voucher records with explicit typing
+const giftVoucherRecords = computed<GiftVoucherPaymentRecord[]>(() => {
+  return giftVoucherRecordsRef.value
+})
+
 const isValidPayment = computed(() => {
-  return voucherCode.value.trim() !== '' && voucherAmount.value > 0 && amountReceive.value > 0
+  return voucherCode.value.trim() !== '' && voucherActualAmount.value > 0 && amountReceive.value > 0
 })
 
 // Type guard function to check if record is a gift voucher payment
@@ -230,28 +265,21 @@ const isGiftVoucherRecord = (record: unknown): record is GiftVoucherPaymentRecor
   )
 }
 
-// Computed property for filtered gift voucher records
-const giftVoucherRecords = computed(() => {
-  return paymentStore.componentRecords.giftVoucher.filter(isGiftVoucherRecord)
-})
-
 const calculateRemainingBalance = () => {
-  if (voucherAmount.value > 0) {
-    remainingBalance.value = Math.max(0, voucherAmount.value - amountDue.value)
+  if (voucherActualAmount.value > 0) {
+    remainingBalance.value = Math.max(0, voucherActualAmount.value - amountReceive.value)
   } else {
     remainingBalance.value = 0
   }
 }
 
 const processPayment = () => {
-  const appliedAmount = Math.min(voucherAmount.value, amountReceive.value)
-
   const paymentRecord: GiftVoucherPaymentRecord = {
     id: generateId(),
     type: 'giftVoucher',
     voucherCode: voucherCode.value,
-    voucherAmount: voucherAmount.value,
-    appliedAmount: appliedAmount,
+    voucherActualAmount: voucherActualAmount.value,
+    amountReceive: amountReceive.value,
     remainingBalance: remainingBalance.value,
     customerName: customerName.value,
     issueDate: issueDate.value,
@@ -260,29 +288,28 @@ const processPayment = () => {
     timestamp: new Date().toISOString(),
   }
 
-  // Add to store directly
+  // Add to both store and local reference
   paymentStore.componentRecords.giftVoucher.push(paymentRecord)
+  giftVoucherRecordsRef.value.push(paymentRecord)
 
   // Emit the payment record to parent
   emit('payment-record-added', {
     id: paymentRecord.id,
     type: 'giftVoucher',
-    amount: paymentRecord.appliedAmount,
+    amount: paymentRecord.amountReceive,
   })
 
   // Clear amount field for next payment
   amountReceive.value = 0
-
-  console.log('Gift voucher payment record added:', paymentRecord)
 }
 
 const editRecord = (index: number) => {
-  const record = paymentStore.componentRecords.giftVoucher[index]
+  const record = giftVoucherRecordsRef.value[index]
 
-  if (isGiftVoucherRecord(record)) {
+  if (record) {
     voucherCode.value = record.voucherCode
-    voucherAmount.value = record.voucherAmount
-    amountReceive.value = record.appliedAmount
+    voucherActualAmount.value = record.voucherActualAmount
+    amountReceive.value = record.amountReceive
     remainingBalance.value = record.remainingBalance
     customerName.value = record.customerName
     issueDate.value = record.issueDate
@@ -293,26 +320,28 @@ const editRecord = (index: number) => {
     // Emit removal event
     emit('payment-record-removed', record.id)
 
-    // Remove the record from store
+    // Remove the record from both store and local reference
     paymentStore.componentRecords.giftVoucher.splice(index, 1)
+    giftVoucherRecordsRef.value.splice(index, 1)
   }
 }
 
 const deleteRecord = (index: number) => {
-  const record = paymentStore.componentRecords.giftVoucher[index]
+  const record = giftVoucherRecordsRef.value[index]
 
-  if (isGiftVoucherRecord(record)) {
+  if (record) {
     // Emit removal event
     emit('payment-record-removed', record.id)
 
-    // Remove from store
+    // Remove from both store and local reference
     paymentStore.componentRecords.giftVoucher.splice(index, 1)
+    giftVoucherRecordsRef.value.splice(index, 1)
   }
 }
 
 const resetForm = () => {
   voucherCode.value = ''
-  voucherAmount.value = 0
+  voucherActualAmount.value = 0
   amountReceive.value = 0
   remainingBalance.value = 0
   customerName.value = ''
@@ -320,6 +349,9 @@ const resetForm = () => {
   expiryDate.value = ''
   notes.value = ''
   editingIndex.value = null
+
+  // Clear local records
+  giftVoucherRecordsRef.value = []
 }
 
 const generateId = () => {
@@ -337,17 +369,41 @@ const formatTimestamp = (timestamp: string) => {
 }
 
 const loadVoucherData = () => {
-  // Simulate loading voucher data (in real app, this would be an API call)
-  if (voucherCode.value.trim() !== '') {
-    voucherAmount.value = 200.0
-    customerName.value = 'Jane Smith'
-    issueDate.value = '2024-01-15'
-    expiryDate.value = '2024-12-31'
-    calculateRemainingBalance()
+  // Always set voucher actual amount to 100 regardless of voucher code
+  voucherActualAmount.value = 100.0
+  // Don't overwrite customer name - keep the one set in onMounted
+  // customerName.value = 'Jane Smith' // Removed this line
+  // Don't overwrite issue date - keep the one set in onMounted
+  // issueDate.value = '2024-01-15' // Removed this line
+  // Set expiry date to today's date
+  const today = new Date()
+  expiryDate.value = today.toISOString().split('T')[0]
+  calculateRemainingBalance()
+}
+
+const handleAmountReceiveChange = () => {
+  // Calculate remaining balance: (Actual Voucher Amount - Amount Receive)
+  if (voucherActualAmount.value > 0) {
+    remainingBalance.value = Math.max(0, voucherActualAmount.value - amountReceive.value)
+  } else {
+    remainingBalance.value = 0
   }
 }
 
 onMounted(() => {
+  // Initialize voucher actual amount to 100
+  voucherActualAmount.value = 100.0
+
+  // Set voucher code to "GV-2001-10"
+  voucherCode.value = 'GV-2001-10'
+
+  // Set issue date to today's date
+  const today = new Date()
+  issueDate.value = today.toISOString().split('T')[0]
+
+  // Set customer name to "Ojha" by default
+  customerName.value = 'Ojha'
+
   // Load existing records from store
   const existingRecords = paymentStore.getComponentRecords('giftVoucher')
   if (existingRecords.length > 0) {
@@ -356,8 +412,8 @@ onMounted(() => {
       id: record.id || generateId(),
       type: 'giftVoucher' as const,
       voucherCode: record.voucherCode || '',
-      voucherAmount: record.voucherAmount || 0,
-      appliedAmount: record.appliedAmount || 0,
+      voucherActualAmount: record.voucherActualAmount || 0,
+      amountReceive: record.amountReceive || 0,
       remainingBalance: record.remainingBalance || 0,
       customerName: record.customerName || '',
       issueDate: record.issueDate || '',
