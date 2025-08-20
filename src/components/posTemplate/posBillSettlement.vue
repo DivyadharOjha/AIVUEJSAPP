@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { usePaymentStore } from '../../stores/paymentStore'
+import { usePaymentStore, type ComponentPaymentRecord } from '../../stores/paymentStore'
 import PosBillSettlementCash from './posBillSettlementCash.vue'
 import PosBillSettlementCreditCard from './posBillSettlementCreditCard.vue'
 import PosBillSettlementDebitCard from './posBillSettlementDebitCard.vue'
@@ -121,21 +121,36 @@ const canSaveTransaction = computed(() => paymentStore.canSaveTransaction)
 const getBalanceBadgeClass = () => paymentStore.getBalanceBadgeClass()
 const getBalanceText = () => paymentStore.getBalanceText()
 
-const handlePaymentRecordAdded = (record: any) => {
+// Helper function to extract amount from different payment record types
+const getAmountFromRecord = (record: ComponentPaymentRecord): number => {
+  switch (record.type) {
+    case 'cash':
+      return record.cashReceived
+    case 'creditCard':
+    case 'debitCard':
+      return record.amount
+    case 'creditNote':
+      return record.appliedAmount
+    case 'memberPoint':
+      return record.redeemedAmount
+    case 'giftVoucher':
+    case 'discountVoucher':
+    case 'wallet':
+    case 'ePayment':
+      return record.amountReceive
+    default:
+      return 0
+  }
+}
+
+const handlePaymentRecordAdded = (record: ComponentPaymentRecord) => {
   console.log('Payment record added:', record)
 
   // Convert component record to store format
   const storeRecord = {
     id: record.id,
     type: record.type,
-    amount:
-      record.amount ||
-      record.cashReceived ||
-      record.appliedAmount ||
-      record.redeemedAmount ||
-      record.amountReceive ||
-      record.discountAmount ||
-      0,
+    amount: getAmountFromRecord(record),
     timestamp: new Date().toISOString(),
     details: record,
   }
