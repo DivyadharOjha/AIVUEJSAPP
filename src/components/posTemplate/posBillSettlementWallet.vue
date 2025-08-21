@@ -155,10 +155,10 @@
                                 </button>
                               </div>
                             </td>
-                            <td>{{ record.walletType }}</td>
-                            <td>{{ maskWalletNumber(record.walletId) }}</td>
-                            <td>${{ record.walletBalance.toFixed(2) }}</td>
-                            <td>${{ record.amount.toFixed(2) }}</td>
+                            <td>Digital Wallet</td>
+                            <td>{{ maskWalletNumber(record.memberId) }}</td>
+                            <td>${{ record.walletAvailableBalance.toFixed(2) }}</td>
+                            <td>${{ record.amountReceive.toFixed(2) }}</td>
                             <td>{{ record.transactionId }}</td>
                             <td>{{ record.notes || '-' }}</td>
                             <td>{{ formatTimestamp(record.timestamp) }}</td>
@@ -178,7 +178,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { usePaymentStore, type WalletPaymentRecord } from '../../stores/paymentStore'
 
 const emit = defineEmits<{
@@ -234,17 +234,14 @@ const calculateRemainingBalance = () => {
 }
 
 const processPayment = () => {
-  const remainingBalance = calculateRemainingBalance()
-
   const paymentRecord: WalletPaymentRecord = {
     id: generateId(),
     type: 'wallet',
-    walletType: 'digital',
-    walletId: memberId.value,
-    walletBalance: walletBalance.value,
-    amount: amountReceive.value,
+    memberId: memberId.value,
+    memberName: memberName.value,
+    walletAvailableBalance: walletBalance.value,
+    amountReceive: amountReceive.value,
     transactionId: transactionId.value,
-    remainingBalance: remainingBalance,
     notes: notes.value,
     timestamp: new Date().toISOString(),
   }
@@ -256,7 +253,7 @@ const processPayment = () => {
   emit('payment-record-added', {
     id: paymentRecord.id,
     type: 'wallet',
-    amount: paymentRecord.amount,
+    amount: paymentRecord.amountReceive,
   })
 
   // Clear amount field for next payment
@@ -272,10 +269,10 @@ const editRecord = (index: number) => {
   const record = paymentStore.componentRecords.wallet[index]
 
   if (isWalletRecord(record)) {
-    memberId.value = record.walletId
-    memberName.value = 'Member Name' // This would be loaded from API
-    walletBalance.value = record.walletBalance
-    amountReceive.value = record.amount
+    memberId.value = record.memberId
+    memberName.value = record.memberName
+    walletBalance.value = record.walletAvailableBalance
+    amountReceive.value = record.amountReceive
     transactionId.value = record.transactionId
     notes.value = record.notes
     editingIndex.value = index
@@ -353,9 +350,8 @@ const loadWalletData = () => {
   }
 }
 
+// Generate a transaction id on mount
 onMounted(() => {
-  // Simulate amount due (in real app, this would come from props or store)
-  amountDue.value = 125.5
   generateTransactionId()
 })
 
@@ -367,12 +363,11 @@ onMounted(() => {
     const validWalletRecords = existingRecords.filter(isWalletRecord).map((record) => ({
       id: record.id || generateId(),
       type: 'wallet' as const,
-      walletType: record.walletType || 'digital',
-      walletId: record.walletId || '',
-      walletBalance: record.walletBalance || 0,
-      amount: record.amount || 0,
+      memberId: record.memberId || '',
+      memberName: record.memberName || '',
+      walletAvailableBalance: record.walletAvailableBalance || 0,
+      amountReceive: record.amountReceive || 0,
       transactionId: record.transactionId || '',
-      remainingBalance: record.remainingBalance || 0,
       notes: record.notes || '',
       timestamp: record.timestamp || new Date().toISOString(),
     }))
@@ -380,6 +375,15 @@ onMounted(() => {
     paymentStore.componentRecords.wallet = validWalletRecords
   }
 })
+
+// React to memberId changes by loading wallet data (and run immediately on mount)
+watch(
+  memberId,
+  () => {
+    loadWalletData()
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped>

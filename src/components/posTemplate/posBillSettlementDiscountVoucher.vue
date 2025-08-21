@@ -139,11 +139,13 @@
                                 </button>
                               </div>
                             </td>
-                            <td>{{ record.voucherCode }}</td>
-                            <td>${{ record.discountValue.toFixed(2) }}</td>
-                            <td>${{ record.discountAmount.toFixed(2) }}</td>
-                            <td>${{ record.finalAmount.toFixed(2) }}</td>
-                            <td>{{ formatDate(record.validUntil) }}</td>
+                            <td>{{ record.discountVoucherNumber }}</td>
+                            <td>${{ record.discountVoucherValue.toFixed(2) }}</td>
+                            <td>${{ record.amountReceive.toFixed(2) }}</td>
+                            <td>
+                              ${{ (record.discountVoucherValue - record.amountReceive).toFixed(2) }}
+                            </td>
+                            <td>{{ formatDate(record.validTill) }}</td>
                             <td>{{ record.notes || '-' }}</td>
                             <td>{{ formatTimestamp(record.timestamp) }}</td>
                           </tr>
@@ -211,16 +213,13 @@ const calculateDiscount = () => {
 }
 
 const processPayment = () => {
-  const { discountAmount, finalAmount } = calculateDiscount()
-
   const paymentRecord: DiscountVoucherPaymentRecord = {
     id: generateId(),
     type: 'discountVoucher',
-    voucherCode: voucherCode.value,
-    discountValue: discountValue.value,
-    discountAmount: discountAmount,
-    finalAmount: finalAmount,
-    validUntil: validUntil.value,
+    discountVoucherNumber: voucherCode.value,
+    discountVoucherValue: discountValue.value,
+    amountReceive: amountReceive.value,
+    validTill: validUntil.value,
     notes: notes.value,
     timestamp: new Date().toISOString(),
   }
@@ -232,7 +231,7 @@ const processPayment = () => {
   emit('payment-record-added', {
     id: paymentRecord.id,
     type: 'discountVoucher',
-    amount: paymentRecord.discountAmount,
+    amount: paymentRecord.amountReceive,
   })
 
   // Clear amount field for next payment
@@ -245,10 +244,10 @@ const editRecord = (index: number) => {
   const record = paymentStore.componentRecords.discountVoucher[index]
 
   if (isDiscountVoucherRecord(record)) {
-    voucherCode.value = record.voucherCode
-    discountValue.value = record.discountValue
-    amountReceive.value = record.discountAmount
-    validUntil.value = record.validUntil
+    voucherCode.value = record.discountVoucherNumber
+    discountValue.value = record.discountVoucherValue
+    amountReceive.value = record.amountReceive
+    validUntil.value = record.validTill
     notes.value = record.notes
     editingIndex.value = index
 
@@ -313,8 +312,8 @@ const loadVoucherData = () => {
 }
 
 onMounted(() => {
-  // Simulate amount due (in real app, this would come from props or store)
-  amountDue.value = 125.5
+  // amountDue is computed from store, no need to set it here
+  // The store already has the original amount due set
 })
 
 onMounted(() => {
@@ -327,11 +326,10 @@ onMounted(() => {
       .map((record) => ({
         id: record.id || generateId(),
         type: 'discountVoucher' as const,
-        voucherCode: record.voucherCode || '',
-        discountValue: record.discountValue || 0,
-        discountAmount: record.discountAmount || 0,
-        finalAmount: record.finalAmount || 0,
-        validUntil: record.validUntil || '',
+        discountVoucherNumber: record.discountVoucherNumber || '',
+        discountVoucherValue: record.discountVoucherValue || 0,
+        amountReceive: record.amountReceive || 0,
+        validTill: record.validTill || '',
         notes: record.notes || '',
         timestamp: record.timestamp || new Date().toISOString(),
       }))

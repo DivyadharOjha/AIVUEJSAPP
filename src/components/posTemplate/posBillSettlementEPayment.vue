@@ -129,15 +129,13 @@
                                 </button>
                               </div>
                             </td>
-                            <td>{{ record.paymentMethod }}</td>
-                            <td>{{ maskAccountNumber(record.accountNumber) }}</td>
-                            <td>{{ record.ifscCode }}</td>
-                            <td>${{ record.amount.toFixed(2) }}</td>
+                            <td>E-Payment</td>
+                            <td>{{ record.transactionId }}</td>
+                            <td>{{ record.referenceNumber }}</td>
+                            <td>${{ record.amountReceive.toFixed(2) }}</td>
                             <td>{{ record.transactionId }}</td>
                             <td>
-                              <span :class="getStatusClass(record.paymentStatus)">
-                                {{ record.paymentStatus }}
-                              </span>
+                              <span class="badge bg-success"> Completed </span>
                             </td>
                             <td>{{ record.notes || '-' }}</td>
                             <td>{{ formatTimestamp(record.timestamp) }}</td>
@@ -201,13 +199,9 @@ const processPayment = () => {
   const paymentRecord: EPaymentRecord = {
     id: generateId(),
     type: 'ePayment',
-    paymentMethod: 'bank_transfer',
-    accountNumber: 'N/A',
-    ifscCode: 'N/A',
-    amount: amountReceive.value,
+    amountReceive: amountReceive.value,
     transactionId: transactionId.value,
     referenceNumber: referenceNumber.value,
-    paymentStatus: 'completed',
     notes: notes.value,
     timestamp: new Date().toISOString(),
   }
@@ -219,7 +213,7 @@ const processPayment = () => {
   emit('payment-record-added', {
     id: paymentRecord.id,
     type: 'ePayment',
-    amount: paymentRecord.amount,
+    amount: paymentRecord.amountReceive,
   })
 
   // Clear amount field for next payment
@@ -235,7 +229,7 @@ const editRecord = (index: number) => {
   const record = paymentStore.componentRecords.ePayment[index]
 
   if (isEPaymentRecord(record)) {
-    amountReceive.value = record.amount
+    amountReceive.value = record.amountReceive
     transactionId.value = record.transactionId
     referenceNumber.value = record.referenceNumber
     notes.value = record.notes
@@ -310,13 +304,9 @@ onMounted(() => {
     const validEPaymentRecords = existingRecords.filter(isEPaymentRecord).map((record) => ({
       id: record.id || generateId(),
       type: 'ePayment' as const,
-      paymentMethod: record.paymentMethod || 'bank_transfer',
-      accountNumber: record.accountNumber || 'N/A',
-      ifscCode: record.ifscCode || 'N/A',
-      amount: record.amount || 0,
+      amountReceive: record.amountReceive || 0,
       transactionId: record.transactionId || '',
       referenceNumber: record.referenceNumber || '',
-      paymentStatus: record.paymentStatus || 'completed',
       notes: record.notes || '',
       timestamp: record.timestamp || new Date().toISOString(),
     }))
