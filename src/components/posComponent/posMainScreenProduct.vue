@@ -11,7 +11,7 @@
             <div
               id="divRightPanelProduct"
               ref="divRightPanelProduct"
-              class="row g-2 flex-grow-1"
+              class="product-grid-container flex-grow-1"
               :style="productGridStyle"
             >
               <div
@@ -191,95 +191,105 @@ function onImgError(e: Event) {
   border-radius: 6px;
   background: transparent;
 }
+/* Product grid container */
+.product-grid-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: 8px;
+  padding: 8px;
+}
+
 /* Make product cards fill their grid cell and stretch vertically */
 .product-row {
-  .product-row {
-    height: 25% !important;
-    min-height: 0 !important;
-  }
-  .product-col {
-    height: 100% !important;
-    min-height: 0 !important;
-    padding: 0.2vw !important;
-    box-sizing: border-box;
-  }
-  .product-card {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: stretch;
-    border-radius: 6px;
-    box-shadow: 0 1px 4px 0 rgba(60, 60, 60, 0.08);
-    border: 1px solid #e3e6ea;
-    transition:
-      box-shadow 0.2s,
-      border-color 0.2s,
-      background 0.2s;
-    background: #fff !important;
-    padding: 6px 4px !important;
-    margin: 0 !important;
-    overflow: hidden;
-  }
-  .product-img-row {
-    flex: 1 1 0;
-    min-height: 0;
-    padding: 2px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .product-img {
-    width: 90% !important;
-    max-width: 90%;
-    height: 60px !important;
-    object-fit: contain;
-    border-radius: 4px;
-    background: transparent !important;
-    border: none !important;
-  }
-  .product-name-row {
-    flex: 1 1 0;
-    min-height: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1px 2px;
-  }
-  .product-name {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #222;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-    text-align: center;
-    line-height: 1.2;
-  }
-  .product-qty-rate-row {
-    flex: 1 1 0;
-    min-height: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1px 4px;
-  }
-  .product-qty-value {
-    font-weight: 700;
-    color: #1976d2;
-    font-size: 0.85rem;
-  }
-  .product-rate-label {
-    font-size: 0.9rem;
-    color: #888;
-    font-weight: 700;
-  }
-  .product-rate {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #1976d2;
-  }
+  height: 20% !important;
+  min-height: 0 !important;
+  display: flex;
+  gap: 8px;
+}
+.product-col {
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 4px !important;
+  box-sizing: border-box;
+}
+.product-card {
+  height: 100% !important;
+  min-height: 0 !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px 0 rgba(60, 60, 60, 0.1);
+  border: 1px solid #e3e6ea;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s,
+    background 0.2s;
+  background: #fff !important;
+  padding: 8px 6px !important;
+  margin: 0 !important;
+  overflow: hidden;
+}
+.product-img-row {
+  flex: 2 1 0;
+  min-height: 0;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.product-img {
+  width: 100% !important;
+  max-width: 100%;
+  height: 80px !important;
+  object-fit: contain;
+  border-radius: 6px;
+  background: transparent !important;
+  border: none !important;
+}
+.product-name-row {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 2px;
+}
+.product-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+  line-height: 1.3;
+}
+.product-qty-rate-row {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 4px;
+}
+.product-qty-value {
+  font-weight: 700;
+  color: #1976d2;
+  font-size: 0.9rem;
+}
+.product-rate-label {
+  font-size: 0.9rem;
+  color: #888;
+  font-weight: 700;
+}
+.product-rate {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1976d2;
 }
 </style>
