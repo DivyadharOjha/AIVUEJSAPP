@@ -45,8 +45,7 @@
                             'https://via.placeholder.com/80x80?text=No+Image'
                           "
                           :alt="product.ProductName"
-                          class="product-img w-100"
-                          style="width: 100%; max-width: 100%; height: 48px; object-fit: contain"
+                          class="product-img"
                           @error="onImgError"
                         />
                       </div>
@@ -254,7 +253,7 @@ function onImgError(e: Event) {
   min-width: 0;
   max-width: 25%;
   min-height: 0;
-  padding: 4px;
+  padding: 2px;
   box-sizing: border-box;
   display: flex;
   overflow: hidden;
@@ -268,15 +267,15 @@ function onImgError(e: Event) {
   flex-direction: column;
   justify-content: space-between;
   align-items: stretch;
-  border-radius: 6px;
-  box-shadow: 0 1px 4px 0 rgba(60, 60, 60, 0.04);
+  border-radius: 4px;
+  box-shadow: 0 1px 2px 0 rgba(60, 60, 60, 0.04);
   border: 1px solid #e3e6ea;
   transition:
     box-shadow 0.2s,
     border-color 0.2s,
     background 0.2s;
   background: #fff !important;
-  padding: 6px 4px;
+  padding: 3px 2px;
   margin: 0;
   overflow: hidden;
   box-sizing: border-box;
@@ -290,19 +289,27 @@ function onImgError(e: Event) {
 .product-img-row {
   flex: 2 1 0;
   min-height: 0;
-  padding: 1px 0;
+  padding: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: stretch;
+  width: 100%;
+  height: 60px;
+  overflow: hidden;
 }
 .product-img {
   width: 100% !important;
   max-width: 100%;
-  height: 60px !important;
-  object-fit: cover;
-  border-radius: 4px;
+  height: 100% !important;
+  object-fit: fill;
+  object-position: center;
+  border-radius: 2px;
   background: transparent !important;
   border: none !important;
+  display: block;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
 }
 .product-name-row {
   flex: 1 1 0;
@@ -310,10 +317,10 @@ function onImgError(e: Event) {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 2px;
+  padding: 0 1px;
 }
 .product-name {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #222;
   white-space: nowrap;
@@ -330,12 +337,12 @@ function onImgError(e: Event) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1px 4px;
+  padding: 0 2px;
 }
 .product-qty-value {
   font-weight: 700;
   color: #1976d2;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   max-width: 50%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -347,7 +354,7 @@ function onImgError(e: Event) {
   font-weight: 700;
 }
 .product-rate {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #1976d2;
   max-width: 50%;
