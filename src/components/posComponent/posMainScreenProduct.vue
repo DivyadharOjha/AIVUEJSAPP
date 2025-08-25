@@ -272,21 +272,21 @@ function onImgError(e: Event) {
   filter: none;
 }
 .product-img-row {
-  flex: 2 1 0;
+  flex: 3 1 0;
   min-height: 0;
   padding: 0;
   display: flex;
   align-items: stretch;
   justify-content: stretch;
   width: 100%;
-  height: 60px;
+  height: 90px;
   overflow: hidden;
 }
 .product-img {
   width: 100% !important;
   max-width: 100%;
   height: 100% !important;
-  object-fit: fill;
+  object-fit: cover;
   object-position: center;
   border-radius: 2px;
   background: transparent !important;
