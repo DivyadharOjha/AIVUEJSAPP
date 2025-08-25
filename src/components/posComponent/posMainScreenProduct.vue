@@ -75,7 +75,7 @@
             </div>
           </div>
         </div>
-        <div v-if="products.length > 20" class="row" style="height: 40px; min-height: 0">
+        <div v-if="products.length > 16" class="row" style="height: 40px; min-height: 0">
           <div class="col-12 d-flex justify-content-center align-items-center" style="height: 100%">
             <button class="btn btn-outline-primary btn-sm me-2" @click="prevPage">&lt;</button>
             <span style="font-size: 0.95rem">Page {{ currentPage }} / {{ totalPages }}</span>
@@ -108,15 +108,15 @@ const props = defineProps<{ products: Product[] }>()
 const products = props.products
 const hasProducts = computed(() => products && products.length > 0)
 const currentPage = ref(1)
-const pageSize = 20
+const pageSize = 16
 const totalPages = computed(() => Math.ceil((products?.length || 0) / pageSize))
 
-// Compute a 2D array for the product grid (5 rows x 4 columns)
+// Compute a 2D array for the product grid (4 rows x 4 columns)
 const productGrid = computed(() => {
   const start = (currentPage.value - 1) * pageSize
   const pageProducts = products?.slice(start, start + pageSize) || []
   const grid: Product[][] = []
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 4; i++) {
     const row: Product[] = []
     for (let j = 0; j < 4; j++) {
       const product = pageProducts[i * 4 + j]
@@ -131,7 +131,7 @@ const productGrid = computed(() => {
 
 // Dynamic height calculation for divRightPanelProduct
 const divRightPanelProduct = ref<HTMLElement | null>(null)
-const paginationVisible = computed(() => products.length > 20)
+const paginationVisible = computed(() => products.length > 16)
 function setProductGridHeight() {
   nextTick(() => {
     const parent = divRightPanelProduct.value?.parentElement
@@ -193,94 +193,93 @@ function onImgError(e: Event) {
 }
 /* Make product cards fill their grid cell and stretch vertically */
 .product-row {
-  height: 20% !important;
-  min-height: 0 !important;
-}
-.product-col {
-  height: 100% !important;
-  min-height: 0 !important;
-  padding: 0.5vw !important;
-  box-sizing: border-box;
-}
-.product-card {
-  height: 100% !important;
-  min-height: 0 !important;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 6px;
-  box-shadow: 0 1px 4px 0 rgba(60, 60, 60, 0.04);
-  border: 1px solid #e3e6ea;
-  transition:
-    box-shadow 0.2s,
-    border-color 0.2s,
-    background 0.2s;
-  background: #fff !important;
-  padding: 6px 4px !important;
-  margin: 0 !important;
-  overflow: hidden;
-}
-.product-card:hover {
-  border-color: #4fc3f7;
-  box-shadow: 0 2px 12px 2px #4fc3f733;
-  background: #f4fff4 !important;
-  filter: none;
-}
-.product-img-row {
-  min-height: 48px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.product-img {
-  width: 90% !important;
-  max-width: 90%;
-  height: 48px !important;
-  object-fit: contain;
-  border-radius: 4px;
-  background: transparent !important;
-  border: none !important;
-}
-.product-name-row {
-  min-height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 2px;
-}
-.product-name {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #222;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-  text-align: center;
-}
-.product-qty-rate-row {
-  min-height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 4px;
-}
-.product-qty-value {
-  font-weight: 700;
-  color: #1976d2;
-  font-size: 0.85rem;
-}
-.product-rate-label {
-  font-size: 0.8rem;
-  color: #888;
-  font-weight: 700;
-}
-.product-rate {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #1976d2;
+  .product-row {
+    height: 25% !important;
+    min-height: 0 !important;
+  }
+  .product-col {
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 0.2vw !important;
+    box-sizing: border-box;
+  }
+  .product-card {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px 0 rgba(60, 60, 60, 0.08);
+    border: 1px solid #e3e6ea;
+    transition:
+      box-shadow 0.2s,
+      border-color 0.2s,
+      background 0.2s;
+    background: #fff !important;
+    padding: 6px 4px !important;
+    margin: 0 !important;
+    overflow: hidden;
+  }
+  .product-img-row {
+    flex: 1 1 0;
+    min-height: 0;
+    padding: 2px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .product-img {
+    width: 90% !important;
+    max-width: 90%;
+    height: 60px !important;
+    object-fit: contain;
+    border-radius: 4px;
+    background: transparent !important;
+    border: none !important;
+  }
+  .product-name-row {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 2px;
+  }
+  .product-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #222;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .product-qty-rate-row {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1px 4px;
+  }
+  .product-qty-value {
+    font-weight: 700;
+    color: #1976d2;
+    font-size: 0.85rem;
+  }
+  .product-rate-label {
+    font-size: 0.9rem;
+    color: #888;
+    font-weight: 700;
+  }
+  .product-rate {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1976d2;
+  }
 }
 </style>
