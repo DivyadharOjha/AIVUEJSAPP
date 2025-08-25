@@ -152,6 +152,7 @@
                   >
                     <posMainScreenProduct
                       v-if="selectedProductGroup"
+                      :key="selectedProductGroup.ProductGroupId"
                       :group="selectedProductGroup"
                       :products="selectedProducts"
                       @product-selected="handleProductSelected"
@@ -350,6 +351,8 @@ const productDataMap = {
 
 // Debug logging
 console.log('Product data map keys:', Object.keys(productDataMap))
+console.log('Electronics products length:', electronicsProducts.length)
+console.log('Sample electronics product:', electronicsProducts[0])
 
 // Function to load first product group data
 async function loadFirstProductGroup() {
@@ -397,6 +400,16 @@ function initializeDynamicLineWiseFields() {
   mainScreenStore.DynamicLineWiseField = dynamicFields
   console.log('Dynamic linewise fields initialized:', dynamicFields)
 }
+
+// Watch for changes in selectedProducts
+watch(
+  () => selectedProducts.value,
+  (newProducts) => {
+    console.log('Main Screen - selectedProducts changed:', newProducts?.length, 'products')
+    console.log('Main Screen - First product:', newProducts?.[0])
+  },
+  { deep: true },
+)
 
 // Auto-load first product group when component mounts
 onMounted(async () => {
@@ -473,16 +486,40 @@ function handleFooterShortcutClick(shortcutId: string): void {
 }
 
 function handleProductGroupSelected(group: { ProductGroupId: number; ProductGroupText: string }) {
+  console.log('=== PRODUCT GROUP SELECTION START ===')
   console.log('Product group selected:', group)
+
   selectedProductGroup.value = group
 
-  // Get products from the data map with type safety
-  const products = productDataMap[group.ProductGroupText as keyof typeof productDataMap]
-  selectedProducts.value = products || []
+  // BULLETPROOF SOLUTION: Use ProductGroupId directly - this will ALWAYS work
+  const groupIdMap = {
+    1: electronicsProducts,
+    2: clothingAndApparelProducts,
+    3: homeAndGardenProducts,
+    4: sportsAndOutdoorProducts,
+    5: booksAndMediaProducts,
+    6: automotiveProducts,
+    7: healthAndBeautyProducts,
+    8: toysAndGamesProducts,
+    9: foodAndBeveragesProducts,
+    10: officeSuppliesProducts,
+  }
 
-  console.log(
-    `Loaded ${selectedProducts.value.length} products for group: ${group.ProductGroupText}`,
-  )
+  const products = groupIdMap[group.ProductGroupId as keyof typeof groupIdMap]
+
+  if (products) {
+    selectedProducts.value = products
+    console.log(
+      `✅ SUCCESS: Loaded ${products.length} products for group ID ${group.ProductGroupId} (${group.ProductGroupText})`,
+    )
+    console.log('selectedProducts.value updated:', selectedProducts.value.length, 'products')
+    console.log('First product in selectedProducts:', selectedProducts.value[0])
+  } else {
+    selectedProducts.value = []
+    console.log(`❌ ERROR: No products found for group ID ${group.ProductGroupId}`)
+  }
+
+  console.log('=== PRODUCT GROUP SELECTION END ===')
 }
 
 function handleProductSelected(product: Product) {

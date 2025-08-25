@@ -5,27 +5,20 @@
       class="flex-grow-1 d-flex flex-column h-100"
       style="min-height: 0; overflow: hidden"
     >
-      <div class="container-fluid h-100 p-0" style="min-height: 0; overflow: hidden">
-        <div class="row h-100" style="min-height: 0; overflow: hidden">
+      <div
+        class="container-fluid h-100 p-0 d-flex flex-column"
+        style="min-height: 0; overflow: hidden"
+      >
+        <div class="row flex-grow-1" style="min-height: 0; overflow: hidden">
           <div class="col-12 h-100" style="min-height: 0; overflow: hidden">
             <div
               id="divRightPanelProduct"
               ref="divRightPanelProduct"
-              class="product-grid-container flex-grow-1"
+              class="product-grid-container"
               :style="productGridStyle"
             >
-              <div
-                v-for="(row, rowIndex) in productGrid"
-                :key="rowIndex"
-                class="col-12 d-flex flex-row flex-fill product-row"
-                style="flex: 1 1 0; min-height: 0; margin-bottom: 0; height: 20%"
-              >
-                <div
-                  v-for="(product, colIndex) in row"
-                  :key="colIndex"
-                  class="d-flex align-items-stretch justify-content-stretch px-0 flex-fill product-col"
-                  style="width: 25%; min-width: 0; min-height: 0; height: 100%"
-                >
+              <div v-for="(row, rowIndex) in productGrid" :key="rowIndex" class="product-row">
+                <div v-for="(product, colIndex) in row" :key="colIndex" class="product-col">
                   <div
                     :class="[
                       'card',
@@ -75,19 +68,16 @@
             </div>
           </div>
         </div>
-        <div v-if="products.length > 16" class="row" style="height: 40px; min-height: 0">
-          <div class="col-12 d-flex justify-content-center align-items-center" style="height: 100%">
-            <button class="btn btn-outline-primary btn-sm me-2" @click="prevPage">&lt;</button>
-            <span style="font-size: 0.95rem">Page {{ currentPage }} / {{ totalPages }}</span>
-            <button
-              class="btn btn-outline-primary btn-sm ms-2"
-              :disabled="currentPage === totalPages"
-              @click="nextPage"
-            >
-              &gt;
-            </button>
-          </div>
-        </div>
+        <posPageNavigation
+          v-if="products.length > 16"
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          :total-records="products.length"
+          @first-click="firstPage"
+          @previous-click="prevPage"
+          @next-click="nextPage"
+          @last-click="lastPage"
+        />
       </div>
     </div>
     <div
@@ -103,10 +93,16 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, watch, nextTick } from 'vue'
 import type { Product } from '../posDataStruct/posProduct'
+import posPageNavigation from '../posTemplate/posPageNavigation.vue'
 
 const props = defineProps<{ products: Product[] }>()
 const products = props.products
 const hasProducts = computed(() => products && products.length > 0)
+
+// Debug logging for products
+console.log('posMainScreenProduct - Received products:', products)
+console.log('posMainScreenProduct - Products length:', products?.length)
+console.log('posMainScreenProduct - hasProducts:', hasProducts.value)
 const currentPage = ref(1)
 const pageSize = 16
 const totalPages = computed(() => Math.ceil((products?.length || 0) / pageSize))
@@ -115,6 +111,13 @@ const totalPages = computed(() => Math.ceil((products?.length || 0) / pageSize))
 const productGrid = computed(() => {
   const start = (currentPage.value - 1) * pageSize
   const pageProducts = products?.slice(start, start + pageSize) || []
+
+  console.log('productGrid computed - products length:', products?.length)
+  console.log('productGrid computed - currentPage:', currentPage.value)
+  console.log('productGrid computed - start:', start)
+  console.log('productGrid computed - pageProducts length:', pageProducts.length)
+  console.log('productGrid computed - first page product:', pageProducts[0])
+
   const grid: Product[][] = []
   for (let i = 0; i < 4; i++) {
     const row: Product[] = []
@@ -126,35 +129,68 @@ const productGrid = computed(() => {
     }
     grid.push(row)
   }
+
+  console.log('productGrid computed - grid created with rows:', grid.length)
   return grid
 })
 
 // Dynamic height calculation for divRightPanelProduct
 const divRightPanelProduct = ref<HTMLElement | null>(null)
-const paginationVisible = computed(() => products.length > 16)
+const paginationVisible = computed(() => {
+  const shouldShow = products.length >= 16
+  console.log('Pagination check:', { productsLength: products.length, shouldShow })
+  return shouldShow
+})
 function setProductGridHeight() {
   nextTick(() => {
     const parent = divRightPanelProduct.value?.parentElement
     if (parent && divRightPanelProduct.value) {
-      const parentHeight = parent.clientHeight
-      const paginationHeight = paginationVisible.value ? 40 : 0
-      divRightPanelProduct.value.style.height = `${parentHeight - paginationHeight}px`
+      //const parentHeight = parent.clientHeight
+      //const paginationHeight = paginationVisible.value ? 48 : 0 // Increased for pageNavigation component
+      //const containerPadding = 16 // 8px top + 8px bottom
+      //const availableHeight = parentHeight - paginationHeight - containerPadding
+      //divRightPanelProduct.value.style.height = `${Math.max(availableHeight, 300)}px`
     }
   })
 }
 onMounted(setProductGridHeight)
 watch([() => products.length, paginationVisible], setProductGridHeight)
 
+// Watch for products changes
+watch(
+  () => products,
+  (newProducts) => {
+    console.log('posMainScreenProduct - Products changed:', newProducts)
+    console.log('posMainScreenProduct - New products length:', newProducts?.length)
+    console.log('posMainScreenProduct - First product:', newProducts?.[0])
+    console.log('posMainScreenProduct - hasProducts computed:', hasProducts.value)
+
+    // Reset to first page when products change
+    currentPage.value = 1
+    console.log('posMainScreenProduct - Reset to page 1')
+  },
+  { deep: true, immediate: true },
+)
+
 const productGridStyle = computed(() => {
   // Optionally, keep the style object for other flex/grid properties
   return { minHeight: 0, overflow: 'hidden', flexBasis: 0, flexGrow: 1 }
 })
 
+function firstPage() {
+  currentPage.value = 1
+}
+
 function prevPage() {
   if (currentPage.value > 1) currentPage.value--
 }
+
 function nextPage() {
   if (currentPage.value < totalPages.value) currentPage.value++
+}
+
+function lastPage() {
+  currentPage.value = totalPages.value
 }
 
 function onImgError(e: Event) {
@@ -199,44 +235,62 @@ function onImgError(e: Event) {
   min-height: 0;
   gap: 8px;
   padding: 8px;
+  overflow: hidden;
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Make product cards fill their grid cell and stretch vertically */
 .product-row {
-  height: 20% !important;
-  min-height: 0 !important;
   display: flex;
+  flex: 1 1 0;
+  min-height: 0;
   gap: 8px;
+  height: 25%;
 }
 .product-col {
-  height: 100% !important;
-  min-height: 0 !important;
-  padding: 4px !important;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 25%;
+  min-height: 0;
+  padding: 4px;
   box-sizing: border-box;
+  display: flex;
+  overflow: hidden;
 }
 .product-card {
-  height: 100% !important;
-  min-height: 0 !important;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: stretch;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px 0 rgba(60, 60, 60, 0.1);
+  border-radius: 6px;
+  box-shadow: 0 1px 4px 0 rgba(60, 60, 60, 0.04);
   border: 1px solid #e3e6ea;
   transition:
     box-shadow 0.2s,
     border-color 0.2s,
     background 0.2s;
   background: #fff !important;
-  padding: 8px 6px !important;
-  margin: 0 !important;
+  padding: 6px 4px;
+  margin: 0;
   overflow: hidden;
+  box-sizing: border-box;
+}
+.product-card:hover {
+  border-color: #4fc3f7;
+  box-shadow: 0 2px 12px 2px #4fc3f733;
+  background: #f4fff4 !important;
+  filter: none;
 }
 .product-img-row {
   flex: 2 1 0;
   min-height: 0;
-  padding: 4px 0;
+  padding: 1px 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,9 +298,9 @@ function onImgError(e: Event) {
 .product-img {
   width: 100% !important;
   max-width: 100%;
-  height: 80px !important;
-  object-fit: contain;
-  border-radius: 6px;
+  height: 60px !important;
+  object-fit: cover;
+  border-radius: 4px;
   background: transparent !important;
   border: none !important;
 }
@@ -256,18 +310,19 @@ function onImgError(e: Event) {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3px 2px;
+  padding: 0 2px;
 }
 .product-name {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: #222;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
+  max-width: 100%;
   text-align: center;
-  line-height: 1.3;
+  word-wrap: break-word;
 }
 .product-qty-rate-row {
   flex: 1 1 0;
@@ -275,21 +330,30 @@ function onImgError(e: Event) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 3px 4px;
+  padding: 1px 4px;
 }
 .product-qty-value {
   font-weight: 700;
   color: #1976d2;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .product-rate-label {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #888;
   font-weight: 700;
 }
 .product-rate {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: #1976d2;
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
 }
 </style>

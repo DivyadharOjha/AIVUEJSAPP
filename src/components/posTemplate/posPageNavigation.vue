@@ -91,7 +91,6 @@ function handleLastClick() {
 <style scoped>
 .pagination-container {
   padding: 8px 0;
-  background: #f8f9fa;
   border-top: 1px solid #e9ecef;
   border-radius: 0 0 6px 6px;
 }
