@@ -30,6 +30,7 @@
                       { 'product-card-compact': products.length > 20 },
                     ]"
                     style="height: 100%; min-height: 0; margin: 0"
+                    @click="$emit('product-selected', product)"
                   >
                     <div
                       class="row g-0 flex-column h-100"
