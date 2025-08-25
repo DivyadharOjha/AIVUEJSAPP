@@ -98,10 +98,6 @@ const props = defineProps<{ products: Product[] }>()
 const products = props.products
 const hasProducts = computed(() => products && products.length > 0)
 
-// Debug logging for products
-console.log('posMainScreenProduct - Received products:', products)
-console.log('posMainScreenProduct - Products length:', products?.length)
-console.log('posMainScreenProduct - hasProducts:', hasProducts.value)
 const currentPage = ref(1)
 const pageSize = 16
 const totalPages = computed(() => Math.ceil((products?.length || 0) / pageSize))
@@ -110,12 +106,6 @@ const totalPages = computed(() => Math.ceil((products?.length || 0) / pageSize))
 const productGrid = computed(() => {
   const start = (currentPage.value - 1) * pageSize
   const pageProducts = products?.slice(start, start + pageSize) || []
-
-  console.log('productGrid computed - products length:', products?.length)
-  console.log('productGrid computed - currentPage:', currentPage.value)
-  console.log('productGrid computed - start:', start)
-  console.log('productGrid computed - pageProducts length:', pageProducts.length)
-  console.log('productGrid computed - first page product:', pageProducts[0])
 
   const grid: Product[][] = []
   for (let i = 0; i < 4; i++) {
@@ -129,7 +119,6 @@ const productGrid = computed(() => {
     grid.push(row)
   }
 
-  console.log('productGrid computed - grid created with rows:', grid.length)
   return grid
 })
 
@@ -137,7 +126,6 @@ const productGrid = computed(() => {
 const divRightPanelProduct = ref<HTMLElement | null>(null)
 const paginationVisible = computed(() => {
   const shouldShow = products.length >= 16
-  console.log('Pagination check:', { productsLength: products.length, shouldShow })
   return shouldShow
 })
 function setProductGridHeight() {
@@ -159,11 +147,7 @@ watch([() => products.length, paginationVisible], setProductGridHeight)
 watch(
   () => products,
   (newProducts) => {
-    console.log('posMainScreenProduct - Products changed:', newProducts)
     console.log('posMainScreenProduct - New products length:', newProducts?.length)
-    console.log('posMainScreenProduct - First product:', newProducts?.[0])
-    console.log('posMainScreenProduct - hasProducts computed:', hasProducts.value)
-
     // Reset to first page when products change
     currentPage.value = 1
     console.log('posMainScreenProduct - Reset to page 1')
@@ -241,12 +225,13 @@ function onImgError(e: Event) {
 }
 
 /* Make product cards fill their grid cell and stretch vertically */
+/* Default: 5 products per row for >900px */
 .product-row {
   display: flex;
   flex: 1 1 0;
   min-height: 0;
   gap: 8px;
-  height: 25%;
+  height: 20%;
 }
 .product-col {
   flex: 1 1 0;
@@ -364,95 +349,16 @@ function onImgError(e: Event) {
   text-align: right;
 }
 /* Responsive product grid and card styles */
-@media (max-width: 1200px) {
-  .product-grid-container {
-    gap: 6px;
-    padding: 4px;
-  }
+@media (max-width: 899px) {
+  /* 3 products per row for <=899px */
   .product-row {
     gap: 6px;
-    height: 25%;
+    height: 33.33%;
   }
   .product-col {
+    max-width: 33.33%;
+    flex: 1 1 0;
     padding: 1px;
-  }
-  .product-card {
-    padding: 2px 1px;
-  }
-  .product-img-row {
-    height: 48px;
-  }
-  .product-img {
-    height: 48px !important;
-  }
-  .product-name {
-    font-size: 0.7rem;
-  }
-  .product-qty-value,
-  .product-rate {
-    font-size: 0.7rem;
-  }
-}
-
-@media (max-width: 900px) {
-  .product-grid-container {
-    gap: 4px;
-    padding: 2px;
-  }
-  .product-row {
-    gap: 4px;
-    height: 33%; /* 3 rows */
-  }
-  .product-col {
-    max-width: 33%; /* 3 columns */
-    padding: 1px;
-  }
-  .product-card {
-    padding: 1px 0;
-  }
-  .product-img-row {
-    height: 36px;
-  }
-  .product-img {
-    height: 36px !important;
-  }
-  .product-name {
-    font-size: 0.65rem;
-  }
-  .product-qty-value,
-  .product-rate {
-    font-size: 0.65rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .product-grid-container {
-    gap: 2px;
-    padding: 1px;
-  }
-  .product-row {
-    gap: 2px;
-    height: 50%; /* 2 rows */
-  }
-  .product-col {
-    max-width: 50%; /* 2 columns */
-    padding: 0;
-  }
-  .product-card {
-    padding: 0;
-  }
-  .product-img-row {
-    height: 28px;
-  }
-  .product-img {
-    height: 28px !important;
-  }
-  .product-name {
-    font-size: 0.6rem;
-  }
-  .product-qty-value,
-  .product-rate {
-    font-size: 0.6rem;
   }
 }
 </style>
